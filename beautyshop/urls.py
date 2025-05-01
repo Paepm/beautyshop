@@ -19,12 +19,15 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from beautyshop.settings import BASE_DIR
+from django.contrib.auth import views as auth_views
 
 import os
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),
+    path('login/', auth_views.LoginView.as_view(template_name='shop/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='shop/logout.html'), name='logout'),
 ]
 
 # for the template static files

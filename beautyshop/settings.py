@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'shop',  # Custom app for the beauty shop
 ]
 
+LOGIN_REDIRECT_URL = '/'  # Redirect to Home after login
+LOGOUT_REDIRECT_URL = '/login/'  # Redirect to login page after logout
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,7 +59,7 @@ ROOT_URLCONF = 'beautyshop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Directory for templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
