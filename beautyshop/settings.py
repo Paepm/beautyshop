@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'cart',  # Custom app for the shopping cart
 ]
 
+LOGIN_URL = '/login/'  # URL for login page
 LOGIN_REDIRECT_URL = '/'  # Redirect to Home after login
 LOGOUT_REDIRECT_URL = '/login/'  # Redirect to login page after logout
 

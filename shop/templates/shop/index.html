@@ -33,20 +33,17 @@
             Sale
           </div>
           {% endif %} {% if product.image %}
-          <img
-            class="card-img-top"
-            style="height: 300px; object-fit: cover"
-            src="{{ product.image.url }}"
-            alt="{{ product.name }}"
-          />
-          {% else %}
-          <img
-            class="card-img-top"
-            style="height: 300px; object-fit: cover"
-            src="{% static 'assets/placeholder.jpg' %}"
-            alt="Kein Bild verfügbar"
-          />
-          {% endif %}
+          <img class="card-img-top"
+               style="height: 300px; object-fit: cover"
+               src="{{ product.image.url }}"
+               alt="{{ product.name }}">
+        {% else %}
+          <img class="card-img-top"
+               style="height: 300px; object-fit: cover"
+               src="{% static 'assets/placeholder.jpg' %}"
+               alt="Kein Bild verfügbar">
+        {% endif %}
+        
 
           <div class="card-body p-4">
             <div class="text-center">

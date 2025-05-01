@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from shop.models import Product, User
+from shop.models import Item, User
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -12,7 +12,7 @@ class Cart(models.Model):
     
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
@@ -20,3 +20,6 @@ class CartItem(models.Model):
     
     def get_total_price(self):
         return self.quantity * self.product.price
+    
+        
+        

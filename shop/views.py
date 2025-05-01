@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from devtools import debug
 
-from .models import Product, Category
-from cart.models import Cart, CartItem
+from .models import Item, Category
+from cart.models import Cart
+from cart.models import CartItem
 
 
 # Create your views here.
 
 def product_list(request):
     # Logic to retrieve and display products
-    products = Product.objects.all()
+    products = Item.objects.all()
+    # debug(products)
     return render(request, 'shop/index.html', {"products": products})
 
 def about(request):
@@ -43,9 +46,9 @@ def signup_view(request):
         form = UserCreationForm()
     return render(request, 'shop/signup.html', {'form': form})
 
-@login_required
+@login_required(login_url='cart:cart_detail')
 def add_to_card(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Item, id=product_id)
 
     # get or create a cart for the user
     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -57,6 +60,6 @@ def add_to_card(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
 
-    #shows the cart detail page
+    # add product to cart and stay on same page
     return redirect(request.META.get('HTTP_REFERER', 'cart:cart_detail'))
 
