@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop',  # Custom app for the beauty shop
+    'cart',  # Custom app for the shopping cart
 ]
 
 LOGIN_REDIRECT_URL = '/'  # Redirect to Home after login
