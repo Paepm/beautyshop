@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 from shop.models import Item, User
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

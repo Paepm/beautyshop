@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'shop',  # Custom app for the beauty shop
     'cart',  # Custom app for the shopping cart
     'orders',  # Custom app for order management
+    'accounts',  # Custom app for user accounts
 ]
 
 LOGIN_URL = '/login/'  # URL for login page
@@ -86,6 +87,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 
 
 # Password validation

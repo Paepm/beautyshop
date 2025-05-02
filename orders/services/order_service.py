@@ -22,7 +22,7 @@ class OrderService:
             return None
         
         cart_items = self.cart.items.select_related('product')
-        debug(cart_items)
+        # debug(cart_items)
         total_price = sum(item.get_total_price() for item in cart_items)
 
         order: Order = Order.objects.create(user=self.user, created_at=timezone.now(), status='pending', total_price=total_price)

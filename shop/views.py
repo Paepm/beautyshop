@@ -36,15 +36,7 @@ def terms_and_conditions(request):
     # Logic to display the terms and conditions page
     return render(request, 'shop/terms_and_conditions.html')
 
-def signup_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = UserCreationForm()
-    return render(request, 'shop/signup.html', {'form': form})
+
 
 @login_required(login_url='cart:cart_detail')
 def add_to_card(request, product_id):
