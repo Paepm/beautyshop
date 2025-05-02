@@ -29,23 +29,18 @@
           <button type="submit" class="btn btn-danger btn-sm">Remove</button>
         </form>
   
-        <form action="{% url 'cart:update_cart_item' item.id %}" method="POST">
+        <form action="{% url 'cart:update_cart_item' item.id %}" method="POST" class="d-flex align-items-center auto-submit-form">
           {% csrf_token %}
-          <input type="hidden" name="action" value="decrement" />
-          <button type="submit">−</button>
+          <input
+            type="number"
+            name="quantity"
+            value="{{ item.quantity }}"
+            min="1"
+            class="form-control form-control-sm quantity-input"
+            style="width: 80px;"
+          />
         </form>
-  
-        <form action="{% url 'cart:update_cart_item' item.id %}" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="increment" />
-          <button type="submit">+</button>
-        </form>
-  
-        <form action="{% url 'cart:update_cart_item' item.id %}" method="POST" class="d-flex align-items-center">
-          {% csrf_token %}
-          <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm" style="width: 80px;" />
-          <button type="submit" class="btn btn-sm btn-outline-primary ml-2">Update</button>
-        </form>
+        
       </div>
     </li>
     {% endfor %}
@@ -53,8 +48,27 @@
   
   <hr />
   <h4>Total: {{ total_price|floatformat:2 }} €</h4>
+  {% if cart_items %}
+  <form action="{% url 'orders:create_order' %}" method="post" class="mt-3">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">
+      Proceed to Checkout
+    </button>
+  </form>
+{% endif %}
+
+
   {% else %}
   <p>Dein Warenkorb ist leer.</p>
   {% endif %}
 </div>
+
+<script>
+  // Auto-submit form on quantity change
+  document.querySelectorAll('.quantity-input').forEach(function(input) {
+    input.addEventListener('change', function() {
+      input.closest('form').submit();
+    });
+  });
+</script>
 {% endblock %}

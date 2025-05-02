@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Your Orders</h2>
+
+  {% if orders %}
+    <ul class="list-group">
+      {% for order in orders %}
+      <li class="list-group-item">
+        <a href="{% url 'orders:user_order_detail' order.id %}">
+          <strong>Order #{{ order.id }}</strong>
+        </a> – {{ order.created_at|date:"d.m.Y H:i" }}<br />
+        Status: {{ order.status }}<br />
+        Total: {{ order.total_price }} €
+      </li>
+      
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You have no orders yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

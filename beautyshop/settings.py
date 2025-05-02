@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop',  # Custom app for the beauty shop
     'cart',  # Custom app for the shopping cart
+    'orders',  # Custom app for order management
 ]
 
 LOGIN_URL = '/login/'  # URL for login page
