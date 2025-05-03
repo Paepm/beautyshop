@@ -33,6 +33,8 @@ def email_check_sign_up(request):
     return render(request, 'accounts/email_check_sign_up.html', {'error': error})
 
 def signup_view(request: HttpRequest) -> HttpResponse:
+    print("USERNAME:", settings.EMAIL_HOST_USER)
+    print("PASSWORD:", settings.EMAIL_HOST_PASSWORD)
     # Load welcome message from email templates
     message = email_templates.EmailTemplate.WELCOME.value
     debug(type(message['subject']))  # Debug: confirm it's a string
@@ -47,11 +49,13 @@ def signup_view(request: HttpRequest) -> HttpResponse:
 
             # Send welcome email with dynamic user name
             send_mail(
-                subject=message['subject'].format(name=form.cleaned_data['first_name']),
-                message=message['message'].format(name=form.cleaned_data['first_name']),
+                subject=message['subject'].format(name=form.cleaned_data['first_name']),    # format str is needed to replace {name} with the actual name
+                message=message['message'].format(name=form.cleaned_data['first_name']),    # format str is needed to replace {name} with the actual name
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user.email],
                 fail_silently=False,
+                auth_user='mair.patrick@gmx.at',
+                auth_password='O63UTWLJ2WQ56YFSM4K6',
             )
 
             # Log the user in and redirect to product list

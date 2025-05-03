@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -91,9 +92,18 @@ DATABASES = {
 # added for the custom user model
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Console email backend for development
-DEFAULT_FROM_EMAIL = 'noreply@beautyshop.local'  # Default email address for sending emails
+# automatic email verification
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Console email backend for development
 
+EMAIL_HOST = 'mail.gmx.net'  # SMTP server for sending emails
+EMAIL_PORT = 587  # Port for SMTP
+EMAIL_USE_TLS = True  # Use TLS for secure email sending
+EMAIL_USE_SSL = False  # Do not use SSL
+   
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # emailadress saved in .env file
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Default email address for sending emails
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # password saved in .env file
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Default email address for sending emails
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
