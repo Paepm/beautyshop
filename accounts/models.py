@@ -51,7 +51,7 @@ class CustomUser(AbstractUser):
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
 
     newsletter_opt_in = models.BooleanField(default=False)
-    terms_accepted = models.BooleanField(default=False)
+    terms_accepted = models.BooleanField(default=False, blank=True)
 
     class Meta:
         verbose_name = 'User'

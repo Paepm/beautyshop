@@ -39,6 +39,7 @@ def signup_view(request: HttpRequest) -> HttpResponse:
     Handle user signup. Do not create a user yet.
     Instead, send a verification email with a signed token containing the user's data.
     """
+
     if request.method == 'POST':
         form = SignupForm(request.POST)
 
@@ -80,7 +81,9 @@ def signup_view(request: HttpRequest) -> HttpResponse:
             form = SignupForm(initial={'email': email})
 
     else:
-        form = SignupForm() # show empty form for GET requests
+        # Pre-fill email if passes in the URL
+        email = request.GET.get('email', '')
+        form = SignupForm(initial={'email': email}) # show empty form for GET requests
         
     return render(request, 'accounts/sign_up.html', {'form': form})
 
