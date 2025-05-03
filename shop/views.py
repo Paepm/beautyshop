@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from devtools import debug
 
-from .models import Item, Category
+from .models import Item
 from cart.models import Cart
 from cart.models import CartItem
 
@@ -14,7 +14,7 @@ def product_list(request):
     # Logic to retrieve and display products
     products = Item.objects.all()
     # debug(products)
-    return render(request, 'shop/index.html', {"products": products})
+    return render(request, 'shop/product_list.html', {"products": products})
 
 def about(request):
     # Logic to display the about page
@@ -38,7 +38,7 @@ def terms_and_conditions(request):
 
 
 
-@login_required(login_url='cart:cart_detail')
+@login_required
 def add_to_card(request, product_id):
     product = get_object_or_404(Item, id=product_id)
 
@@ -53,5 +53,6 @@ def add_to_card(request, product_id):
         cart_item.save()
 
     # add product to cart and stay on same page
-    return redirect(request.META.get('HTTP_REFERER', 'cart:cart_detail'))
+    print("REFERER:", request.META.get('HTTP_REFERER', ''))
+    return redirect(request.META.get('HTTP_REFERER')) or reverse('shop:product_list')
 

@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'accounts',  # Custom app for user accounts
 ]
 
-LOGIN_URL = '/login/'  # URL for login page
+LOGIN_URL = '/accounts:login/'  # URL for login page
 LOGIN_REDIRECT_URL = '/'  # Redirect to Home after login
 LOGOUT_REDIRECT_URL = '/login/'  # Redirect to login page after logout
 
