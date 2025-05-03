@@ -4,9 +4,13 @@ from django.urls import reverse
 from django.contrib.auth import login
 from django.contrib import messages
 from devtools import debug
+from django.core.mail import send_mail
+from django.conf import settings
+from django.http import HttpRequest, HttpResponse
 
 from .forms import CustomLoginForm
 from .forms import SignupForm
+from . import email_templates
 
 
 
@@ -28,18 +32,39 @@ def email_check_sign_up(request):
                             
     return render(request, 'accounts/email_check_sign_up.html', {'error': error})
 
-def signup_view(request):
+def signup_view(request: HttpRequest) -> HttpResponse:
+    # Load welcome message from email templates
+    message = email_templates.EmailTemplate.WELCOME.value
+    debug(type(message['subject']))  # Debug: confirm it's a string
+    
     if request.method == 'POST':
         form = SignupForm(request.POST)
-        debug(form.errors)
+        debug(form.errors)  # Log any validation errors
+
+        # Check if the submitted form is valid
         if form.is_valid():
             user = form.save()
+
+            # Send welcome email with dynamic user name
+            send_mail(
+                subject=message['subject'].format(name=form.cleaned_data['first_name']),
+                message=message['message'].format(name=form.cleaned_data['first_name']),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            # Log the user in and redirect to product list
             login(request, user)
-            return redirect('shop:product_list')  # or redirect to a different page
+            return redirect('shop:product_list')
+
     else:
+        # If request is GET, show empty form (optionally pre-filled with email from URL)
         email = request.GET.get('email', '')
         form = SignupForm(initial={'email': email})
         debug(form)
+
+    # Render the signup form template with the current form state
     return render(request, 'accounts/sign_up.html', {'form': form})
 
 def login_view(request):

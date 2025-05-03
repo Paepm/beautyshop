@@ -88,8 +88,11 @@ DATABASES = {
     }
 }
 
+# added for the custom user model
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Console email backend for development
+DEFAULT_FROM_EMAIL = 'noreply@beautyshop.local'  # Default email address for sending emails
 
 
 # Password validation
