@@ -1,39 +1,17 @@
-from django.utils import timezone  
-from devtools import debug
-from orders.models import Order, OrderItem
-from cart.models import Cart
+from .order_creator import OrderCreator
 
 class OrderService:
-
     def __init__(self, user):
         self.user = user
-        self.cart = self._get_cart()
 
-    def _get_cart(self) -> Cart | None:
-        try:
-            return Cart.objects.get(user=self.user)
-        
-        except Cart.DoesNotExist:
-            return None
+    def process_order(self)-> OrderCreator | None:
+        """
+        Create a new Order for the current user based on the items in their shopping cart.
 
+        This method delegates the actual order creation to the OrderCreator service.
+        It returns the created Order instance if successful, or None if the user's cart is empty.
 
-    def create_order(self) -> Order:
-        if not self.cart:
-            return None
-        
-        cart_items = self.cart.items.select_related('product')
-        # debug(cart_items)
-        total_price = sum(item.get_total_price() for item in cart_items)
-
-        order: Order = Order.objects.create(user=self.user, created_at=timezone.now(), status='pending', total_price=total_price)
-        
-        for item in cart_items:
-            OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.price)
-        
-        self.clear_cart()
-        return order
-    
-    
-    def clear_cart(self):
-        self.cart.items.all().delete()
-
+        Returns:
+            Order | None: The created Order instance or None if no cart was found.
+        """
+        return OrderCreator(self.user).create_order()

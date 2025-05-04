@@ -1,62 +1,36 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseNotAllowed
+from django.shortcuts import render, redirect
 from devtools import debug
 
-from .models import Cart, CartItem
+from .services.cart_services import CartService
 
 @login_required
 def cart_detail(request):
-    try:
-        cart = Cart.objects.get(user=request.user)
-        cart_items = cart.items.all()
-        total_price = sum(item.get_total_price() for item in cart_items)
-    except Cart.DoesNotExist:
-        cart_items = []
-        total_price = 0
-
+    """"Display the cart detail page."""
+    service = CartService(request.user)
     return render(request, 'cart/cart_detail.html', {
-        'cart_items': cart_items,
-        'total_price': total_price,
+        'cart_items': service.get_cart_items(),
+        'total_price': service.get_total_price(),
         'login_required': request.user.is_authenticated,
     })
 
+
 @login_required
+@require_POST
 def remove_product_from_cart(request, product_id):
-    if request.method == 'POST':
-        try:
-            cart = Cart.objects.get(user=request.user)
-            item = get_object_or_404(CartItem, id=product_id, cart=cart)
-            item.delete()
-        except Cart.DoesNotExist:
-            pass
+    """Remove a product from the cart and redirect to the cart detail page."""      
+    CartService(request.user).remove_item(product_id)
 
-        return redirect('cart:cart_detail')
-
-    return HttpResponseNotAllowed(['POST'])
+    return redirect('cart:cart_detail')
 
 @login_required
 @require_POST
 def update_cart_item_quantity(request, item_id):
-    cart = Cart.objects.get(user=request.user)
-    item = get_object_or_404(CartItem, id=item_id, cart=cart)
-
-    action = request.POST.get("action")
-    quantity = request.POST.get("quantity")
-
-    if action == "increment":
-        item.quantity += 1
-    elif action == "decrement":
-        item.quantity = max(1, item.quantity - 1) # Ensure quantity doesn't go below 1
-    elif quantity:
-        try:
-            quantity = int(quantity)
-            item.quantity = max(1, quantity) # Ensure quantity doesn't go below 1
-        except ValueError:
-            pass # Handle invalid quantity input
-            
-    item.save()
+    """update the quantity of a cart item and redirect to the cart detail page."""
+    action = request.POST.get('action')
+    quantity = request.POST.get('quantity')
+    CartService(request.user).update_quantity(item_id=item_id, action=action, quantity=quantity)
     return redirect('cart:cart_detail')
             
 

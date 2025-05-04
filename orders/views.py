@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from orders.services.order_service import OrderService
+from orders.services.order_service import OrderCreator
 from .models import Order
 
 
 @login_required
 def create_order_view(request):
     if request.method == 'POST':
-        service = OrderService(user=request.user)
+        service = OrderCreator(user=request.user)
         order = service.create_order()
 
         return redirect('orders:order_success', order_id=order.id)

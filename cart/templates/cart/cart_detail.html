@@ -8,8 +8,8 @@
 
   {% if not request.user.is_authenticated %}
     <div class="alert alert-warning mt-3">
-      Bitte <a href="{% url 'login' %}">einloggen</a> oder <a href="{% url 'register' %}">registrieren</a>,
-      um Produkte in den Warenkorb zu legen.
+      Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a>,
+      to save products in your cart!
     </div>
   {% endif %}
 
@@ -59,7 +59,7 @@
 
 
   {% else %}
-  <p>Dein Warenkorb ist leer.</p>
+  <p>Your cart is empty!</p>
   {% endif %}
 </div>
 
