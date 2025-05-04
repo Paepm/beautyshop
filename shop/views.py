@@ -8,7 +8,6 @@ from cart.models import Cart
 from cart.models import CartItem
 
 
-# Create your views here.
 
 def product_list(request):
     # Logic to retrieve and display products
@@ -35,8 +34,6 @@ def agb(request):
 def terms_and_conditions(request):
     # Logic to display the terms and conditions page
     return render(request, 'shop/terms_and_conditions.html')
-
-
 
 @login_required
 def add_to_card(request, product_id):

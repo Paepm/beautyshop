@@ -35,3 +35,5 @@ class EmailTemplate(Enum):
             'Beautyshop Team'
         )
     }
+
+    
