@@ -30,7 +30,7 @@ class ShopService:
             CartItem: The created or updated cart item.
         """
         product: Item = get_object_or_404(Item, id=product_id)
-        cart: Cart = Cart.objects.get(user=self.user)
+        cart, _ = Cart.objects.get_or_create(user=self.user)
 
         # Check if the cart already exists, if not, create a new one
         cart_item: CartItem = CartItem.objects.filter(cart=cart, product=product).first()
