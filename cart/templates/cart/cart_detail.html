@@ -20,7 +20,7 @@
       <div class="w-100 d-flex justify-content-between">
         <span>{{ item.product.name }} (x{{ item.quantity }})</span>
         <span>{{ item.product.price|floatformat:2 }} €</span>
-        <span>{{ item.get_total_price|floatformat:2 }} €</span>
+        <span>{{ item.model_get_total_price|floatformat:2 }} €</span>
       </div>
   
       <div class="mt-2 d-flex gap-2">
