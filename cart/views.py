@@ -9,6 +9,7 @@ from .services.cart_services import CartService
 def cart_detail(request):
     """"Display the cart detail page."""
     service = CartService(request.user)
+    debug(service.get_total_price())
     return render(request, 'cart/cart_detail.html', {
         'cart_items': service.get_cart_items(),
         'total_price': service.get_total_price(),
