@@ -7,6 +7,6 @@ app_name = 'payments'
 
 urlpatterns = [
     path('create/', views.select_payment_method_view, name='create_payment'),
-    # path('success/<int:order_id>/', views.payment_success_view, name='payment_success'),
+    path('stripe/', views.start_stripe_payment_view, name='start_stripe_payment'),
     # path('cancel/<int:payment_id>/', views.payment_cancel_view, name='payment_cancel'),
 ]

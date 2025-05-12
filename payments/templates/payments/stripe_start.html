@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Stripe Payment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Stripe Payment (Dummy)</h2>
+
+  <p><strong>Status:</strong> {{ response.status }}</p>
+  <p><strong>Amount:</strong> {{ response.amount }} {{ response.currency }}</p>
+  <p><strong>Client Secret:</strong> {{ response.client_secret }}</p>
+  <p><strong>Intent ID:</strong> {{ response.payment_intent_id }}</p>
+
+  <form method="post" action="{% url 'orders:create_order_after_payment' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success mt-4">
+      Zahlung abgeschlossen → Bestellung erstellen
+    </button>
+  </form>
+</div>
+{% endblock %}
