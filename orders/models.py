@@ -9,6 +9,14 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)  # order total price
     shipping_address = models.CharField(max_length=255, blank=True, default="")
+    payment_method = models.CharField(choices=[
+            ('card', 'Credit Card'),
+            ('paypal', 'PayPal'),
+            ('invoice', 'Invoice'),
+            ('bank_transfer', 'Bank Transfer'),
+            ('crypto', 'Crypto'),
+            ('klara', 'Klara'),
+    ], default='', max_length=30)
 
     status = models.CharField(choices=[
         ('new', 'New'),
