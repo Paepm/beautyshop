@@ -7,8 +7,25 @@ from shop.models import Item as product
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(default='pending', max_length=20)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)  # order total price
+    shipping_address = models.CharField(max_length=255, blank=True, default="")
+
+    status = models.CharField(choices=[
+        ('new', 'New'),
+        ('processing', 'Processing'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('cancelled', 'Cancelled')
+    ],  
+        default='new', max_length=30)
+   
+    payment_status = models.CharField(choices=[
+        ('ooen', 'Open'),
+        ('paid', 'Paid'),
+        ('failed', 'Failed')
+    ], default='open', max_length=30)
+
+   
 
 
 class OrderItem(models.Model):

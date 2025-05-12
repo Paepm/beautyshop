@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'cart',  # Custom app for the shopping cart
     'orders',  # Custom app for order management
     'accounts',  # Custom app for user accounts
+    'payments',  # Custom app for payment processing
 ]
 
 LOGIN_URL = '/accounts:login/'  # URL for login page

@@ -31,6 +31,7 @@ urlpatterns = [
     path('cart/', include('cart.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
     path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('payments/', include('payments.urls', namespace='payments')),
     # paths for django password resetter --> is global needed that it works....
     path('accounts/password_reset_confirm/<str:uidb64>/<str:token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('accounts/password_reset_done/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done',),

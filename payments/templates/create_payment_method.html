@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Choose your payment method</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label><input type="radio" name="method" value="card"> Credit Card</label><br>
+    <label><input type="radio" name="method" value="paypal"> PayPal</label><br>
+    <label><input type="radio" name="method" value="invoice"> Invoice</label><br>
+    <label><input type="radio" name="method" value="bank_transfer"> Bank Transfer</label><br>
+    <label><input type="radio" name="method" value="crypto"> Cryptocurrency</label><br>
+    <label><input type="radio" name="method" value="klara"> Klara</label><br>
+    <button type="submit" class="btn btn-success">Continue</button>
+  </form>
+{% endblock %}

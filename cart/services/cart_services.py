@@ -91,3 +91,10 @@ class CartService:
             except ValueError:
                 return  # Handle invalid quantity input
         item.save()
+
+    def clear_cart(self) -> None:
+        """
+        Clear all items from the user's cart.
+        """
+        if self.cart:
+            self.cart.items.all().delete()
