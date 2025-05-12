@@ -5,25 +5,31 @@ from devtools import debug
 from orders.services.order_service import OrderCreator
 from cart.services.cart_services import CartService
 from .models import Order
+from payments.services.payment_service import PaymentService
 
 
-# this function is useless, because we create the order now in the payment function: select_payment_method_view()
 @login_required
-def create_order_view(request):
-    if request.method == 'POST':
-        # Create order first
-        service = OrderCreator(user=request.user)
-        order = service.create_order()
+def create_order_after_payment_view(request):
+    method = request.session.get('selected_payment_method')
+    if not method:
+        return redirect('cart:cart_detail')
+    
+    payment_service = PaymentService(request.user)
+    if not payment_service.validate_pay_method(method):
+        return redirect('cart:cart_detail')
+    
+    order = OrderCreator(request.user).create_order()
+    payment_service.save_method_to_order(order, method)
+    order.payment_status = 'paid'
+    order.save()
 
-        # Update session after creation
-        request.session["order_id"] = order.id
-        debug("ORDER ID CREATE:", order.id)
-        # request.session["selected_payment_method"] = None  # Reset if needed
+    CartService(request.user).clear_cart()
 
-        return redirect('orders:order_success', order_id=order.id)
+    request.session.pop('selected_payment_method', None)
+    request.session['order_id'] = order.id
 
-    return redirect('cart:cart_detail')
-
+    debug("Order Created:", order.id)
+    return redirect('orders:order_success', order_id=order.id)
 
 
 def order_success_view(request, order_id):
