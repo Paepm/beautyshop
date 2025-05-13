@@ -4,9 +4,10 @@ from orders.models import Order, OrderItem
 from cart.models import Cart
 
 class OrderCreator:
-    """"Responsible for creating an Order and related OrderItems from a user's cart"""
+    """Responsible for creating an Order and related OrderItems from a user's cart"""
 
     def __init__(self, user):
+        """Initialize the OrderCreator with a user and attempt to retrieve their cart."""
         self.user = user
         self.cart = self._get_cart()
 

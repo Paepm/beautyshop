@@ -16,6 +16,9 @@ from .forms import CustomLoginForm
 User = get_user_model()
 
 def email_check_sign_up(request):
+    """
+    Check if the email is already in use, if so, redirect to login page.
+    """
     error = None
 
     if request.method == 'POST':

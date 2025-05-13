@@ -65,7 +65,7 @@ def start_stripe_payment_view(request):
     debug("TOTAL PRICE:", amount)
 
     # Stripe Payment start
-    response = payment_service.process_payment(order=None, amount=amount, method=method)
+    response = payment_service.process_payment(amount=amount, method=method)
     debug(response)
 
     # go to payment page

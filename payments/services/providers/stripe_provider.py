@@ -24,7 +24,9 @@ class StripeProvider:
           'currency': currency,
           'status': intent.status,
       }
-
+    
+    
+    # DUMMY METHODS TO SIMULATE PAYMENT CONFIRMATION AND CANCELLATION
     def confirm_payment(self, payment_intent_id: str) -> bool:
         """
         Dummy confirm logic. In real world, check payment status from Stripe API.
