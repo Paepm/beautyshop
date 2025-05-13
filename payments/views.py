@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from devtools import debug
+from django.conf import settings
 
 from orders.services.order_creator import OrderCreator
 from cart.services.cart_services import CartService
@@ -9,30 +10,46 @@ from orders.models import Order
 
 @login_required
 def select_payment_method_view(request):
-    if request.method == 'POST':
-        method = request.POST.get('method')
-        payment_service = PaymentService(request.user)
+    payment_service = PaymentService(request.user)
+    supported_methods = payment_service.get_supported_methods()
 
-        # 1. paymethod validation
+    if request.method == 'POST':
+        debug("POST DATA:", request.POST)
+        method = request.POST.get('method')
+
+        # 1. validate method
         if not payment_service.validate_pay_method(method):
             return render(request, 'select_payment_method.html', {
-                'error': 'Invalid payment method selected.'
+                'error': 'Invalid payment method selected.',
+                'supported_methods': supported_methods
             })
 
-        # 2. paymethod remember in session
+        # 2. save in session
         request.session['selected_payment_method'] = method
         debug("SELECTED PAYMENT METHOD:", method)
-        debug(request.session)
+        debug("SESSION AFTER SELECTION:", dict(request.session))
 
-        # 3. Redirect to final order creation
-        return redirect('payments:start_stripe_payment')
+        # 3. conditional redirect based on method
+        if method == 'stripe':
+            return redirect('payments:start_stripe_payment')
+        else:
+            return redirect('orders:create_order_after_payment')
 
     # GET: show page
-    return render(request, 'select_payment_method.html')
+    return render(request, 'select_payment_method.html', {
+        'supported_methods': supported_methods
+    })
+
 
 @login_required
 def start_stripe_payment_view(request):
-    method = request.session.get("selected_payment_method")
+
+    debug("START STRIPE – Session:", dict(request.session))
+
+    method = request.session.get("selected_payment_method") # get selected payment method from session
+    debug("SELECTED PAYMENT METHOD:", method)
+
+    # prevents manipulation or wrong payment method
     if not method:
         return redirect("payments:select_payment_method")
 
@@ -41,15 +58,17 @@ def start_stripe_payment_view(request):
     if not payment_service.validate_pay_method(method):
         return redirect("payments:select_payment_method")
 
-    # Beispielwert, z. B. aus CartService berechnet
+    # calculate total price of the cart
     amount = CartService(request.user).get_total_price()
+    debug("TOTAL PRICE:", amount)
 
-    # Dummy Stripe Payment starten
+    # Dummy Stripe Payment start
     response = payment_service.process_payment(order=None, amount=amount, method=method)
     debug(response)
 
-    # ✅ NEU: Button zur „Order erstellen“-View mit finalem Redirect
+    # go to payment page
     return render(request, "payments/stripe_start.html", {
-        "response": response
+        "client_secret": response["client_secret"],
+        "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
     })
 

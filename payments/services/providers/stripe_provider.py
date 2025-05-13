@@ -1,27 +1,29 @@
 # payments/providers/stripe_provider.py
+from decouple import config
+import stripe
 
 class StripeProvider:
-    """
-    Dummy implementation for Stripe logic.
-    In production, this would integrate with stripe API (e.g. via stripe Python SDK).
-    """
 
     def __init__(self, user):
         self.user = user
+        stripe.api_key = config('STRIPE_SECRET_KEY') # load the key from .env file
 
     def create_payment_intent(self, amount: float, currency: str = 'eur') -> dict:
-        """
-        Simulate creating a Stripe payment intent.
-        In real code, this would call stripe.PaymentIntent.create(...) and return client_secret etc.
-        """
-        # Simulated response
-        return {
-            'payment_intent_id': 'pi_dummy_123456',
-            'client_secret': 'cs_test_dummysecret',
-            'amount': amount,
-            'currency': currency,
-            'status': 'requires_payment_method'
-        }
+      intent = stripe.PaymentIntent.create(
+          amount=int(amount * 100), # stripe expects cents
+          currency=currency,
+          metadata={
+              'user_id': self.user.id,
+              'email': self.user.email,
+          }
+      )
+      return {
+          'payment_intent_id': intent.id,
+          'client_secret': intent.client_secret,
+          'amount': amount,
+          'currency': currency,
+          'status': intent.status,
+      }
 
     def confirm_payment(self, payment_intent_id: str) -> bool:
         """

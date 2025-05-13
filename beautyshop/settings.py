@@ -106,6 +106,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Default email address for sending emails
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # password saved in .env file
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Default email address for sending emails
 
+# Stripe for payment processing (testing)
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')  # Stripe secret key saved in .env file
+STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')  # Stripe public key saved in .env file
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 

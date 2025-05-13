@@ -17,16 +17,6 @@ class Order(models.Model):
             ('crypto', 'Crypto'),
             ('klara', 'Klara'),
     ], default='', max_length=30)
-
-    status = models.CharField(choices=[
-        ('new', 'New'),
-        ('processing', 'Processing'),
-        ('shipped', 'Shipped'),
-        ('delivered', 'Delivered'),
-        ('cancelled', 'Cancelled')
-    ],  
-        default='new', max_length=30)
-   
     payment_status = models.CharField(choices=[
         ('ooen', 'Open'),
         ('paid', 'Paid'),

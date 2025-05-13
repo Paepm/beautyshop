@@ -45,7 +45,7 @@ class OrderCreator:
         
         total_price = sum(item.product.price * item.quantity for item in cart_items)
 
-        order: Order = Order.objects.create(user=self.user, created_at=timezone.now(), status='pending', total_price=total_price)
+        order: Order = Order.objects.create(user=self.user, created_at=timezone.now(), payment_status='pending', total_price=total_price)
         
         for item in cart_items:
             OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.price)

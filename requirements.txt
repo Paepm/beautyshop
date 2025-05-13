@@ -4,3 +4,4 @@ django-countries
 django-extensions
 devtools
 python-decouple
+stripe

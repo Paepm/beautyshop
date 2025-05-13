@@ -18,17 +18,20 @@ def create_order_after_payment_view(request):
     if not payment_service.validate_pay_method(method):
         return redirect('cart:cart_detail')
     
+    debug("SELECTED PAYMENT METHOD:", method)
     order = OrderCreator(request.user).create_order()
     payment_service.save_method_to_order(order, method)
     order.payment_status = 'paid'
+    debug("Order Payment Status:", order.payment_status)
     order.save()
+    debug("Order Data:", order.id, order.payment_status, order.user.email, order.payment_method)
 
     CartService(request.user).clear_cart()
 
     request.session.pop('selected_payment_method', None)
     request.session['order_id'] = order.id
 
-    debug("Order Created:", order.id)
+    # debug("Order Created:", order.id)
     return redirect('orders:order_success', order_id=order.id)
 
 

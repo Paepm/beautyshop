@@ -12,7 +12,7 @@
         <a href="{% url 'orders:user_order_detail' order.id %}">
           <strong>Order #{{ order.id }}</strong>
         </a> – {{ order.created_at|date:"d.m.Y H:i" }}<br />
-        Status: {{ order.status }}<br />
+        Status: {{ order.payment_status }}<br />
         Total: {{ order.total_price }} €
       </li>
       
