@@ -44,7 +44,7 @@ def order_success_view(request, order_id):
 
 def user_order_list_view(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'user_order_list.html', {'orders': orders})
+    return render(request, 'user_order_list.html', {'orders': orders,})
 
 def user_order_detail_view(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)

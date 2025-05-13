@@ -7,24 +7,26 @@ from orders.services.order_creator import OrderCreator
 from cart.services.cart_services import CartService
 from payments.services.payment_service import PaymentService
 from orders.models import Order
+from payments.services.payment_service import PaymentService
 
 @login_required
 def select_payment_method_view(request):
     payment_service = PaymentService(request.user)
     supported_methods = payment_service.get_supported_methods()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'submit_btn' in request.POST: # check if the form was submitted and checked if its no GHOSTPOST (first time entering page, wrong error..)
         debug("POST DATA:", request.POST)
         method = request.POST.get('method')
-
+        debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", method)
+        
         # 1. validate method
         if not payment_service.validate_pay_method(method):
             return render(request, 'select_payment_method.html', {
-                'error': 'Invalid payment method selected.',
-                'supported_methods': supported_methods
+                'supported_methods': supported_methods,
+                'error': "Invalid payment method selected."
             })
 
-        # 2. save in session
+        # 2. valid input --> next step --> save in session
         request.session['selected_payment_method'] = method
         debug("SELECTED PAYMENT METHOD:", method)
         debug("SESSION AFTER SELECTION:", dict(request.session))
@@ -62,7 +64,7 @@ def start_stripe_payment_view(request):
     amount = CartService(request.user).get_total_price()
     debug("TOTAL PRICE:", amount)
 
-    # Dummy Stripe Payment start
+    # Stripe Payment start
     response = payment_service.process_payment(order=None, amount=amount, method=method)
     debug(response)
 
