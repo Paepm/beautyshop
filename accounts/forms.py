@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from django.forms.widgets import SelectDateWidget
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from .models import CustomUser
 
 
@@ -40,15 +41,15 @@ class CustomLoginForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean(self):
+        """Validate the form data and authenticate the user."""
         cleaned_data = super().clean()
         username_or_email = cleaned_data.get('username_or_email')
         password = cleaned_data.get('password')
 
-        from django.contrib.auth import get_user_model
         User = get_user_model()
 
         try:
-            # Suche zuerst per E-Mail
+            # search for user by email
             user = User.objects.get(email=username_or_email)
             username = user.username
         except User.DoesNotExist:

@@ -6,25 +6,32 @@ from orders.services.order_service import OrderCreator
 from cart.services.cart_services import CartService
 from .models import Order
 from payments.services.payment_service import PaymentService
+from beautyshop.logging_config import setup_logger
+
+# create a logger instance
+logger = setup_logger(__name__)
 
 
 @login_required
 def create_order_after_payment_view(request):
+
     method = request.session.get('selected_payment_method')
     if not method:
+        logger.warning(f'[ORDER] No payment method selected for user: {request.user.email}')
         return redirect('cart:cart_detail')
     
     payment_service = PaymentService(request.user)
     if not payment_service.validate_pay_method(method):
+        logger.warning(f'[ORDER] Invalid payment method selected for user: {request.user.email}')
         return redirect('cart:cart_detail')
     
-    debug("SELECTED PAYMENT METHOD:", method)
+    # debug("SELECTED PAYMENT METHOD:", method)
     order = OrderCreator(request.user).create_order()
     payment_service.save_method_to_order(order, method)
     order.payment_status = 'paid'
-    debug("Order Payment Status:", order.payment_status)
+    # debug("Order Payment Status:", order.payment_status)
     order.save()
-    debug("Order Data:", order.id, order.payment_status, order.user.email, order.payment_method)
+    # debug("Order Data:", order.id, order.payment_status, order.user.email, order.payment_method)
 
     CartService(request.user).clear_cart()
 

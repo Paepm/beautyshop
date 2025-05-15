@@ -12,8 +12,10 @@ from .services.registration_service import RegistrationService
 from .services.email_verification import EmailVerificationService
 from .services.login_service import LoginService
 from .forms import CustomLoginForm
+from beautyshop.logging_config import setup_logger
 
 User = get_user_model()
+logger = setup_logger(__name__)
 
 def email_check_sign_up(request):
     """
@@ -40,21 +42,24 @@ def signup_view(request: HttpRequest) -> HttpResponse:
     Handle user signup: validate form, send verification email with signed token.
     """
     email = request.GET.get('email', '')
-    
+
     if request.method == 'POST':
         form = SignupForm(request.POST)
 
         if form.is_valid():
             reg_service = RegistrationService(request, form.cleaned_data)
-            token = reg_service.generate_signed_token()
-            reg_service.send_verification_email(token)
-            messages.success(request, "Please check your email to verify your account.")
-            return redirect('shop:product_list')
+
+            if reg_service.prepare_and_send_verification_email():
+                messages.success(request, "Please check your email to verify your account.")
+                return redirect('shop:product_list')
+            else:
+                messages.error(request, "Could not send verification email. Please try again.")
 
     else:
         form = SignupForm(initial={'email': email})
 
     return render(request, 'accounts/sign_up.html', {'form': form})
+
 
 
 def verify_account_view(request: HttpRequest, token: str) -> HttpResponse:

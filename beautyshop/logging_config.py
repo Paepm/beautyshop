@@ -17,24 +17,23 @@ class ColorFormatter(logging.Formatter):
 
 
 
-
-
 def setup_logger(name: str) -> logging.Logger:
     """Returns a logger instance with console + file handler"""
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG) # or INFO in production
 
-    # just configure one time!
+    # allows just one instance of the logger --> initialise it only once
+    # if the logger already has handlers, we don't want to add more!
     if not logger.handlers:
 
-        # Console Handler
+        # Console Handler with colors
         console = logging.StreamHandler()
         console.setLevel(logging.DEBUG)
         color_formatter = ColorFormatter('[%(asctime)s] %(levelname)s in %(name)s: %(message)s')
         console.setFormatter(color_formatter)
         logger.addHandler(console)
 
-        # File Handler
+        # File Handler without colors
         file = logging.FileHandler('logs/beautyshop.log')
         file.setLevel(logging.INFO)
         file_formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(name)s: %(message)s')

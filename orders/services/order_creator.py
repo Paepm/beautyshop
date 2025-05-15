@@ -5,7 +5,7 @@ from orders.models import Order, OrderItem
 from cart.models import Cart
 from beautyshop.logging_config import setup_logger
 
-logger = setup_logger(__name__)
+
 
 class OrderCreator:
     """Responsible for creating an Order and related OrderItems from a user's cart"""
@@ -14,7 +14,7 @@ class OrderCreator:
         """Initialize the OrderCreator with a user and attempt to retrieve their cart."""
         self.user = user
         self.cart = self._get_cart()
-        logger.debug(f'[INIT] OrderCreator initialized for user: {self.user.email}.')
+        self.logger = setup_logger(__name__)
 
     def _get_cart(self) -> Cart | None:
         """
@@ -28,11 +28,10 @@ class OrderCreator:
         """
         try:
             cart = Cart.objects.get(user=self.user)
-            logger.debug(f'[CART] Cart found for user: {self.user.email}.')
             return cart
         
         except Cart.DoesNotExist:
-            logger.warning(f'[CART] No cart found for user: {self.user.email}')
+            self.logger.warning(f'[CART] No cart found for user: {self.user.email}')
             return None
 
 
@@ -48,7 +47,7 @@ class OrderCreator:
             Order | None: The created Order instance or None if no cart is found.
         """
         if not self.cart:
-            logger.info(f'[ORDER] Cannot create order - no cart for user: {self.user.email}.')
+            self.logger.info(f'[ORDER] Cannot create order - no cart for user: {self.user.email}.')
             return None
         
         cart_items = self.cart.items.select_related('product')
@@ -56,11 +55,9 @@ class OrderCreator:
         total_price = sum(item.product.price * item.quantity for item in cart_items)
 
         order: Order = Order.objects.create(user=self.user, created_at=timezone.now(), payment_status='pending', total_price=total_price)
-        logger.info(f'[ORDER] Order created for user: {self.user.email} with total price: {total_price} €.')
         
         for item in cart_items:
             OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.price)
-            logger.debug(f'[ORDER ITEM] Added product {item.product.name} x{item.quantity} to order #{order.id}')
         
         return order
     

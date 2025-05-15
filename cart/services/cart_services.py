@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from devtools import debug
 
 from cart.models import Cart, CartItem
+from beautyshop.logging_config import setup_logger
 
 class CartService:
     """
@@ -18,6 +19,7 @@ class CartService:
         """
         self.user = user
         self.cart = self._get_cart()
+        self.logger = setup_logger(__name__)
 
     def _get_cart(self) -> Cart | None:
         """
@@ -89,6 +91,7 @@ class CartService:
             try:
                 item.quantity = max(1, int(quantity))  # Ensure quantity doesn't go below 1
             except ValueError:
+                self.logger.warning(f"Invalid quantity input: {quantity} for item #{item_id}")
                 return  # Handle invalid quantity input
         item.save()
 
