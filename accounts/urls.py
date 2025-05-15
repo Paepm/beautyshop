@@ -2,7 +2,8 @@ from django.urls import path
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_views
 
-from . import views
+from .views.accounts import views
+from .views.profile import views as profile_views
 
 app_name = 'accounts'
 
@@ -16,5 +17,6 @@ urlpatterns = [
     path('password_reset_confirm/<str:uidb64>/<str:token>/', auth_views.PasswordResetConfirmView.as_view(template_name='accounts/password_reset_confirm.html'), name='password_reset_confirm'),
     path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='accounts/password_reset_complete.html'), name='password_reset_complete'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='accounts/password_reset_done.html'), name='password_reset_done'),
-    
+    path('profile/', profile_views.profile_view, name='profile'),
+    path('profile/edit/', profile_views.edit_profile_view, name='profile_edit'),
 ]

@@ -45,8 +45,8 @@ class CustomUser(AbstractUser):
 
     gender = models.CharField(
         max_length=10,
-        choices=[('M', 'Male'), ('F', 'Female')],
-        blank=True
+        choices=[('M', 'Male'), ('F', 'Female'), ('D', 'Diverse')],
+        blank=False
     )
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True)
 

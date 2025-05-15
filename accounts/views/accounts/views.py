@@ -6,12 +6,12 @@ from devtools import debug
 from django.http import HttpRequest, HttpResponse
 
 
-from .forms import CustomLoginForm
-from .forms import SignupForm
-from .services.registration_service import RegistrationService
-from .services.email_verification import EmailVerificationService
-from .services.login_service import LoginService
-from .forms import CustomLoginForm
+from ...forms import CustomLoginForm
+from ...forms import SignupForm
+from ...services.registration_service import RegistrationService
+from ...services.email_verification import EmailVerificationService
+from ...services.login_service import LoginService
+from ...forms import CustomLoginForm
 from beautyshop.logging_config import setup_logger
 
 User = get_user_model()

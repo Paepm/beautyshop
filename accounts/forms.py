@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from django.forms.widgets import SelectDateWidget
 from datetime import date
+import datetime
 
 from django.contrib.auth import get_user_model
 from .models import CustomUser
@@ -64,3 +65,21 @@ class CustomLoginForm(forms.Form):
 
     def get_user(self):
         return self.user
+    
+
+class ProfileEditForm(forms.ModelForm):
+    date_of_birth = forms.DateField(
+        widget=forms.SelectDateWidget(
+            years=range(datetime.date.today().year - 30, datetime.date.today().year + 1)
+        )
+    )
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'first_name', 'last_name', 'email',
+            'phone_number', 'address', 'post_code',
+            'city', 'country', 'date_of_birth',
+            'gender', 'profile_image',
+            'newsletter_opt_in'
+        ]

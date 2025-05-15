@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Your Profile</h1>
+
+  <p><strong>Username:</strong> {{ user.username }}</p>
+  <p><strong>First Name:</strong> {{ user.first_name }}</p>
+  <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Date of Birth:</strong> {{ user.date_of_birth }}</p>
+
+  <p><strong>Gender:</strong>
+    {% if user.gender == "M" %}Male
+    {% elif user.gender == "F" %}Female
+    {% elif user.gender == "D" %}Diverse
+    {% else %}Not specified
+    {% endif %}
+  </p>
+
+  <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+  <p><strong>Address:</strong> {{ user.address }}</p>
+  <p><strong>Postal Code:</strong> {{ user.post_code }}</p>
+  <p><strong>City:</strong> {{ user.city }}</p>
+  <p><strong>Country:</strong> {{ user.country.name }}</p>
+
+  <p><strong>Newsletter Subscription:</strong>
+    {% if user.newsletter_opt_in %}Yes{% else %}No{% endif %}
+  </p>
+
+
+  <p><strong>Profile Image:</strong></p>
+  {% if user.profile_image %}
+    <img src="{{ user.profile_image.url }}" alt="Profile Image" width="150">
+  {% else %}
+    <p>No profile image uploaded.</p>
+  {% endif %}
+
+  <form action="{% url 'accounts:profile_edit' %}">
+    <button type="submit" class="btn btn-success">Edit Profile</button>
+  </form>
+  
+{% endblock %}
