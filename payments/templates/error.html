@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="alert alert-danger">
+    {{ error|default:"An undefined error got expected." }}</h2>
+
+    <a href="{% url 'payments:create_payment' %}" class="btn btn-primary mt-3">
+      Back to payment methods
+    </a>
+  </div>
+{% endblock %}

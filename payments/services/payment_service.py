@@ -1,6 +1,8 @@
 from orders.models import Order
-from payments.services.providers.stripe_provider import StripeProvider
+from payments.services.provider_registry import PROVIDER_MAP
 from payments.enums.payment_methods import PaymentMethod
+
+
 
 class PaymentService:
     """Handles payment logic methods and processes payments for orders."""
@@ -58,7 +60,7 @@ class PaymentService:
 
     def process_payment(self, amount: float, method: str) -> dict:
         """
-        Process the payment using the selected method.
+        Process the payment using the selected method by dynamically resolving the provider class.
 
         Args:
             amount (float): The amount to be charged.
@@ -67,10 +69,17 @@ class PaymentService:
         Returns:
             dict: A dictionary with payment status and optional provider info.
         """
-        if method == 'stripe':
-            provider = StripeProvider(self.user)
-            return provider.create_payment_intent(amount, currency='eur')
+        if not self.validate_pay_method(method):
+            return {'status': 'error',
+                    'message': f'Invalid payment method: {method}'
+                    }
         
-        # placeholder for other payment methods
-        return {'status': 'unsupported',
-                'message': f'This payment method {method} is not yet implemented.'}
+        provider_class = PROVIDER_MAP.get(method)
+        if not provider_class:
+            return {'status': 'unsupported',
+                    'message': f'No provider implemented for payment method: {method}'
+                    }
+        
+        provider = provider_class(self.user)
+
+        return provider.create_payment_intent(amount=amount, currency="eur")
