@@ -110,6 +110,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Default email address for sending emails
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')  # Stripe secret key saved in .env file
 STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')  # Stripe public key saved in .env file
 
+# Qogita API credentials
+QOGITA_EMAIL = config('QOGITA_EMAIL')  # Qogita email saved in .env file
+QOGITA_PASSWORD = config('QOGITA_PASSWORD')  # Qogita password saved in .env file
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 

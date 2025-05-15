@@ -1,12 +1,13 @@
 import requests
+from django.conf import settings
 from devtools import debug
 
 class QogitaClient:
     def __init__(self):
-        self.token = None
+        self.access_token = None
         self.base_url = "https://api.qogita.com"
-        self.QOGITA_EMAIL = "showmeyoursmile@me.com"
-        self.QOGITA_PASSWORD = "zAgge2-pebzew-qipwac"
+        self.qogita_email = settings.QOGITA_EMAIL
+        self.qogita_pw = settings.QOGITA_PASSWORD
 
     def authorisation_api(self):
         
@@ -15,8 +16,8 @@ class QogitaClient:
 
         response = requests.post(url=authorisation_url,
                                  json={
-                                     "email": self.QOGITA_EMAIL,
-                                     "password": self.QOGITA_PASSWORD
+                                     "email": self.qogita_email,
+                                     "password": self.qogita_pw
                                  },
                                  headers={"Content-Type: application/json"}
                                  )
@@ -29,6 +30,6 @@ class QogitaClient:
         data = response.json()
         debug("Response JSON:", data)
 
-        access_token = data["accessToken"]
+        self.access_token = data["accessToken"]
         # headers = {"Authorization": f"Bearer {access_token}"}
         cart_qid = data["user"]["activeCartQid"]
