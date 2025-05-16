@@ -23,7 +23,7 @@ class StripeProvider(BasePaymentProvider):
             currency (str): Currency code, default is EUR.
 
         Returns:
-            dict: A dictionary with provider-specific response data.
+            dict: A dictionary with provider-specific response data.asd
         """
         intent = stripe.PaymentIntent.create(
             amount=int(amount * 100),  # Stripe expects the amount in cents
