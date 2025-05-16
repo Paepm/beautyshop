@@ -13,11 +13,15 @@ def stripe_webhook_view(request):
     """
     Stripe Webhook Endpoint - verifies signature and dispatches event
     """
+    # get the json-webhook from stripe
     payload = request.body
+    # safety header for verification
     sig_header = request.headers.get('stripe-signature')
+    # secret key from .env
     endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
     try:
+        # construct_event() --> check if payload, header and secret is valid
         event = stripe.Webhook.construct_event(
             payload=payload,
             sig_header=sig_header,

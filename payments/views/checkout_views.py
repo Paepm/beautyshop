@@ -43,7 +43,7 @@ def select_payment_method_view(request):
 @login_required
 def start_payment_view(request):
 
-    #debug("START STRIPE – Session:", dict(request.session))
+    # debug("START STRIPE – Session:", dict(request.session))
     method = request.session.get("selected_payment_method") # get selected payment method from session
     # debug("SELECTED PAYMENT METHOD:", method)
 

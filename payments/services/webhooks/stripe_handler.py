@@ -16,7 +16,8 @@ class StripeWebhookHandler:
         intent = event['data']['object']
         user_id = intent['metadata'].get('user_id')
         debug(f"PaymentIntent was successful for user {user_id}!")
-        # Mark order as paid
+
+        # logic to handle successful payment
         if user_id:
             try:
                 order = Order.objects.filter(user_id=user_id, payment_status='open').latest('created_at')
@@ -37,6 +38,7 @@ class StripeWebhookHandler:
 
         debug(f'Payment failed: {user_id} - {error_message}')
 
+        # logic to handle failed payment
         if user_id:
             try:
                 order = Order.objects.filter(user_id=user_id, payment_status='open').latest('created_at')
