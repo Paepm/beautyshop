@@ -5,7 +5,6 @@ from django.conf import settings
 
 from cart.services.cart_services import CartService
 from payments.services.payment_service import PaymentService
-from orders.models import Order
 from payments.services.payment_service import PaymentService
 
 
@@ -56,7 +55,7 @@ def start_payment_view(request):
     if not payment_service.validate_pay_method(method):
         return redirect("payments:select_payment_method")
 
-    # calculate total price of the cart
+    # calculate total price of the cart for user payment
     amount = CartService(request.user).get_total_price()
     # debug("TOTAL PRICE:", amount)
 

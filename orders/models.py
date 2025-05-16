@@ -18,7 +18,7 @@ class Order(models.Model):
             ('klara', 'Klara'),
     ], default='', max_length=30)
     payment_status = models.CharField(choices=[
-        ('ooen', 'Open'),
+        ('open', 'Open'),
         ('paid', 'Paid'),
         ('failed', 'Failed')
     ], default='open', max_length=30)
