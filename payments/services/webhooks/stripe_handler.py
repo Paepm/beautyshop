@@ -37,51 +37,51 @@ class StripeWebhookHandler:
         intent = event["data"]["object"]
         debug(f"Stripe_intent:", intent)
 
-        user_id = intent["metadata"].get("user_id")
-        debug(f"User_id {user_id}!")
+        order_id = intent["metadata"].get("order_id")
+
+        debug(f"[SUCCESS] Order ID from metadata: {order_id}")
 
         # logic to handle successful payment
-        if user_id:
+        if order_id:
             try:
-                order = Order.objects.filter(
-                    user_id=user_id, payment_status="open"
-                ).latest("created_at")
+                order = Order.objects.get(id=order_id)
                 debug("order:", order)
-                order.payment_status = "paid"
-                debug("order_status:", order.payment_status)
-                order.save()
+                if order.payment_status == Order.PaymentStatus.OPEN:
+                    order.payment_status = Order.PaymentStatus.PAID
+                    order.save()
+                    debug("order_status:", order.payment_status)
             except Order.DoesNotExist:
-                debug(f"No open order found for user {user_id}.")
+                debug(f"No open order found for order {order_id}.")
         else:
-            debug("No user ID found in metadata.")
+            debug("No Order ID found in metadata.")
 
-        debug(f"Payment succeeded for user {user_id}!")
+        debug(f"Payment succeeded for order ID {order_id}!")
 
         return "Handled: payment_intent.succeeded"
 
     # function naming should be like: handle_{event_type}
     def handle_payment_intent_payment_failed(self, event) -> str:
         intent = event["data"]["object"]
-        user_id = intent["metadata"].get("user_id")
+        order_id = intent["metadata"].get("order_id")
         error_message = intent.get("last_payment_error", {}).get(
             "message", "Unknown error"
         )
 
-        debug(f"Payment failed: {user_id} - {error_message}")
+        debug(f"Payment failed: {order_id} - {error_message}")
 
         # logic to handle failed payment
-        if user_id:
+        if order_id:
             try:
-                order = Order.objects.filter(
-                    user_id=user_id, payment_status="open"
-                ).latest("created_at")
-                order.payment_status = "failed"
-                order.save()
-                debug("order_status:", order.payment_status)
+                order = Order.objects.get(id=order_id)
+                if order.payment_status == Order.PaymentStatus.OPEN:
+
+                    order.payment_status = Order.PaymentStatus.FAILED
+                    order.save()
+                    debug("order_status:", order.payment_status)
             except Order.DoesNotExist:
-                debug(f"No open order found for user {user_id}.")
+                debug(f"No open order found for order ID {order_id}.")
         else:
-            debug("No user ID found in metadata.")
+            debug("No Order ID found in metadata.")
 
         return "Handled: payment_intent.payment_failed"
 

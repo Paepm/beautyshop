@@ -7,6 +7,7 @@ from cart.services.cart_services import CartService
 from payments.services.payment_service import PaymentService
 from payments.services.payment_service import PaymentService
 from orders.services.order_service import OrderCreator
+from orders.models import Order
 
 
 @login_required
@@ -66,6 +67,19 @@ def start_payment_view(request):
     amount = CartService(request.user).get_total_price()
     # debug("TOTAL PRICE:", amount)
 
+    # check if the order already exists in the session, if not create a new order
+    if request.session.get("order_id"):
+        try:
+            existing_order = Order.objects.get(
+                id=request.session["order_id"], payment_status="open"
+            )
+            order = existing_order  # Verwende vorhandene offene Order
+        except Order.DoesNotExist:
+            order = OrderCreator(request.user).create_order(payment_method=method)
+    else:
+        order = OrderCreator(request.user).create_order(payment_method=method)
+
+    request.session["order_id"] = order.id
     # create order from user
     order = OrderCreator(request.user).create_order(payment_method=method)
 
