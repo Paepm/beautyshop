@@ -1,12 +1,34 @@
 {% extends 'base.html' %}
 
-{% block title %}Order Successful, you had payed for the Order!{% endblock %}
+{% block title %}
+{% if order.payment_status == "paid" %}
+Order Successful – Your payment was received!
+{% else %}
+Order Placed – Waiting for payment confirmation
+{% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="mb-4">Thank you for your order!</h2>
+    <h2 class="mb-4">
+        {% if order.payment_status == "paid" %}
+        ✅ Thank you for your order!
+        {% else %}
+        ⏳ Thank you! We're verifying your payment...
+        {% endif %}
+    </h2>
+
     <p>Your order ID is <strong>#{{ order.id }}</strong>.</p>
     <p>Total amount: <strong>{{ order.total_price }} €</strong></p>
     <p>Payment method: <strong>{{ order.payment_method }}</strong></p>
+
+    {% if order.payment_status == "paid" %}
+    <p class="text-success">✅ Payment received. Your order is now being processed.</p>
+    {% elif order.payment_status == "failed" %}
+    <p class="text-danger">❌ Payment failed. Please contact support or try again.</p>
+    {% else %}
+    <p class="text-warning">⏳ We're still waiting for Stripe to confirm your payment. You'll get a confirmation email
+        once it's complete.</p>
+    {% endif %}
 </div>
 {% endblock %}

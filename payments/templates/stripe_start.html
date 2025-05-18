@@ -16,7 +16,7 @@
 <!-- Stripe.js -->
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  const stripe = Stripe("{{ stripe_public_key }}");  // <-- my public key
+  const stripe = Stripe("{{ stripe_public_key }}");
   const elements = stripe.elements();
   const cardElement = elements.create("card");
   cardElement.mount("#card-element");
@@ -27,18 +27,31 @@
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    // Optional: disable button while processing
+    document.getElementById("submit").disabled = true;
+
     const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: cardElement,
-      }
+      },
     });
 
     if (error) {
-      document.getElementById("card-errors").textContent = error.message;
+      // 💥 Fehler auf der Karte (z. B. abgelehnt)
+      console.error("Payment error:", error.message);
+      // Weiterleitung zur Fehlerseite
+      window.location.href = "{% url 'payments:error_payment' %}";
     } else {
-      // Redirect to finalize view after successful payment
-      window.location.href = "{% url 'orders:create_order_after_payment' %}";
+      if (paymentIntent.status === "succeeded") {
+        // ✅ Redirect zur "Bestellung abschließen"-View
+        window.location.href = "{% url 'orders:create_order_after_payment' %}";
+      } else {
+        // ⚠️ Falls aus irgendeinem Grund nicht succeeded (z. B. benötigt 3D Secure)
+        console.warn("Payment not completed:", paymentIntent.status);
+        window.location.href = "{% url 'payments:error_payment' %}";
+      }
     }
   });
 </script>
+
 {% endblock %}

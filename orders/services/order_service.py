@@ -1,4 +1,5 @@
 from .order_creator import OrderCreator
+from orders.models import Order
 
 
 # need this class later, for external integrations!
@@ -6,15 +7,25 @@ class OrderService:
     def __init__(self, user):
         self.user = user
 
-    def process_order(self) -> OrderCreator | None:
+    def process_order(self, method: str, request) -> Order:
         """
-        Create a new Order for the current user based on the items in their shopping cart.
+        Return an existing open order or create a new one.
 
-        This method delegates the actual order creation to the OrderCreator service.
-        It returns the created Order instance if successful, or None if the user's cart is empty.
-
-        Returns:
-            Order | None: The created Order instance or None if no cart was found.
+        Saves the order ID into the session.
         """
-        pass
-        # return OrderCreator(self.user).create_order()
+        order = None
+        order_id = request.session.get("order_id")
+
+        if order_id:
+            try:
+                order = Order.objects.get(
+                    id=order_id, payment_status=Order.PaymentStatus.OPEN
+                )
+            except Order.DoesNotExist:
+                pass  # fallback to create below
+
+        if not order:
+            order = OrderCreator(self.user).create_order(payment_method=method)
+            request.session["order_id"] = order.id
+
+        return order

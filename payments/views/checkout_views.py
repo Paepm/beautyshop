@@ -3,11 +3,9 @@ from django.contrib.auth.decorators import login_required
 from devtools import debug
 from django.conf import settings
 
-from cart.services.cart_services import CartService
 from payments.services.payment_service import PaymentService
 from payments.services.payment_service import PaymentService
-from orders.services.order_service import OrderCreator
-from orders.models import Order
+from orders.services.order_service import OrderService
 
 
 @login_required
@@ -49,13 +47,7 @@ def select_payment_method_view(request):
 @login_required
 def start_payment_view(request):
 
-    # debug("START STRIPE – Session:", dict(request.session))
-    method = request.session.get(
-        "selected_payment_method"
-    )  # get selected payment method from session
-    # debug("SELECTED PAYMENT METHOD:", method)
-
-    # prevents manipulation or wrong payment method
+    method = request.session.get("selected_payment_method")
     if not method:
         return redirect("payments:select_payment_method")
 
@@ -63,36 +55,19 @@ def start_payment_view(request):
     if not payment_service.validate_pay_method(method):
         return redirect("payments:select_payment_method")
 
-    # calculate total price of the cart for user payment
-    amount = CartService(request.user).get_total_price()
-    # debug("TOTAL PRICE:", amount)
+    # Order vorbereiten (neu oder reuse)
+    order = OrderService(request.user).process_order(method, request)
 
-    # check if the order already exists in the session, if not create a new order
-    if request.session.get("order_id"):
-        try:
-            existing_order = Order.objects.get(
-                id=request.session["order_id"], payment_status="open"
-            )
-            order = existing_order  # Verwende vorhandene offene Order
-        except Order.DoesNotExist:
-            order = OrderCreator(request.user).create_order(payment_method=method)
-    else:
-        order = OrderCreator(request.user).create_order(payment_method=method)
+    amount = order.total_price  # aus der Order lesen
 
-    request.session["order_id"] = order.id
-    # create order from user
-    order = OrderCreator(request.user).create_order(payment_method=method)
-
-    # Stripe Payment start
+    # Stripe starten
     response = payment_service.process_payment(
         amount=amount, method=method, order=order
     )
-    # debug(response)
 
     if response.get("status") == "unsupported":
         return render(request, "error.html", {"error": response.get("message")})
 
-    # go to payment page
     return render(
         request,
         "stripe_start.html",

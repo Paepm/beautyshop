@@ -32,30 +32,25 @@ class StripeWebhookHandler:
 
     # function naming should be like: handle_{event_type}
     def handle_payment_intent_succeeded(self, event) -> str:
-        pdb.set_trace()
-
         intent = event["data"]["object"]
-        debug(f"Stripe_intent:", intent)
-
         order_id = intent["metadata"].get("order_id")
 
-        debug(f"[SUCCESS] Order ID from metadata: {order_id}")
-
-        # logic to handle successful payment
-        if order_id:
-            try:
-                order = Order.objects.get(id=order_id)
-                debug("order:", order)
-                if order.payment_status == Order.PaymentStatus.OPEN:
-                    order.payment_status = Order.PaymentStatus.PAID
-                    order.save()
-                    debug("order_status:", order.payment_status)
-            except Order.DoesNotExist:
-                debug(f"No open order found for order {order_id}.")
-        else:
+        if not order_id:
             debug("No Order ID found in metadata.")
+            return "Ignored"
 
-        debug(f"Payment succeeded for order ID {order_id}!")
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            debug(f"Order {order_id} not found yet. Will retry.")
+            raise Exception("Order not ready yet")  # Stripe will retry the webhook
+
+        if order.payment_status == Order.PaymentStatus.OPEN:
+            order.payment_status = Order.PaymentStatus.PAID
+            order.save()
+            debug(f"[PAID] Updated order {order_id} to PAID")
+        else:
+            debug(f"[SKIP] Order {order_id} already processed")
 
         return "Handled: payment_intent.succeeded"
 
@@ -67,21 +62,26 @@ class StripeWebhookHandler:
             "message", "Unknown error"
         )
 
-        debug(f"Payment failed: {order_id} - {error_message}")
+        if not order_id:
+            debug("[FAILED] No Order ID in metadata")
+            return "Ignored"
 
-        # logic to handle failed payment
-        if order_id:
-            try:
-                order = Order.objects.get(id=order_id)
-                if order.payment_status == Order.PaymentStatus.OPEN:
+        debug(f"[FAILED] Order {order_id} failed – Reason: {error_message}")
 
-                    order.payment_status = Order.PaymentStatus.FAILED
-                    order.save()
-                    debug("order_status:", order.payment_status)
-            except Order.DoesNotExist:
-                debug(f"No open order found for order ID {order_id}.")
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            debug(f"[FAILED] Order {order_id} not found yet. Will retry.")
+            raise Exception("Order not ready yet")  # Stripe will retry the webhook
+
+        if order.payment_status == Order.PaymentStatus.OPEN:
+            order.payment_status = Order.PaymentStatus.FAILED
+            order.save()
+            debug(f"[FAILED] Updated order {order_id} to FAILED")
         else:
-            debug("No Order ID found in metadata.")
+            debug(
+                f"[SKIP] Order {order_id} already processed with status: {order.payment_status}"
+            )
 
         return "Handled: payment_intent.payment_failed"
 
