@@ -46,23 +46,27 @@ def select_payment_method_view(request):
 
 @login_required
 def start_payment_view(request):
-
     method = request.session.get("selected_payment_method")
     if not method:
         return redirect("payments:select_payment_method")
 
     payment_service = PaymentService(request.user)
+
+    # Sicherheitsprüfung
     if not payment_service.validate_pay_method(method):
         return redirect("payments:select_payment_method")
 
-    # Order vorbereiten (neu oder reuse)
-    order = OrderService(request.user).process_order(method, request)
+    # Order vorbereiten: entweder aus Session oder neu erstellen
+    order_service = OrderService(user=request.user, request=request)
+    order = order_service.process_order(payment_method=method)
 
-    amount = order.total_price  # aus der Order lesen
+    if not order:
+        request.session["error_message"] = "Could not create order."
+        return redirect("payments:error")
 
     # Stripe starten
     response = payment_service.process_payment(
-        amount=amount, method=method, order=order
+        amount=order.total_price, method=method, order=order
     )
 
     if response.get("status") == "unsupported":
