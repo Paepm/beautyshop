@@ -1,10 +1,10 @@
-from django.utils import timezone  
+from django.utils import timezone
 from devtools import debug
+from django.db import transaction
 
 from orders.models import Order, OrderItem
 from cart.models import Cart
 from beautyshop.logging_config import setup_logger
-
 
 
 class OrderCreator:
@@ -29,37 +29,47 @@ class OrderCreator:
         try:
             cart = Cart.objects.get(user=self.user)
             return cart
-        
+
         except Cart.DoesNotExist:
-            self.logger.warning(f'[CART] No cart found for user: {self.user.email}')
+            self.logger.warning(f"[CART] No cart found for user: {self.user.email}")
             return None
 
-
-    def create_order(self) -> Order | None:
+    def create_order(self, payment_method: str | None = None) -> Order | None:
         """
         Create a new Order object and related OrderItems based on the user's cart.
 
-        The function checks if the user has a valid cart. If yes, it creates an Order with 
-        a calculated total price and individual OrderItems for each CartItem. All operations 
+        The function checks if the user has a valid cart. If yes, it creates an Order with
+        a calculated total price and individual OrderItems for each CartItem. All operations
         are wrapped in an atomic transaction to ensure database integrity.
 
         Returns:
             Order | None: The created Order instance or None if no cart is found.
         """
         if not self.cart:
-            self.logger.info(f'[ORDER] Cannot create order - no cart for user: {self.user.email}.')
+            self.logger.info(
+                f"[ORDER] Cannot create order - no cart for user: {self.user.email}."
+            )
             return None
-        
-        cart_items = self.cart.items.select_related('product')
-        
+
+        cart_items = self.cart.items.select_related("product")
+
         total_price = sum(item.product.price * item.quantity for item in cart_items)
 
-        order: Order = Order.objects.create(user=self.user, created_at=timezone.now(), payment_status='pending', total_price=total_price)
-        
+        with transaction.atomic():
+            order = Order.objects.create(
+                user=self.user,
+                total_price=total_price,
+                created_at=timezone.now(),
+                payment_method=payment_method or "",
+                payment_status=Order.PaymentStatus.OPEN,
+            )
+
         for item in cart_items:
-            OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.price)
-        
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.price,
+            )
+
         return order
-    
-
-

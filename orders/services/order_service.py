@@ -6,7 +6,7 @@ class OrderService:
     def __init__(self, user):
         self.user = user
 
-    def process_order(self)-> OrderCreator | None:
+    def process_order(self) -> OrderCreator | None:
         """
         Create a new Order for the current user based on the items in their shopping cart.
 
@@ -16,4 +16,5 @@ class OrderService:
         Returns:
             Order | None: The created Order instance or None if no cart was found.
         """
-        return OrderCreator(self.user).create_order()
+        pass
+        # return OrderCreator(self.user).create_order()

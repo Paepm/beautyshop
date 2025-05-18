@@ -3,9 +3,8 @@ from payments.services.provider_registry import PROVIDER_MAP
 from payments.enums.payment_methods import PaymentMethod
 
 
-
 class PaymentService:
-    """Handles payment logic methods and processes payments for orders."""
+    """Handles payment methods and processes payments for orders."""
 
     def __init__(self, user):
         """
@@ -31,8 +30,8 @@ class PaymentService:
             return True
         except ValueError:
             return False
-    
-    def save_method_to_order(self, order:Order, method:str) -> None:
+
+    def save_method_to_order(self, order: Order, method: str) -> None:
         """
         Save the selected payment method to the order.
 
@@ -58,7 +57,7 @@ class PaymentService:
         """
         return [method.value for method in PaymentMethod]
 
-    def process_payment(self, amount: float, method: str) -> dict:
+    def process_payment(self, amount: float, method: str, order: Order) -> dict:
         """
         Process the payment using the selected method by dynamically resolving the provider class.
 
@@ -70,16 +69,15 @@ class PaymentService:
             dict: A dictionary with payment status and optional provider info.
         """
         if not self.validate_pay_method(method):
-            return {'status': 'error',
-                    'message': f'Invalid payment method: {method}'
-                    }
-        
+            return {"status": "error", "message": f"Invalid payment method: {method}"}
+
         provider_class = PROVIDER_MAP.get(method)
         if not provider_class:
-            return {'status': 'unsupported',
-                    'message': f'No provider implemented for payment method: {method}'
-                    }
-        
-        provider = provider_class(self.user)
+            return {
+                "status": "unsupported",
+                "message": f"No provider implemented for payment method: {method}",
+            }
+
+        provider = provider_class(self.user, order=order)
 
         return provider.create_payment_intent(amount=amount, currency="eur")
