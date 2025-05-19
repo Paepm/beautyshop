@@ -12,13 +12,13 @@
     {% csrf_token %}
     {{ form.as_p }}
     {% if next %}
-      <input type="hidden" name="next" value="{{ next }}">
+    <input type="hidden" name="next" value="{{ next }}">
     {% endif %}
     <div class="text-center">
       <button type="submit" class="btn btn-dark">Login</button>
     </div>
     <div class="text-center mt-3">
-      <p>Do you loose your password? <a href="{% url 'accounts:password_reset_email' %}">Click Here</a></p>
+      <p>Do you loose your password? <a href="{% url 'emails:password_reset_email' %}">Click Here</a></p>
     </div>
   </form>
 </div>

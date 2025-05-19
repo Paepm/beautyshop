@@ -1,2 +1,0 @@
-Warning: 'disable-software-rendering' is not in the list of known options, but still passed to Electron/Chromium.
-Warning: 'disable-features' is not in the list of known options, but still passed to Electron/Chromium.

@@ -11,6 +11,9 @@
     <div id="card-errors" role="alert" class="text-danger mt-2"></div>
     <button id="submit" class="btn btn-success mt-3">Pay</button>
   </form>
+  <div id="processing-message" class="mt-3 text-info" style="display: none;">
+    Processing your payment... Please wait.
+  </div>
 </div>
 
 <!-- Stripe.js -->
@@ -22,36 +25,42 @@
   cardElement.mount("#card-element");
 
   const form = document.getElementById("payment-form");
+  const submitButton = document.getElementById("submit");
+  const processingMessage = document.getElementById("processing-message");
+  const errorDiv = document.getElementById("card-errors");
   const clientSecret = "{{ client_secret }}";
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // Optional: disable button while processing
-    document.getElementById("submit").disabled = true;
+    submitButton.disabled = true;
+    processingMessage.style.display = "block";
+    errorDiv.textContent = "";
 
     const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: cardElement,
-      },
+      }
     });
 
     if (error) {
-      // 💥 Fehler auf der Karte (z. B. abgelehnt)
-      console.error("Payment error:", error.message);
-      // Weiterleitung zur Fehlerseite
-      window.location.href = "{% url 'payments:error_payment' %}";
+      console.error("Stripe payment error:", error.message);
+      errorDiv.textContent = error.message;
+
+      // Optional: Re-enable button for retry
+      submitButton.disabled = false;
+      processingMessage.style.display = "none";
+
+    } else if (paymentIntent && paymentIntent.status === "succeeded") {
+      // Successful payment – continue
+      window.location.href = "{% url 'orders:create_order_after_payment' %}";
     } else {
-      if (paymentIntent.status === "succeeded") {
-        // ✅ Redirect zur "Bestellung abschließen"-View
-        window.location.href = "{% url 'orders:create_order_after_payment' %}";
-      } else {
-        // ⚠️ Falls aus irgendeinem Grund nicht succeeded (z. B. benötigt 3D Secure)
-        console.warn("Payment not completed:", paymentIntent.status);
-        window.location.href = "{% url 'payments:error_payment' %}";
-      }
+      // Any unexpected state
+      errorDiv.textContent = "Payment not completed. Please try again.";
+      console.warn("Unexpected paymentIntent status:", paymentIntent?.status);
+      submitButton.disabled = false;
+      processingMessage.style.display = "none";
     }
   });
 </script>
-
 {% endblock %}

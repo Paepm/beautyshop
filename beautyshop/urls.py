@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
@@ -24,24 +25,46 @@ from django.contrib.auth import views as auth_views
 import os
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('shop.urls', namespace='shop')),
-    path('login/', auth_views.LoginView.as_view(template_name='shop/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='shop/logout.html'), name='logout'),
-    path('cart/', include('cart.urls', namespace='cart')),
-    path('orders/', include('orders.urls', namespace='orders')),
-    path('accounts/', include('accounts.urls', namespace='accounts')),
-    path('payments/', include('payments.urls', namespace='payments')),
+    path("admin/", admin.site.urls),
+    path("", include("shop.urls", namespace="shop")),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(template_name="shop/login.html"),
+        name="login",
+    ),
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(template_name="shop/logout.html"),
+        name="logout",
+    ),
+    path("cart/", include("cart.urls", namespace="cart")),
+    path("orders/", include("orders.urls", namespace="orders")),
+    path("accounts/", include("accounts.urls", namespace="accounts")),
+    path("payments/", include("payments.urls", namespace="payments")),
+    path("emails/", include("emails.urls", namespace="emails")),
     # paths for django password resetter --> is global needed that it works....
-    path('accounts/password_reset_confirm/<str:uidb64>/<str:token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('accounts/password_reset_done/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done',),
-    path('accounts/password_reset_complete/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_complete'),
-
+    path(
+        "emails/password_reset_confirm/<str:uidb64>/<str:token>/",
+        auth_views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "emails/password_reset_done/",
+        auth_views.PasswordResetDoneView.as_view(),
+        name="password_reset_done",
+    ),
+    path(
+        "emails/password_reset_complete/",
+        auth_views.PasswordResetDoneView.as_view(),
+        name="password_reset_complete",
+    ),
 ]
 
 # for the template static files
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(BASE_DIR, 'static'))
+    urlpatterns += static(
+        settings.STATIC_URL, document_root=os.path.join(BASE_DIR, "static")
+    )
 
 # for the media files
 if settings.DEBUG:
