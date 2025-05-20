@@ -1,27 +1,39 @@
+# payments/services/webhooks/stripe_handler.py
+
 from devtools import debug
-import pdb
+from django.utils.timezone import now
 
 from orders.models import Order
+from orders.enums.paymentstatus import PaymentStatus
+from orders.services.order_service import OrderService
 
 
 class StripeWebhookHandler:
+    """
+    Handles incoming Stripe webhook events and dispatches them to
+    the appropriate method based on event type.
+
+    This handler is designed specifically for the Stripe Checkout Session flow.
+    """
 
     def __init__(self, request):
+        """
+        Initialize the handler with the current HTTP request context.
+
+        Args:
+            request (HttpRequest): The Django request object, used for context (e.g., logging, user access).
+        """
         self.request = request
 
     def handle(self, event) -> str:
         """
-        Dispatches a Stripe event to its corresponding handler method.
-
-        This method dynamically maps the Stripe event type (e.g., "payment_intent.succeeded")
-        to a corresponding handler method (e.g., `handle_payment_intent_succeeded`). If no
-        matching handler method is found, the default handler (`handle_default`) is called.
+        Main entry point for processing a Stripe webhook event.
 
         Args:
-            event (dict): The Stripe event payload.
+            event (dict): The full Stripe event payload.
 
         Returns:
-            str: A response message from the executed handler.
+            str: A status message indicating how the event was handled.
         """
         event_type = event["type"]
         method_name = f'handle_{event_type.replace(".", "_")}'
@@ -30,74 +42,52 @@ class StripeWebhookHandler:
         method = getattr(self, method_name, self.handle_default)
         return method(event)
 
-    # function naming should be like: handle_{event_type}
-    def handle_payment_intent_succeeded(self, event) -> str:
-        intent = event["data"]["object"]
-        order_id = intent["metadata"].get("order_id")
+    def handle_checkout_session_completed(self, event) -> str:
+        """
+        Handles the 'checkout.session.completed' event from Stripe.
+
+        This event is sent after a successful payment through a Stripe Checkout Session.
+        It updates the order's payment and order status accordingly.
+
+        Args:
+            event (dict): The Stripe event payload.
+
+        Returns:
+            str: Result message for logging/debugging.
+        """
+        session = event["data"]["object"]
+        order_id = session["metadata"].get("order_id")
+
+        debug(f"[WEBHOOK] checkout.session.completed at {now()}")
 
         if not order_id:
-            debug("No Order ID found in metadata.")
+            debug("❌ No order_id found in session metadata.")
             return "Ignored"
 
         try:
             order = Order.objects.get(id=order_id)
         except Order.DoesNotExist:
-            debug(f"Order {order_id} not found yet. Will retry.")
-            raise Exception("Order not ready yet")  # Stripe will retry the webhook
-
-        if order.payment_status == Order.PaymentStatus.OPEN:
-            order.payment_status = Order.PaymentStatus.PAID
-            order.save()
-            debug(f"[PAID] Updated order {order_id} to PAID")
-        else:
-            debug(f"[SKIP] Order {order_id} already processed")
-
-        return "Handled: payment_intent.succeeded"
-
-    # function naming should be like: handle_{event_type}
-    def handle_payment_intent_payment_failed(self, event) -> str:
-        intent = event["data"]["object"]
-        order_id = intent["metadata"].get("order_id")
-        error_message = intent.get("last_payment_error", {}).get(
-            "message", "Unknown error"
-        )
-
-        if not order_id:
-            debug("[FAILED] No Order ID in metadata")
+            debug(f"❌ Order {order_id} not found in database.")
             return "Ignored"
 
-        debug(f"[FAILED] Order {order_id} failed – Reason: {error_message}")
+        if order.payment_status == PaymentStatus.PAID:
+            debug(f"⏭️ Order {order_id} already marked as PAID.")
+            return "Already paid"
 
-        try:
-            order = Order.objects.get(id=order_id)
-        except Order.DoesNotExist:
-            debug(f"[FAILED] Order {order_id} not found yet. Will retry.")
-            raise Exception("Order not ready yet")  # Stripe will retry the webhook
+        OrderService(order.user, self.request).set_paid(order)
+        debug(f"✅ Order {order_id} marked as PAID + PROCESSING")
 
-        if order.payment_status == Order.PaymentStatus.OPEN:
-            order.payment_status = Order.PaymentStatus.FAILED
-            order.save()
-            debug(f"[FAILED] Updated order {order_id} to FAILED")
-        else:
-            debug(
-                f"[SKIP] Order {order_id} already processed with status: {order.payment_status}"
-            )
-
-        return "Handled: payment_intent.payment_failed"
+        return "Handled: checkout.session.completed"
 
     def handle_default(self, event) -> str:
         """
-        Default handler for unrecognized Stripe event types.
-
-        This method is called when no specific handler exists for the received
-        Stripe event. It logs the event type for debugging purposes and returns
-        a simple response message.
+        Default fallback handler for unrecognized or unused event types.
 
         Args:
-            event (dict): The Stripe event payload that was not matched.
+            event (dict): The Stripe event payload.
 
         Returns:
-            str: A response message indicating the event was ignored.
+            str: Always returns 'Ignored'.
         """
         debug(f"[HANDLE_DEFAULT]: Unhandled event type: {event['type']}")
         return "Ignored"

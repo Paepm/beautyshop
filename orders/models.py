@@ -4,19 +4,11 @@ from django.conf import settings
 from cart.models import CartItem
 from shop.models import Item as product
 from payments.enums.payment_methods import PaymentMethod
-
-
-from django.db import models
-from django.conf import settings
-from payments.enums.payment_methods import PaymentMethod
+from orders.enums.paymentstatus import PaymentStatus
+from orders.enums.orderstatus import OrderStatus
 
 
 class Order(models.Model):
-    class PaymentStatus(models.TextChoices):
-        OPEN = "open", "Open"
-        PAID = "paid", "Paid"
-        FAILED = "failed", "Failed"
-        EXPIRED = "expired", "Expired"
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -30,6 +22,10 @@ class Order(models.Model):
 
     payment_status = models.CharField(
         choices=PaymentStatus.choices, default=PaymentStatus.OPEN, max_length=30
+    )
+
+    order_status = models.CharField(
+        choices=OrderStatus.choices, default=OrderStatus.PENDING, max_length=30
     )
 
     def __str__(self):

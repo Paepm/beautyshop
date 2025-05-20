@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from devtools import debug
-from django.conf import settings
+from django.urls import reverse
 
 from payments.services.payment_service import PaymentService
 from payments.services.payment_service import PaymentService
@@ -52,11 +52,11 @@ def start_payment_view(request):
 
     payment_service = PaymentService(request.user)
 
-    # Sicherheitsprüfung
+    # Validate
     if not payment_service.validate_pay_method(method):
         return redirect("payments:select_payment_method")
 
-    # Order vorbereiten: entweder aus Session oder neu erstellen
+    # Order erstellen
     order_service = OrderService(user=request.user, request=request)
     order = order_service.process_order(payment_method=method)
 
@@ -64,22 +64,25 @@ def start_payment_view(request):
         request.session["error_message"] = "Could not create order."
         return redirect("payments:error")
 
-    # Stripe starten
+    # Stripe Checkout starten (oder anderer Provider)
     response = payment_service.process_payment(
-        amount=order.total_price, method=method, order=order
+        amount=order.total_price,
+        method=method,
+        order=order,
+        success_url=request.build_absolute_uri(
+            reverse("orders:order_success", args=[order.id])
+        ),
+        cancel_url=request.build_absolute_uri(
+            reverse("payments:select_payment_method")
+        ),
     )
 
     if response.get("status") == "unsupported":
         return render(request, "error.html", {"error": response.get("message")})
 
-    return render(
-        request,
-        "stripe_start.html",
-        {
-            "client_secret": response["client_secret"],
-            "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
-        },
-    )
+    return redirect(
+        response["redirect_url"]
+    )  # <--- Hier leiten wir direkt zu Stripe um
 
 
 @login_required

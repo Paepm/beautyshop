@@ -6,21 +6,22 @@
   <h2>Your Orders</h2>
 
   {% if orders %}
-    <ul class="list-group">
-      {% for order in orders %}
-      <li class="list-group-item">
-        <a href="{% url 'orders:user_order_detail' order.id %}">
-          <strong>Order #{{ order.id }}</strong>
-        </a> – {{ order.created_at|date:"d.m.Y H:i" }}<br />
-        Status: {{ order.payment_status }}<br />
-        Payment Method: {{ order.payment_method }}<br />
-        Total: {{ order.total_price }} €
-      </li>
-      
-      {% endfor %}
-    </ul>
+  <ul class="list-group">
+    {% for order in orders %}
+    <li class="list-group-item">
+      <a href="{% url 'orders:user_order_detail' order.id %}">
+        <strong>Order #{{ order.id }}</strong>
+      </a> – {{ order.created_at|date:"d.m.Y H:i" }}<br />
+      Order Status: {{ order.order_status}}<br />
+      Payment Status: {{ order.payment_status }}<br />
+      Payment Method: {{ order.payment_method }}<br />
+      Total: {{ order.total_price }} €
+    </li>
+
+    {% endfor %}
+  </ul>
   {% else %}
-    <p>You have no orders yet.</p>
+  <p>You have no orders yet.</p>
   {% endif %}
 </div>
 {% endblock %}

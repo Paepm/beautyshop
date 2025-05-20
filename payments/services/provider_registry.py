@@ -3,6 +3,6 @@ from payments.services.providers.stripe_provider import StripeProvider
 
 
 PROVIDER_MAP = {
-    PaymentMethod.STRIPE.value: StripeProvider,
+    PaymentMethod.CARD.value: StripeProvider,
     # Add other payment providers here
-    }
+}
