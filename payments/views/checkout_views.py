@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from devtools import debug
-from django.conf import settings
+from django.urls import reverse
 
 from payments.services.payment_service import PaymentService
 from payments.services.payment_service import PaymentService
@@ -10,6 +10,20 @@ from orders.services.order_service import OrderService
 
 @login_required
 def select_payment_method_view(request):
+    """
+    Displays the payment method selection page and processes user input.
+
+    On GET requests, renders a template with the list of supported payment methods.
+    On POST requests, validates the selected method and stores it in the session.
+    If the method is valid, redirects to the payment start view.
+    If invalid, re-renders the form with an error message.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing session and POST data.
+
+    Returns:
+        HttpResponse: Rendered template or redirect to the next step in the payment flow.
+    """
     payment_service = PaymentService(request.user)
     supported_methods = payment_service.get_supported_methods()
 
@@ -46,40 +60,82 @@ def select_payment_method_view(request):
 
 @login_required
 def start_payment_view(request):
+    """
+    Initiates the payment process using the selected payment method.
+
+    Retrieves the selected payment method from the session, validates it,
+    creates or retrieves an order, and redirects the user to the external
+    Stripe Checkout page. If any validation fails, the user is redirected
+    back to the payment method selection or error page.
+
+    After initiating the checkout, the selected payment method is removed
+    from the session to allow clean state for future purchases.
+
+    Args:
+        request (HttpRequest): The HTTP request object from the user.
+
+    Returns:
+        HttpResponseRedirect: Redirect to Stripe Checkout or another view
+        depending on success, failure, or missing data.
+    """
     method = request.session.get("selected_payment_method")
+
     if not method:
         return redirect("payments:select_payment_method")
 
     payment_service = PaymentService(request.user)
 
-    # Sicherheitsprüfung
+    # Validate
     if not payment_service.validate_pay_method(method):
         return redirect("payments:select_payment_method")
 
-    # Order vorbereiten: entweder aus Session oder neu erstellen
+    # create order
     order_service = OrderService(user=request.user, request=request)
     order = order_service.process_order(payment_method=method)
 
     if not order:
         request.session["error_message"] = "Could not create order."
-        return redirect("payments:error")
+        return redirect("payments:error_payment")
 
-    # Stripe starten
+    success_url = request.build_absolute_uri(
+        reverse("orders:order_success", args=[order.id])
+    )
+    cancel_url = request.build_absolute_uri(reverse("payments:cancel_payment"))
+
+    # Stripe Checkout start
     response = payment_service.process_payment(
-        amount=order.total_price, method=method, order=order
+        method=method,
+        order=order,
+        success_url=success_url,
+        cancel_url=cancel_url,
     )
 
     if response.get("status") == "unsupported":
         return render(request, "error.html", {"error": response.get("message")})
 
-    return render(
-        request,
-        "stripe_start.html",
-        {
-            "client_secret": response["client_secret"],
-            "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
-        },
-    )
+    # delete the selected payment method from session that in new session the user can select a new payment method
+    request.session.pop("selected_payment_method", None)
+
+    return redirect(
+        response["redirect_url"]
+    )  # <--- here we redirect to the Stripe Checkout URL
+
+
+@login_required
+def cancel_payment_view(request):
+    """
+    Handles user-initiated cancellation from Stripe Checkout.
+    Marks the current order as failed
+    """
+    order_service = OrderService(user=request.user, request=request)
+    order = order_service.get_existing_open_order()
+
+    if order:
+        order_service = OrderService(request.user, request, order)
+        order_service.set_payment_failed()
+
+    request.session["error_message"] = "Payment was cancelled."
+    return redirect("payments:error_payment")
 
 
 @login_required

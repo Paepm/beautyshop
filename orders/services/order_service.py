@@ -2,12 +2,16 @@ from orders.services.order_creator import OrderCreator
 from orders.models import Order
 from django.core.exceptions import ObjectDoesNotExist
 
+from orders.enums.paymentstatus import PaymentStatus
+from orders.enums.orderstatus import OrderStatus
+
 
 class OrderService:
-    def __init__(self, user, request):
+    def __init__(self, user, request, order=None):
         self.user = user
         self.request = request
         self.session = request.session
+        self.order = order
 
     def get_existing_open_order(self) -> Order | None:
         """
@@ -19,7 +23,7 @@ class OrderService:
 
         try:
             order = Order.objects.get(
-                id=order_id, user=self.user, payment_status=Order.PaymentStatus.OPEN
+                id=order_id, user=self.user, payment_status=PaymentStatus.OPEN
             )
             return order
         except ObjectDoesNotExist:
@@ -38,3 +42,49 @@ class OrderService:
         new_order = OrderCreator(self.user).create_order(payment_method=payment_method)
         self.session["order_id"] = new_order.id
         return new_order
+
+    def set_paid(self) -> None:
+        """ "
+        Sets the order payment status to paid and updates the order status to processing.
+        Args:
+            order (Order): The order to update.
+        Returns:
+            None
+        """
+        if self.order.payment_status == PaymentStatus.PAID:
+            return  # Already paid
+
+        self.order.payment_status = PaymentStatus.PAID
+        self.order.order_status = (
+            OrderStatus.PROCESSING
+        )  # automatically set to processing
+        self.order.save()
+
+    def set_payment_failed(self) -> None:
+        """ "
+        Sets the order payment status to failed and updates the order status to cancelled.
+        Args:
+            order (Order): The order to update.
+        Returns:
+            None
+        """
+        if self.order.payment_status == PaymentStatus.PAID:
+            return
+
+        self.order.payment_status = PaymentStatus.FAILED
+        self.order.order_status = OrderStatus.FAILED
+        self.order.save()
+
+    def set_payment_processing(self) -> None:
+        """ "
+        Sets the order payment status to processing.
+        Args:
+            order (Order): The order to update.
+        Returns:
+            None
+        """
+        if self.order.payment_status == PaymentStatus.PAID:
+            return
+
+        self.order.payment_status = PaymentStatus.PROCESSING
+        self.order.save()

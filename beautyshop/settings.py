@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-!mjyz1+wxiham11_b0wq=q3qdgm*qlebo0+ll9u^lyxp%t7)7g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "191b-62-178-83-52.ngrok-free.app"]
 
 
 # Application definition
@@ -117,6 +117,12 @@ STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY")  # Stripe public key saved in .e
 STRIPE_WEBHOOK_SECRET = config(
     "STRIPE_WEBHOOK_SECRET"
 )  # Stripe webhook secret saved in .env file
+
+# Paypal for payment processing (testing)
+PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID")  # PayPal client ID saved in .env file
+PAYPAL_CLIENT_SECRET = config(
+    "PAYPAL_CLIENT_SECRET"
+)  # PayPal client secret saved in .env file
 
 
 # Password validation

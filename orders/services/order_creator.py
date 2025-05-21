@@ -5,6 +5,8 @@ from django.db import transaction
 from orders.models import Order, OrderItem
 from cart.models import Cart
 from beautyshop.logging_config import setup_logger
+from orders.enums.paymentstatus import PaymentStatus
+from orders.enums.orderstatus import OrderStatus
 
 
 class OrderCreator:
@@ -61,7 +63,8 @@ class OrderCreator:
                 total_price=total_price,
                 created_at=timezone.now(),
                 payment_method=payment_method or "",
-                payment_status=Order.PaymentStatus.OPEN,
+                payment_status=PaymentStatus.OPEN,
+                order_status=OrderStatus.PENDING,
             )
 
         for item in cart_items:

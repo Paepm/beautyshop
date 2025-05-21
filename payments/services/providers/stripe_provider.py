@@ -15,34 +15,49 @@ class StripeProvider(BasePaymentProvider):
         stripe.api_key = config("STRIPE_SECRET_KEY")  # Set your Stripe secret key
         self.order = order
 
-    def create_payment_intent(self, amount: float, currency: str = "eur") -> dict:
+    def create_checkout_session(self, success_url: str, cancel_url: str) -> str:
         """
-        Creates a payment intent and returns metadata like client_secret.
-
-        Args:
-            amount (float): The total amount to charge.
-            currency (str): Currency code, default is EUR.
+        Creates a Stripe Checkout Session with pre-configured payment options.
 
         Returns:
-            dict: A dictionary with provider-specific response data.asd
+            str: The URL to redirect the user to complete the payment.
         """
         if not self.order:
-            raise ValueError("StripeProvider requires an Order instance to proceed.")
+            raise ValueError("Order is required to create a Stripe Checkout session.")
 
-        intent = stripe.PaymentIntent.create(
-            amount=int(amount * 100),  # Stripe expects the amount in cents
-            currency=currency,
-            metadata={
-                "order_id": str(self.order.id),
-            },
+        session = stripe.checkout.Session.create(
+            payment_method_types=[
+                "card",
+                "paypal",
+                "sofort",
+                "sepa_debit",
+                "bancontact",
+            ],  # stripe supports multiple payment methods
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "eur",
+                        "product_data": {
+                            "name": f"Order #{self.order.id}",
+                        },
+                        "unit_amount": int(self.order.total_price * 100),
+                    },
+                    "quantity": 1,
+                }
+            ],
+            mode="payment",
+            metadata={"order_id": str(self.order.id)},
+            # payment_intent_data --> stripe need this to handle payments on stripe checkout session (failed, cancelled, etc)
+            payment_intent_data={"metadata": {"order_id": str(self.order.id)}},
+            customer_email=self.user.email,
+            success_url=success_url,
+            cancel_url=cancel_url,
         )
-        return {
-            "payment_intent_id": intent.id,
-            "client_secret": intent.client_secret,
-            "amount": amount,
-            "currency": currency,
-            "status": intent.status,
-        }
+
+        return session.url
+
+    def create_payment_intent(self, amount: float, currency: str = "eur") -> dict:
+        raise NotImplementedError("This provider uses checkout session instead.")
 
     def confirm_payment(self, payment_intent_id: str) -> bool:
         """

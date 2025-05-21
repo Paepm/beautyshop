@@ -57,27 +57,20 @@ class PaymentService:
         """
         return [method.value for method in PaymentMethod]
 
-    def process_payment(self, amount: float, method: str, order: Order) -> dict:
-        """
-        Process the payment using the selected method by dynamically resolving the provider class.
-
-        Args:
-            amount (float): The amount to be charged.
-            method (str): The payment method (e.g. 'stripe').
-
-        Returns:
-            dict: A dictionary with payment status and optional provider info.
-        """
-        if not self.validate_pay_method(method):
-            return {"status": "error", "message": f"Invalid payment method: {method}"}
-
+    def process_payment(
+        self, method: str, order: Order, success_url=None, cancel_url=None
+    ) -> dict:
         provider_class = PROVIDER_MAP.get(method)
         if not provider_class:
+            return {"status": "unsupported", "message": "Unsupported method."}
+
+        provider = provider_class(self.user, order)
+
+        if hasattr(provider, "create_checkout_session"):
+            url = provider.create_checkout_session(success_url, cancel_url)
+            return {"status": "ok", "redirect_url": url}
+        else:
             return {
                 "status": "unsupported",
-                "message": f"No provider implemented for payment method: {method}",
+                "message": "Provider does not support checkout.",
             }
-
-        provider = provider_class(self.user, order=order)
-
-        return provider.create_payment_intent(amount=amount, currency="eur")
