@@ -1,8 +1,9 @@
 from payments.enums.payment_methods import PaymentMethod
 from payments.services.providers.stripe_provider import StripeProvider
+from payments.services.providers.paypal_provider import PayPalProvider
 
 
 PROVIDER_MAP = {
     PaymentMethod.CARD.value: StripeProvider,
-    # Add other payment providers here
+    PaymentMethod.PAYPAL.value: PayPalProvider,
 }

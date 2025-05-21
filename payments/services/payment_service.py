@@ -58,12 +58,7 @@ class PaymentService:
         return [method.value for method in PaymentMethod]
 
     def process_payment(
-        self,
-        amount: float,
-        method: str,
-        order: Order,
-        success_url=None,
-        cancel_url=None,
+        self, method: str, order: Order, success_url=None, cancel_url=None
     ) -> dict:
         provider_class = PROVIDER_MAP.get(method)
         if not provider_class:

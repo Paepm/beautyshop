@@ -60,7 +60,7 @@ class OrderService:
         )  # automatically set to processing
         self.order.save()
 
-    def set_paiment_failed(order: Order) -> None:
+    def set_payment_failed(self) -> None:
         """ "
         Sets the order payment status to failed and updates the order status to cancelled.
         Args:
@@ -68,9 +68,23 @@ class OrderService:
         Returns:
             None
         """
-        if order.payment_status == PaymentStatus.PAID:
+        if self.order.payment_status == PaymentStatus.PAID:
             return
 
-        order.payment_status = PaymentStatus.FAILED
-        order.order_status = OrderStatus.CANCELLED
-        order.save()
+        self.order.payment_status = PaymentStatus.FAILED
+        self.order.order_status = OrderStatus.FAILED
+        self.order.save()
+
+    def set_payment_processing(self) -> None:
+        """ "
+        Sets the order payment status to processing.
+        Args:
+            order (Order): The order to update.
+        Returns:
+            None
+        """
+        if self.order.payment_status == PaymentStatus.PAID:
+            return
+
+        self.order.payment_status = PaymentStatus.PROCESSING
+        self.order.save()

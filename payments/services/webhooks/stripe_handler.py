@@ -80,6 +80,28 @@ class StripeWebhookHandler:
 
         return "Handled: checkout.session.completed"
 
+    def handle_payment_intent_payment_failed(self, event) -> str:
+        intent = event["data"]["object"]
+        order_id = intent["metadata"].get("order_id")
+
+        if not order_id:
+            debug("[FAILED] No Order ID in metadata")
+            return "Ignored"
+
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            debug(f"[FAILED] Order {order_id} not found")
+            raise Exception("Order not found yet")
+
+        if order.payment_status == PaymentStatus.OPEN:
+            OrderService(order.user, self.request, order).set_payment_failed()
+            debug(f"[FAILED] Set order {order_id} to FAILED")
+        else:
+            debug(f"[SKIP] Order {order_id} already handled")
+
+        return "Handled: payment_intent.payment_failed"
+
     def handle_default(self, event) -> str:
         """
         Default fallback handler for unrecognized or unused event types.

@@ -7,3 +7,4 @@ class PaymentStatus(models.TextChoices):
     PAID = "paid", "Paid"
     FAILED = "failed", "Failed"
     EXPIRED = "expired", "Expired"
+    PROCESSING = "processing", "Processing"

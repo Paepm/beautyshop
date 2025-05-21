@@ -47,6 +47,8 @@ class StripeProvider(BasePaymentProvider):
             ],
             mode="payment",
             metadata={"order_id": str(self.order.id)},
+            # payment_intent_data --> stripe need this to handle payments on stripe checkout session (failed, cancelled, etc)
+            payment_intent_data={"metadata": {"order_id": str(self.order.id)}},
             customer_email=self.user.email,
             success_url=success_url,
             cancel_url=cancel_url,
