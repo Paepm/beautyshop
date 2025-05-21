@@ -19,7 +19,7 @@ class QogitaClient:
                                      "email": self.qogita_email,
                                      "password": self.qogita_pw
                                  },
-                                 headers={"Content-Type: application/json"}
+                                 headers={"Content-Type": "application/json"}
                                  )
         
         
