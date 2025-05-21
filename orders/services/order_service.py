@@ -7,10 +7,11 @@ from orders.enums.orderstatus import OrderStatus
 
 
 class OrderService:
-    def __init__(self, user, request):
+    def __init__(self, user, request, order=None):
         self.user = user
         self.request = request
         self.session = request.session
+        self.order = order
 
     def get_existing_open_order(self) -> Order | None:
         """
@@ -42,7 +43,7 @@ class OrderService:
         self.session["order_id"] = new_order.id
         return new_order
 
-    def set_paid(order: Order) -> None:
+    def set_paid(self) -> None:
         """ "
         Sets the order payment status to paid and updates the order status to processing.
         Args:
@@ -50,12 +51,14 @@ class OrderService:
         Returns:
             None
         """
-        if order.payment_status == PaymentStatus.PAID:
+        if self.order.payment_status == PaymentStatus.PAID:
             return  # Already paid
 
-        order.payment_status = PaymentStatus.PAID
-        order.order_status = OrderStatus.PROCESSING  # automatically set to processing
-        order.save()
+        self.order.payment_status = PaymentStatus.PAID
+        self.order.order_status = (
+            OrderStatus.PROCESSING
+        )  # automatically set to processing
+        self.order.save()
 
     def set_paiment_failed(order: Order) -> None:
         """ "

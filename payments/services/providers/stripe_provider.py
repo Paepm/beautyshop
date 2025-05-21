@@ -32,7 +32,7 @@ class StripeProvider(BasePaymentProvider):
                 "sofort",
                 "sepa_debit",
                 "bancontact",
-            ],  # stripe entscheidet dynamisch
+            ],  # stripe supports multiple payment methods
             line_items=[
                 {
                     "price_data": {

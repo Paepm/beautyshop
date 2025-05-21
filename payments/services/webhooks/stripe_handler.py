@@ -74,7 +74,8 @@ class StripeWebhookHandler:
             debug(f"⏭️ Order {order_id} already marked as PAID.")
             return "Already paid"
 
-        OrderService(order.user, self.request).set_paid(order)
+        order_service = OrderService(order.user, self.request, order)
+        order_service.set_paid()
         debug(f"✅ Order {order_id} marked as PAID + PROCESSING")
 
         return "Handled: checkout.session.completed"
