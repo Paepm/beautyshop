@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Choose your payment method</h1>
+
+<form method="post" autocomplete="off">
+  {% csrf_token %}
+  {% for provider in supported_providers %}
+  <label>
+    <input type="radio" name="provider" value="{{ provider }}">
+    {{ provider|title }}
+  </label><br>
+  {% endfor %}
+
+  {% if error %}
+  <p style="color: red;">{{ error }}</p>
+  {% endif %}
+
+  <button type="submit" class="btn btn-success" name="submit_btn">Continue</button>
+</form>
+{% endblock %}

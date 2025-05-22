@@ -1,10 +1,14 @@
+from devtools import debug
+from django.conf import settings
+import stripe
+
 from orders.models import Order
 from payments.services.provider_registry import PROVIDER_MAP
-from payments.enums.payment_methods import PaymentMethod
+from payments.enums.payment_provider import PaymentProvider
 
 
 class PaymentService:
-    """Handles payment methods and processes payments for orders."""
+    """Handles supported payment providers and initiates checkout flows."""
 
     def __init__(self, user):
         """
@@ -15,62 +19,104 @@ class PaymentService:
         """
         self.user = user
 
-    def validate_pay_method(self, method: str) -> bool:
+    def validate_payment_provider(self, provider: str) -> bool:
         """
-        Check if the provided payment method is supported.
+        Check if the provided payment provider is supported.
 
         Args:
-            method (str): The payment method to validate.
+            provider (str): The payment provider to validate (e.g. 'stripe', 'paypal').
 
         Returns:
             bool: True if supported, False otherwise.
         """
         try:
-            PaymentMethod(method)  # try to cast
+            PaymentProvider(provider)
             return True
         except ValueError:
             return False
 
-    def save_method_to_order(self, order: Order, method: str) -> None:
+    def save_payment_provider_to_order(self, order: Order, provider: str) -> None:
         """
-        Save the selected payment method to the order.
+        Save the selected payment provider (e.g. 'stripe', 'paypal') to the order.
 
         Args:
             order (Order): The order instance to update.
-            method (str): The selected payment method.
+            provider (str): The selected payment provider.
 
         Raises:
-            ValueError: If the method is not supported.
+            ValueError: If the provider is not supported.
         """
-        if not self.validate_pay_method(method):
-            raise ValueError(f"Invalid payment method: {method}")
-        # Assuming order has a field 'payment_method' to store the selected method
-        order.payment_method = method
+        if not self.validate_payment_provider(provider):
+            raise ValueError(f"Invalid payment provider: {provider}")
+
+        order.payment_provider = provider
         order.save()
 
-    def get_supported_methods(self) -> list[str]:
+    def get_supported_payment_providers(self) -> list[str]:
         """
-        Return all supported payment methods.
+        Return all supported payment providers.
 
         Returns:
-            List[str]: A list of valid payment method strings.
+            list[str]: A list of valid payment provider strings (e.g. ['stripe', 'paypal']).
         """
-        return [method.value for method in PaymentMethod]
+        return [provider.value for provider in PaymentProvider]
 
     def process_payment(
-        self, method: str, order: Order, success_url=None, cancel_url=None
+        self, provider_key: str, order: Order, success_url=None, cancel_url=None
     ) -> dict:
-        provider_class = PROVIDER_MAP.get(method)
+        """
+        Create a checkout session with the selected payment provider.
+
+        Args:
+            provider_key (str): The identifier of the provider (e.g. 'stripe', 'paypal').
+            order (Order): The order to be paid.
+            success_url (str): URL to redirect after successful payment.
+            cancel_url (str): URL to redirect if payment is cancelled.
+
+        Returns:
+            dict: A result dictionary with status and redirect URL or error message.
+        """
+        provider_class = PROVIDER_MAP.get(provider_key)
         if not provider_class:
-            return {"status": "unsupported", "message": "Unsupported method."}
+            return {"status": "unsupported", "message": "Unsupported provider."}
 
         provider = provider_class(self.user, order)
 
         if hasattr(provider, "create_checkout_session"):
             url = provider.create_checkout_session(success_url, cancel_url)
             return {"status": "ok", "redirect_url": url}
-        else:
-            return {
-                "status": "unsupported",
-                "message": "Provider does not support checkout.",
-            }
+
+        return {
+            "status": "unsupported",
+            "message": "Provider does not support checkout.",
+        }
+
+    def store_payment_method_from_stripe_intent_and_save_in_order(
+        self, order: Order, payment_intent_id: str
+    ) -> None:
+        """
+        Retrieves the Stripe PaymentIntent and stores the used payment method in the order.
+
+        Args:
+            order (Order): The related order to update.
+            payment_intent_id (str): The Stripe payment intent ID from the session.
+        """
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
+        try:
+            intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+            method_list = intent.get("payment_method_types", [])
+            if method_list:
+                used_method = method_list[0]
+                order.payment_method = used_method
+                order.save()
+                debug(
+                    f"[PAYMENT SERVICE] Stored payment method '{used_method}' in order {order.id}"
+                )
+            else:
+                debug(
+                    f"[PAYMENT SERVICE] No payment method found for PaymentIntent {payment_intent_id}"
+                )
+        except Exception as e:
+            debug(f"[PAYMENT SERVICE] Stripe intent fetch failed: {e}")

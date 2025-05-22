@@ -9,13 +9,13 @@ from orders.services.order_service import OrderService
 
 
 @login_required
-def select_payment_method_view(request):
+def select_payment_provider_view(request):
     """
-    Displays the payment method selection page and processes user input.
+    Displays the payment provider selection page and processes user input.
 
-    On GET requests, renders a template with the list of supported payment methods.
-    On POST requests, validates the selected method and stores it in the session.
-    If the method is valid, redirects to the payment start view.
+    On GET requests, renders a template with the list of supported payment providers.
+    On POST requests, validates the selected provider and stores it in the session.
+    If the provider is valid, redirects to the payment start view.
     If invalid, re-renders the form with an error message.
 
     Args:
@@ -25,27 +25,27 @@ def select_payment_method_view(request):
         HttpResponse: Rendered template or redirect to the next step in the payment flow.
     """
     payment_service = PaymentService(request.user)
-    supported_methods = payment_service.get_supported_methods()
+    supported_providers: list = payment_service.get_supported_payment_providers()
 
     # check if the form was submitted and checked if its no GHOSTPOST (first time entering page, had the wrong payment error..)
     if request.method == "POST" and "submit_btn" in request.POST:
         # debug("POST DATA:", request.POST)
-        method = request.POST.get("method")
-        # debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa", method)
+        provider = request.POST.get("provider")
+        # debug("METHOD:", method)
 
-        # 1. validate method
-        if not payment_service.validate_pay_method(method):
+        # 1. validate provider
+        if not payment_service.validate_payment_provider(provider):
             return render(
                 request,
-                "select_payment_method.html",
+                "select_payment_provider.html",
                 {
-                    "supported_methods": supported_methods,
-                    "error": "Invalid payment method selected.",
+                    "supported_providers": supported_providers,
+                    "error": "Invalid payment provider selected.",
                 },
             )
 
         # 2. valid input --> next step --> save in session
-        request.session["selected_payment_method"] = method
+        request.session["selected_payment_provider"] = provider
         # debug("SELECTED PAYMENT METHOD:", method)
         # debug("SESSION AFTER SELECTION:", dict(request.session))
 
@@ -54,7 +54,9 @@ def select_payment_method_view(request):
 
     # GET: show page
     return render(
-        request, "select_payment_method.html", {"supported_methods": supported_methods}
+        request,
+        "select_payment_provider.html",
+        {"supported_providers": supported_providers},
     )
 
 
@@ -78,20 +80,20 @@ def start_payment_view(request):
         HttpResponseRedirect: Redirect to Stripe Checkout or another view
         depending on success, failure, or missing data.
     """
-    method = request.session.get("selected_payment_method")
+    provider = request.session.get("selected_payment_provider")
 
-    if not method:
-        return redirect("payments:select_payment_method")
+    if not provider:
+        return redirect("payments:select_payment_provider")
 
     payment_service = PaymentService(request.user)
 
     # Validate
-    if not payment_service.validate_pay_method(method):
-        return redirect("payments:select_payment_method")
+    if not payment_service.validate_payment_provider(provider):
+        return redirect("payments:select_payment_provider")
 
     # create order
     order_service = OrderService(user=request.user, request=request)
-    order = order_service.process_order(payment_method=method)
+    order = order_service.process_order(payment_provider=provider)
 
     if not order:
         request.session["error_message"] = "Could not create order."
@@ -104,7 +106,7 @@ def start_payment_view(request):
 
     # Stripe Checkout start
     response = payment_service.process_payment(
-        method=method,
+        provider_key=provider,
         order=order,
         success_url=success_url,
         cancel_url=cancel_url,
@@ -114,7 +116,7 @@ def start_payment_view(request):
         return render(request, "error.html", {"error": response.get("message")})
 
     # delete the selected payment method from session that in new session the user can select a new payment method
-    request.session.pop("selected_payment_method", None)
+    request.session.pop("selected_payment_provider", None)
 
     return redirect(
         response["redirect_url"]
@@ -132,7 +134,7 @@ def cancel_payment_view(request):
 
     if order:
         order_service = OrderService(request.user, request, order)
-        order_service.set_payment_failed()
+        order_service.set_payment_cancelled()
 
     request.session["error_message"] = "Payment was cancelled."
     return redirect("payments:error_payment")

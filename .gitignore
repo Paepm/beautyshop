@@ -10,4 +10,3 @@ db.sqlite3
 Thumbs.db
 *.log
 .devcontainer/
-.git/

@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from orders.models import Order
 from orders.enums.paymentstatus import PaymentStatus
 from orders.services.order_service import OrderService
+from payments.services.payment_service import PaymentService
 
 
 class StripeWebhookHandler:
@@ -56,51 +57,100 @@ class StripeWebhookHandler:
             str: Result message for logging/debugging.
         """
         session = event["data"]["object"]
-        order_id = session["metadata"].get("order_id")
+        debug(f"[HANDLECOMPLETED] session: {session}")
 
-        debug(f"[WEBHOOK] checkout.session.completed at {now()}")
+        order_id = session["metadata"].get("order_id")
+        debug(f"[HANDLECOMPLETED] checkout.session.completed at {now()}")
 
         if not order_id:
-            debug("❌ No order_id found in session metadata.")
+            debug("No order_id found in session metadata.")
             return "Ignored"
 
         try:
             order = Order.objects.get(id=order_id)
         except Order.DoesNotExist:
-            debug(f"❌ Order {order_id} not found in database.")
+            debug(f"[HANDLECOMPLETED]Order {order_id} not found in database.")
             return "Ignored"
 
         if order.payment_status == PaymentStatus.PAID:
-            debug(f"⏭️ Order {order_id} already marked as PAID.")
+            debug(f"Order {order_id} already marked as PAID.")
             return "Already paid"
 
+        # set order as paid
         order_service = OrderService(order.user, self.request, order)
         order_service.set_paid()
-        debug(f"✅ Order {order_id} marked as PAID + PROCESSING")
+        debug(f"[HANDLECOMPLETED]Order {order_id} marked as PAID + PROCESSING")
+
+        # find the payment method and save it in the order
+        payment_service = PaymentService(order.user)
+        payment_intent_id = session.get("payment_intent")
+        if payment_intent_id:
+            payment_service.store_payment_method_from_stripe_intent_and_save_in_order(
+                order, payment_intent_id
+            )
 
         return "Handled: checkout.session.completed"
 
     def handle_payment_intent_payment_failed(self, event) -> str:
-        intent = event["data"]["object"]
-        order_id = intent["metadata"].get("order_id")
+        session = event["data"]["object"]
+        order_id = session["metadata"].get("order_id")
 
         if not order_id:
-            debug("[FAILED] No Order ID in metadata")
+            debug("[HANDLEFAILED] No Order ID in metadata")
             return "Ignored"
 
         try:
             order = Order.objects.get(id=order_id)
         except Order.DoesNotExist:
-            debug(f"[FAILED] Order {order_id} not found")
+            debug(f"[HANDLEFAILED] Order {order_id} not found")
             raise Exception("Order not found yet")
 
         if order.payment_status == PaymentStatus.OPEN:
             OrderService(order.user, self.request, order).set_payment_failed()
-            debug(f"[FAILED] Set order {order_id} to FAILED")
+            debug(f"[HANDLEFAILED] Set order {order_id} to FAILED")
         else:
-            debug(f"[SKIP] Order {order_id} already handled")
+            debug(f"[HANDLEFAILEDSKIP] Order {order_id} already handled")
+
+        # find the payment method and save it in the order
+        payment_service = PaymentService(order.user)
+        payment_intent_id = session.get("id")
+        if payment_intent_id:
+            try:
+                payment_service.store_payment_method_from_stripe_intent_and_save_in_order(
+                    order, payment_intent_id
+                )
+            except Exception as e:
+                debug(f"[HANDLEFAILED] Could not extract payment method: {e}")
 
         return "Handled: payment_intent.payment_failed"
+
+    def handle_payment_intent_payment_canceled(self, event) -> str:
+        """
+        Handles the 'payment_intent.canceled' event from Stripe.
+        This occurs when the user aborts the payment process manually.
+        """
+        intent = event["data"]["object"]
+        order_id = intent["metadata"].get("order_id")
+
+        if not order_id:
+            debug("[HANDLECANCELED] No Order ID in metadata")
+            return "Ignored"
+
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            debug(f"[HANDLECANCELED] Order {order_id} not found")
+            return "Order not found"
+
+        if order.payment_status == PaymentStatus.OPEN:
+            OrderService(order.user, self.request, order).set_payment_cancelled()
+            debug(
+                f"[HANDLECANCELED] Set order {order_id} to CANCELED (aborted by user)"
+            )
+            return "Handled: payment_intent.canceled"
+        else:
+            debug(f"[HANDLECANCELED] Order {order_id} was already handled")
+            return "Already handled"
 
     def handle_default(self, event) -> str:
         """

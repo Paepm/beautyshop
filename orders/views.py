@@ -8,7 +8,7 @@ from .models import Order
 from payments.services.payment_service import PaymentService
 from beautyshop.logging_config import setup_logger
 from payments.services.providers.stripe_provider import StripeProvider
-from payments.enums.payment_methods import PaymentMethod
+from payments.enums.payment_provider import PaymentProvider
 
 # create a logger instance
 logger = setup_logger(__name__)
@@ -33,13 +33,13 @@ def create_order_after_payment_view(request):
 
     payment_service = PaymentService(request.user)
 
-    if not payment_service.validate_pay_method(method):
+    if not payment_service.validate_payment_provider(method):
         logger.warning(
             f"[ORDER] Invalid payment method selected for user: {request.user.email}"
         )
         return redirect("cart:cart_detail")
 
-    payment_service.save_method_to_order(order, method)
+    payment_service.save_payment_provider_to_order(order, method)
 
     CartService(request.user).clear_cart()
 
