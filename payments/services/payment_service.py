@@ -4,7 +4,7 @@ import stripe
 
 from orders.models import Order
 from payments.services.provider_registry import PROVIDER_MAP
-from payments.enums.payment_provider import PaymentProvider
+from payments.enums.payment_providers import PaymentProviders
 
 
 class PaymentService:
@@ -30,7 +30,7 @@ class PaymentService:
             bool: True if supported, False otherwise.
         """
         try:
-            PaymentProvider(provider)
+            PaymentProviders(provider)
             return True
         except ValueError:
             return False
@@ -59,7 +59,7 @@ class PaymentService:
         Returns:
             list[str]: A list of valid payment provider strings (e.g. ['stripe', 'paypal']).
         """
-        return [provider.value for provider in PaymentProvider]
+        return [provider.value for provider in PaymentProviders]
 
     def process_payment(
         self, provider_key: str, order: Order, success_url=None, cancel_url=None

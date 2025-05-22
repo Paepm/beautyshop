@@ -104,6 +104,11 @@ class PayPalWebhookHandler:
         if order.payment_status == PaymentStatus.PAID:
             return "Already marked as paid"
 
+        # STEP 5: this payment_method is hardcoded, because for paypal provider is only the paypal payment_method useable -> and save updated order
+        order.payment_method = "paypal"
+        order.save(update_fields=["payment_method"])
+
+        # STEP 6: Set order as paid
         OrderService(order.user, self.request, order).set_paid()
         debug(f"[PAYPAL] Order {order_id} marked as PAID after capture")
 
@@ -111,19 +116,25 @@ class PayPalWebhookHandler:
 
     def handle_PAYMENT_CAPTURE_DENIED(self, event: dict) -> str:
         debug("[PAYPAL DENIED]", event)
-        resource = event["resource"]
-        order_id = resource["custom_id"]
+
+        order_id = self._get_order_id_from_event(event)
+        if not order_id:
+            debug(["PAYPAL DENIED] No order_id found in event"])
+            return "Ignored – no order_id"
 
         try:
             order = Order.objects.get(id=order_id)
         except Order.DoesNotExist:
+            debug(f"[PAYPAL DENIED] Order {order_id} not found.")
             return "Order not found"
 
-        if order.payment_status == PaymentStatus.OPEN:
-            order.payment_status = PaymentStatus.FAILED
-            order.order_status = OrderStatus.FAILED
-            order.save()
+        if order.payment_status != PaymentStatus.FAILED:
+            order.payment_method = "paypal"
+            OrderService(order.user, self.request, order).set_payment_failed()
             debug(f"[PAYPAL DENIED] Order {order_id} marked as FAILED.")
+
+        else:
+            debug(f"[PAYPAL DENIED] Order {order_id} was already FAILED.")
 
         return "Handled: PAYMENT.CAPTURE.DENIED"
 

@@ -3,6 +3,7 @@ from decouple import config
 import stripe
 
 from payments.services.providers.base import BasePaymentProvider
+from payments.enums.payment_methods import PaymentMethodTypes
 
 
 class StripeProvider(BasePaymentProvider):
@@ -27,11 +28,11 @@ class StripeProvider(BasePaymentProvider):
 
         session = stripe.checkout.Session.create(
             payment_method_types=[
-                "card",
-                "paypal",
-                "sofort",
-                "sepa_debit",
-                "bancontact",
+                PaymentMethodTypes.CARD.value,
+                PaymentMethodTypes.SOFORT.value,
+                PaymentMethodTypes.BANCONTACT.value,
+                PaymentMethodTypes.KLARNA.value,
+                PaymentMethodTypes.SEPA_DEBIT.value,
             ],  # stripe supports multiple payment methods
             line_items=[
                 {

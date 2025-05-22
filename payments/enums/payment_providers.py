@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class PaymentProvider(str, Enum):
+class PaymentProviders(str, Enum):
     STRIPE = "stripe"
     PAYPAL = "paypal"
 

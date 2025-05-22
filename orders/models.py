@@ -3,7 +3,7 @@ from django.conf import settings
 
 from cart.models import CartItem
 from shop.models import Item as product
-from payments.enums.payment_provider import PaymentProvider
+from payments.enums.payment_providers import PaymentProviders
 from orders.enums.paymentstatus import PaymentStatus
 from orders.enums.orderstatus import OrderStatus
 
@@ -25,7 +25,7 @@ class Order(models.Model):
 
     # get the payment_provider from the provicer_payment_method.py Enum and convert to a list of tuples
     payment_provider = models.CharField(
-        choices=[(e.value, e.name.title()) for e in PaymentProvider],
+        choices=[(e.value, e.name.title()) for e in PaymentProviders],
         max_length=80,
         # default=PaymentProvider.STRIPE.value,
     )

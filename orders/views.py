@@ -8,7 +8,7 @@ from .models import Order
 from payments.services.payment_service import PaymentService
 from beautyshop.logging_config import setup_logger
 from payments.services.providers.stripe_provider import StripeProvider
-from payments.enums.payment_provider import PaymentProvider
+from payments.enums.payment_providers import PaymentProviders
 
 # create a logger instance
 logger = setup_logger(__name__)
