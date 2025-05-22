@@ -1,12 +1,13 @@
 from enum import Enum
 
 
-class PaymentMethod(str, Enum):
-    CARD = "card"
+class PaymentProvider(str, Enum):
+    STRIPE = "stripe"
     PAYPAL = "paypal"
 
+    @property
     def label(self) -> str:
         return {
-            self.CARD: "Credit Card",
+            self.STRIPE: "Stripe",
             self.PAYPAL: "PayPal",
-        }
+        }[self]

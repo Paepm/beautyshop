@@ -36,7 +36,7 @@ class OrderCreator:
             self.logger.warning(f"[CART] No cart found for user: {self.user.email}")
             return None
 
-    def create_order(self, payment_method: str | None = None) -> Order | None:
+    def create_order(self, payment_provider: str | None = None) -> Order | None:
         """
         Create a new Order object and related OrderItems based on the user's cart.
 
@@ -62,7 +62,7 @@ class OrderCreator:
                 user=self.user,
                 total_price=total_price,
                 created_at=timezone.now(),
-                payment_method=payment_method or "",
+                payment_provider=payment_provider if payment_provider else None,
                 payment_status=PaymentStatus.OPEN,
                 order_status=OrderStatus.PENDING,
             )

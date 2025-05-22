@@ -73,5 +73,5 @@ class EmailVerificationService:
             str: The full verification URL to be sent via email.
         """
         return self.request.build_absolute_uri(
-            reverse("accounts:verify_email", kwargs={"token": token})
+            reverse("emails:verify_email", kwargs={"token": token})
         )

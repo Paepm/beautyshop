@@ -29,7 +29,7 @@ class OrderService:
         except ObjectDoesNotExist:
             return None
 
-    def process_order(self, payment_method: str) -> Order:
+    def process_order(self, payment_provider: str) -> Order:
         """
         Returns an existing open order from session or creates a new one.
 
@@ -39,7 +39,9 @@ class OrderService:
         if existing_order:
             return existing_order
 
-        new_order = OrderCreator(self.user).create_order(payment_method=payment_method)
+        new_order = OrderCreator(self.user).create_order(
+            payment_provider=payment_provider
+        )
         self.session["order_id"] = new_order.id
         return new_order
 
@@ -55,9 +57,7 @@ class OrderService:
             return  # Already paid
 
         self.order.payment_status = PaymentStatus.PAID
-        self.order.order_status = (
-            OrderStatus.PROCESSING
-        )  # automatically set to processing
+        self.order.order_status = OrderStatus.PROCESSING
         self.order.save()
 
     def set_payment_failed(self) -> None:
@@ -87,4 +87,20 @@ class OrderService:
             return
 
         self.order.payment_status = PaymentStatus.PROCESSING
+        self.order.order_status = OrderStatus.PROCESSING
+        self.order.save()
+
+    def set_payment_cancelled(self) -> None:
+        """ "
+        Sets the order payment status to cancelled.
+        Args:
+            order (Order): The order to update.
+        Returns:
+            None
+        """
+        if self.order.payment_status == PaymentStatus.PAID:
+            return
+
+        self.order.payment_status = PaymentStatus.FAILED
+        self.order.order_status = OrderStatus.CANCELLED
         self.order.save()

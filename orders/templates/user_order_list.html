@@ -13,6 +13,7 @@
         <strong>Order #{{ order.id }}</strong>
       </a> – {{ order.created_at|date:"d.m.Y H:i" }}<br />
       Order Status: {{ order.order_status}}<br />
+      Payment Provider: {{ order.payment_provider }}<br />
       Payment Status: {{ order.payment_status }}<br />
       Payment Method: {{ order.payment_method }}<br />
       Total: {{ order.total_price }} €
