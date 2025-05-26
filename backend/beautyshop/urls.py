@@ -58,6 +58,9 @@ urlpatterns = [
         auth_views.PasswordResetDoneView.as_view(),
         name="password_reset_complete",
     ),
+    # Urls for FRONTEND STUFF TO GET PRODUCTS AS JSON
+    path("api/products/", include("shop.api_urls")),
+    path("api/accounts/", include("accounts.api_urls")),
 ]
 
 # for the template static files

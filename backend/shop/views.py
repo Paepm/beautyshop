@@ -3,6 +3,11 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from devtools import debug
 
+# FRONTEND STUFF IMPORTS
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import ItemSerializer
+
 from .models import Item
 from .services.shop_service import ShopService
 
@@ -12,37 +17,43 @@ def product_list(request):
     Display the list of available products in the shop.
     """
     products = Item.objects.all()
-    return render(request, 'shop/product_list.html', {"products": products})
+    return render(request, "shop/product_list.html", {"products": products})
+
 
 def about(request):
     """
     Render the 'About Us' page.
     """
-    return render(request, 'shop/about.html')
+    return render(request, "shop/about.html")
+
 
 def contact(request):
     """
     Render the contact page with contact information.
     """
-    return render(request, 'shop/contact.html')
+    return render(request, "shop/contact.html")
+
 
 def privacy(request):
     """
     Render the privacy (imprint) page.
     """
-    return render(request, 'shop/privacy.html')
+    return render(request, "shop/privacy.html")
+
 
 def agb(request):
     """
     Render the AGB (terms of service) page.
     """
-    return render(request, 'shop/agb.html')
+    return render(request, "shop/agb.html")
+
 
 def terms_and_conditions(request):
     """
     Render the terms and conditions page.
     """
-    return render(request, 'shop/terms_and_conditions.html')
+    return render(request, "shop/terms_and_conditions.html")
+
 
 @login_required
 def add_to_cart(request, product_id):
@@ -58,4 +69,14 @@ def add_to_cart(request, product_id):
         HttpResponseRedirect: Redirects to the referring page or the product list.
     """
     ShopService(request.user).add_to_cart(product_id)
-    return redirect(request.META.get('HTTP_REFERER') or reverse('shop:product_list'))
+    return redirect(request.META.get("HTTP_REFERER") or reverse("shop:product_list"))
+
+
+# FRONTEND STUFF STARTS HERE
+
+
+@api_view(["GET"])
+def api_product_list(request):
+    items = Item.objects.all()
+    serializer = ItemSerializer(items, many=True)
+    return Response(serializer.data)

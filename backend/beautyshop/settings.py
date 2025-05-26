@@ -39,12 +39,7 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "shop",  # Custom app for the beauty shop
-    "cart",  # Custom app for the shopping cart
-    "orders",  # Custom app for order management
-    "accounts",  # Custom app for user accounts
-    "payments",  # Custom app for payment processing
-    "emails",  # Custom app for email handling
+    "django_extensions",  # Django Extensions for additional features
 ]
 
 THIRD_PARTY_APPS = [
@@ -98,6 +93,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "beautyshop.wsgi.application"
 
+# For local dev enviroment, for REACT, to get CSRF token in Browser
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = "Lax"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

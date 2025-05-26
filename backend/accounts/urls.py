@@ -3,6 +3,7 @@ from django.contrib.auth.views import LogoutView
 
 from .views.accounts import views
 from .views.profile import views as profile_views
+from .views.accounts import csrf
 
 app_name = "accounts"
 
@@ -13,4 +14,6 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="shop:product_list"), name="logout"),
     path("profile/", profile_views.profile_view, name="profile"),
     path("profile/edit/", profile_views.edit_profile_view, name="profile_edit"),
+    # FOR FRONTEND STUFF GET CSRF TOKEN
+    path("api/get-csrf/", csrf.get_csrf_token, name="get_csrf_token"),
 ]
