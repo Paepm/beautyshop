@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from .views.accounts import csrf
+from .views.accounts.api_info import AuthInfoView
 from .views.accounts import views as account_views
 
 
@@ -20,8 +20,8 @@ def logout_view(request):
 
 
 urlpatterns = [
-    path("get-csrf/", csrf.get_csrf_token, name="get_csrf_token"),
     path("login/", account_views.login_view, name="login"),
     path("sign_up/", account_views.signup_view, name="sign_up"),
     path("logout/", logout_view, name="logout"),
+    path("me/", AuthInfoView.as_view(), name="auth_info"),
 ]

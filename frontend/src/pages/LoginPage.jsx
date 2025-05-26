@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { fetchCSRFToken } from '../services/csrf';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { useAuth } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContext';
 import axios from '../services/api';
 
 
@@ -12,14 +11,11 @@ function LoginPage() {
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useAuth();
-
+    const { setIsAuthenticated } = useContext(AuthContext);
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            await fetchCSRFToken(); // get the CSRF token before making the login request
-
             const csrftoken = Cookies.get('csrftoken');
 
             await axios.post('/accounts/login/', {

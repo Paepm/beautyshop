@@ -3,7 +3,7 @@ from django.contrib.auth.views import LogoutView
 
 from .views.accounts import views
 from .views.profile import views as profile_views
-from .views.accounts import csrf
+from .views.accounts.api_info import AuthInfoView
 
 app_name = "accounts"
 
@@ -15,5 +15,5 @@ urlpatterns = [
     path("profile/", profile_views.profile_view, name="profile"),
     path("profile/edit/", profile_views.edit_profile_view, name="profile_edit"),
     # FOR FRONTEND STUFF GET CSRF TOKEN
-    path("api/get-csrf/", csrf.get_csrf_token, name="get_csrf_token"),
+    path("api/get-csrf/", AuthInfoView.as_view, name="get_csrf_token"),
 ]

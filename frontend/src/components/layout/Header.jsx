@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useContext } from 'react';
 
-import { useAuth } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import LogoutButton from '../LogoutButton';
 
 function Header() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useContext(AuthContext);
 
     return (
         <header className="p-4 shadow bg-white flex justify-between items-center">

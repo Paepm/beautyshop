@@ -1,29 +1,32 @@
-import React from 'react';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
+import api from '../services/api';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
-import { logoutUser } from '../services/auth';
-import { useAuth } from '../contexts/AuthContext';
-
-
 function LogoutButton() {
+    const { setIsAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useAuth();
 
     const handleLogout = async () => {
         try {
-            await logoutUser();
-            setIsAuthenticated(false); // Update the authentication state to not authenticated
-            navigate('/'); // to the / page after logout
+            const csrftoken = Cookies.get('csrftoken');
+
+            await api.post('/accounts/logout/', {}, {
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+            });
+
+            setIsAuthenticated(false);
+            navigate('/');
         } catch (error) {
             console.error('Logout failed:', error);
         }
     };
 
     return (
-        <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleLogout} className="text-red-600 hover:underline">
             Logout
         </button>
     );
