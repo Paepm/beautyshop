@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost", "1753-62-178-83-52.ngrok-free.app"]
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,6 +46,24 @@ INSTALLED_APPS = [
     "payments",  # Custom app for payment processing
     "emails",  # Custom app for email handling
 ]
+
+THIRD_PARTY_APPS = [
+    # "rest_framework",
+    # "corsheaders",
+]
+
+LOCAL_APPS = [
+    "shop",
+    "cart",
+    "orders",
+    "accounts",
+    "payments",
+    "emails",
+]
+
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
 
 LOGIN_URL = "/accounts:login/"  # URL for login page
 LOGIN_REDIRECT_URL = "/"  # Redirect to Home after login
