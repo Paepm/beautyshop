@@ -5,6 +5,8 @@ import Layout from './components/layout/Layout';
 import ProductList from './components/ProductList';
 import About from './pages/About';
 import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
+
 
 function App() {
   return (
@@ -15,7 +17,7 @@ function App() {
             <Route index element={<ProductList />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<LoginPage />} />
-            {/* Add more routes as needed */}
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Routes>
       </BrowserRouter>

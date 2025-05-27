@@ -16,7 +16,7 @@ function Header() {
                 {isAuthenticated ? (
                     <>
                         <LogoutButton />
-                        <Link to="/profile">Profil</Link>
+                        <Link to="/profile">Profile</Link>
                     </>
                 ) : (
                     <>
