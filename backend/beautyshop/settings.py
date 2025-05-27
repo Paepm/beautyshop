@@ -94,9 +94,22 @@ TEMPLATES = [
 WSGI_APPLICATION = "beautyshop.wsgi.application"
 
 # For local dev enviroment, for REACT, to get CSRF token in Browser
+
+SESSION_COOKIE_NAME = "sessionid"
+
+
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = "Lax"
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

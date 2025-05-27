@@ -1,32 +1,24 @@
 import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
-import api from '../services/api';
-import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '../services/auth';
+import { AuthContext } from '../contexts/AuthContext';
 
 function LogoutButton() {
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const { refreshAuth } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
-            const csrftoken = Cookies.get('csrftoken');
-
-            await api.post('/accounts/logout/', {}, {
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                },
-            });
-
-            setIsAuthenticated(false);
-            navigate('/');
+            await logoutUser();           // backend logout request
+            await refreshAuth();          // AuthContext refresh
+            navigate('/');                // than back to home
         } catch (error) {
-            console.error('Logout failed:', error);
+            console.error("Logout failed", error);
         }
     };
 
     return (
-        <button onClick={handleLogout} className="text-red-600 hover:underline">
+        <button onClick={handleLogout}>
             Logout
         </button>
     );

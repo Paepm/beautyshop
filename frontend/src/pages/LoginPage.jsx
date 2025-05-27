@@ -1,9 +1,9 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 
 import { AuthContext } from '../contexts/AuthContext';
 import axios from '../services/api';
+import { loginUser } from '../services/auth';
 
 
 function LoginPage() {
@@ -16,17 +16,7 @@ function LoginPage() {
         e.preventDefault();
 
         try {
-            const csrftoken = Cookies.get('csrftoken');
-
-            await axios.post('/accounts/login/', {
-                username_or_email: usernameOrEmail,
-                password: password,
-            }, {
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                },
-            });
-
+            await loginUser(usernameOrEmail, password); // Call the loginUser function to perform the login
             setIsAuthenticated(true); // Update the authentication state to is authenticated
             navigate('/');
         } catch (error) {
