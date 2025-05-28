@@ -5,10 +5,10 @@ function ProductCard({ product }) {
     const handleAddToCart = async () => {
         try {
             await api.post(`/cart/add/${product.id}/`);
-            alert('Produkt wurde zum Warenkorb hinzugefügt!');
+            alert('Product added to cart successfully!');
         } catch (error) {
-            console.error('Fehler beim Hinzufügen zum Warenkorb:', error);
-            alert('Fehler beim Hinzufügen zum Warenkorb');
+            console.error('Error add to cart:', error);
+            alert('Issue adding product to cart. Please try again later.');
         }
     };
 
@@ -25,7 +25,7 @@ function ProductCard({ product }) {
                 onClick={handleAddToCart}
                 className="mt-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
             >
-                In den Warenkorb
+                Add to Cart
             </button>
         </div>
     );

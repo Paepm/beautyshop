@@ -29,6 +29,7 @@ urlpatterns = [
     path("api/products/", include("shop.urls")),
     path("api/accounts/", include("accounts.urls")),
     path("api/emails/", include("emails.urls", namespace="emails")),
+    path("api/cart/", include("cart.urls")),
 ]
 
 # for the template static files

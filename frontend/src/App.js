@@ -9,6 +9,7 @@ import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import CheckEmailPage from './pages/CheckEmailPage';
+import CartPage from './pages/CartPage';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/sign_up" element={<RegisterPage />} />
             <Route path="/verify/:token" element={<VerifyEmailPage />} />
             <Route path="/check_email" element={<CheckEmailPage />} />
+            <Route path="/cart" element={<CartPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
