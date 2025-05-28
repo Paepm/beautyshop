@@ -1,11 +1,13 @@
 from rest_framework import serializers
 
-from accounts.models import CustomUser  # the custom user model
+from accounts.models import CustomUser
+from django_countries.fields import CountryField
+from django_countries.serializer_fields import CountryField as CountrySerializerField
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # country is not a JSON so need to use source seperatly
-    country = serializers.CharField(source="country.name", read_only=True)
+    # country is not a field in CustomUser, but a CountryField
+    country = CountrySerializerField()
 
     class Meta:
         model = CustomUser
@@ -13,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "is_superuser",
             "user_permissions",
+            "groups",
         ]  # sensible fields enabled
         read_only_fields = [
             "id",

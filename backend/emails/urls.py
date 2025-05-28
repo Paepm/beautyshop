@@ -7,7 +7,7 @@ from emails.views.password_reset_views import CustomPasswordResetConfirmView
 app_name = "emails"
 
 urlpatterns = [
-    path("verify_email/<str:token>/", views.verify_account_view, name="verify_email"),
+    path("verify/<str:token>/", views.verify_account_view, name="verify_email"),
     path(
         "password_reset_email/",
         auth_views.PasswordResetView.as_view(

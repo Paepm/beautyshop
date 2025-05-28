@@ -32,8 +32,8 @@ class EmailVerificationService:
             bool: True if sending was successful, False otherwise.
         """
         try:
-            token = self.generate_signed_token()
-            verification_url = self.get_verification_url(token)
+            token = self._generate_signed_token()
+            verification_url = self._get_verification_url(token)
 
             subject = EmailTemplate.WELCOME.value["subject"]
             message = EmailTemplate.WELCOME.value["message"].format(
@@ -49,7 +49,7 @@ class EmailVerificationService:
             self.logger.exception("Failed to send verification email: %s", str(e))
             return False
 
-    def generate_signed_token(self) -> str:
+    def _generate_signed_token(self) -> str:
         """
         Create a signed token from the user's form data for secure email verification.
 
@@ -62,7 +62,7 @@ class EmailVerificationService:
         )  # Convert date to string
         return signing.dumps(data)
 
-    def get_verification_url(self, token: str) -> str:
+    def _get_verification_url(self, token: str) -> str:
         """
         Build the full verification URL using the signed token.
 
@@ -72,6 +72,4 @@ class EmailVerificationService:
         Returns:
             str: The full verification URL to be sent via email.
         """
-        return self.request.build_absolute_uri(
-            reverse("emails:verify_email", kwargs={"token": token})
-        )
+        return VerificationEmailService.get_verification_url(token)

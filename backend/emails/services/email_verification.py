@@ -2,8 +2,6 @@ from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.conf import settings
 
-from accounts.models import CustomUser
-from emails.enums.email_templates import EmailTemplate
 from beautyshop.logging_config import setup_logger
 
 
@@ -44,3 +42,16 @@ class VerificationEmailService:
             logger.exception(
                 "Unexpected error while sending email to %s: %s", email, str(e)
             )
+
+    @staticmethod
+    def get_verification_url(token: str) -> str:
+        """
+        Generate a verification URL containing the signed token.
+
+        Args:
+            token (str): A signed token containing user registration data.
+
+        Returns:
+            str: The full verification URL.
+        """
+        return f"http://localhost:3000/verify/{token}"  # just for dev, is needed because django and react conflict! need to change in production to right url,
