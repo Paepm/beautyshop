@@ -10,3 +10,4 @@ db.sqlite3
 Thumbs.db
 *.log
 .devcontainer/
+node_modules/
