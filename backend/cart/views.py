@@ -64,7 +64,7 @@ def add_product_to_cart(request, product_id):
 
 @require_POST
 @login_required
-def update_cart_item(request, product_id):
+def update_cart_product(request, product_id):
     action = request.POST.get("action")
     quantity = request.POST.get("quantity")
 
@@ -81,3 +81,20 @@ def update_cart_item(request, product_id):
     )
 
     return JsonResponse({"success": True})
+
+
+@require_POST
+@login_required
+def remove_cart_product(request, product_id):
+    """
+    Remove a product from the cart.
+    """
+    debug(f"[REMOVE_CART_PRODUCT] Removing product with ID: {product_id}")
+    try:
+        CartService(request.user).remove_product(product_id=product_id)
+        return JsonResponse({"success": True})
+    except Exception as e:
+        debug(f"[REMOVE_CART_PRODUCT] Error removing product: {e}")
+        return JsonResponse(
+            {"success": False, "error": "Produkt nicht im Warenkorb"}, status=404
+        )

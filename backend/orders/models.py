@@ -1,8 +1,8 @@
 from django.db import models
 from django.conf import settings
 
-from cart.models import CartItem
-from shop.models import Item as product
+from cart.models import CartProduct
+from shop.models import Product as product
 from payments.enums.payment_providers import PaymentProviders
 from orders.enums.paymentstatus import PaymentStatus
 from orders.enums.orderstatus import OrderStatus

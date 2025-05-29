@@ -1,8 +1,7 @@
-from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from devtools import debug
 
-from cart.models import Cart, CartItem
+from cart.models import Cart, CartProduct
 from beautyshop.logging_config import setup_logger
 
 
@@ -34,7 +33,7 @@ class CartService:
         except Cart.DoesNotExist:
             return None
 
-    def get_cart_products(self) -> list[CartItem]:
+    def get_cart_products(self) -> list[CartProduct]:
         """
         Return all items in the user's cart.
 
@@ -53,7 +52,7 @@ class CartService:
         """
         return sum(item.model_get_total_price() for item in self.get_cart_products())
 
-    def remove_item(self, item_id: int) -> None:
+    def remove_product(self, product_id: int) -> None:
         """
         Remove a specific item from the user's cart.
 
@@ -63,9 +62,14 @@ class CartService:
         Returns:
             None
         """
+        debug(f"Removing product {product_id}")
         if self.cart:
-            item: CartItem = get_object_or_404(CartItem, id=item_id, cart=self.cart)
-            item.delete()
+            debug(f"Cart found for user {self.user.username}")
+            product: CartProduct = get_object_or_404(
+                CartProduct, id=product_id, cart=self.cart
+            )
+            debug(f"Product found: {product.product.name}")
+            product.delete()
 
     def update_quantity(
         self, item_id: int, action: str = None, quantity: int = None
@@ -84,7 +88,7 @@ class CartService:
         if not self.cart:
             return
 
-        item: CartItem = get_object_or_404(CartItem, id=item_id, cart=self.cart)
+        item: CartProduct = get_object_or_404(CartProduct, id=item_id, cart=self.cart)
 
         if action == "increment":
             item.quantity += 1
@@ -101,26 +105,6 @@ class CartService:
                 )
                 return  # Handle invalid quantity input
         item.save()
-
-    # def add_product(self, product_id: int, quantity: int) -> None:
-    #     """
-    #     Adds a product to the cart. If it already exists, increment the quantity.
-
-    #     Args:
-    #         product_id (int): ID of the product to add.
-    #         quantity (int): Amount to add (default: 1).
-    #     """
-    #     if not self.cart:
-    #         return
-
-    #     try:
-    #         item = CartItem.objects.get(product_id=product_id, cart=self.cart)
-    #         debug(quantity)
-    #         item.quantity += quantity
-    #         item.save()
-    #     except CartItem.DoesNotExist:
-    #         product = .objects.get(id=product_id)
-    #         CartItem.objects.create(cart=self.cart, product=product, quantity=quantity)
 
     def clear_cart(self) -> None:
         """

@@ -46,10 +46,15 @@ const CartPage = () => {
 
 
 
-    const removeFromCart = async (productId) => {
+    const removeFromCart = async (ItemId) => {
         try {
-            await api.post(`cart/remove/${productId}/`);
-            fetchCart(); // aktualisieren
+            const csrfToken = Cookies.get('csrftoken');
+            await api.post(`cart/remove/${ItemId}/`, null, {
+                headers: {
+                    'X-CSRFToken': csrfToken,  // CSRF Token mitschicken
+                },
+            });
+            fetchCart(); // reload cart after removal
         } catch (error) {
             console.error('Fehler beim Entfernen:', error);
         }
@@ -63,8 +68,8 @@ const CartPage = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            <h2 className="text-2xl font-semibold mb-4">Dein Warenkorb</h2>
-            <p className="text-sm text-gray-600 mb-6">({cartItems.length} Artikel)</p>
+            <h2 className="text-2xl font-semibold mb-4">Your Cart</h2>
+            <p className="text-sm text-gray-600 mb-6">({cartItems.length} Artikle)</p>
 
             <ul className="space-y-6">
                 {cartItems.map((item) => (
@@ -75,24 +80,24 @@ const CartPage = () => {
                                 {item.quantity} × €{item.product.price.toFixed(2)}
                             </p>
                             <p className="text-sm text-gray-800">
-                                Zwischensumme: €{(item.quantity * item.product.price).toFixed(2)}
+                                Subtotal: €{(item.quantity * item.product.price).toFixed(2)}
                             </p>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <button
-                                onClick={() => updateQuantity(item.id, "decrement")}
+                                onClick={() => {
+                                    if (item.quantity > 1) {
+                                        updateQuantity(item.id, "decrement");
+                                    }
+                                }}
                                 className="px-2 py-1 border rounded"
                             >
-                                −
+                                –
                             </button>
-                            <input
-                                type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(e) => updateQuantity(item.id, null, e.target.value)}
-                                className="w-14 border rounded text-center"
-                            />
+
+                            <span className="w-6 text-center">{item.quantity}</span>
+
                             <button
                                 onClick={() => updateQuantity(item.id, "increment")}
                                 className="px-2 py-1 border rounded"
@@ -100,10 +105,10 @@ const CartPage = () => {
                                 +
                             </button>
                             <button
-                                onClick={() => removeFromCart(item.product.id)}
+                                onClick={() => removeFromCart(item.id)}
                                 className="ml-4 px-3 py-1 text-red-600 hover:underline"
                             >
-                                Entfernen
+                                delete
                             </button>
                         </div>
                     </li>
@@ -112,7 +117,7 @@ const CartPage = () => {
             </ul>
 
             <div className="mt-8 text-right font-semibold text-lg">
-                Gesamt: €{totalPrice.toFixed(2)}
+                Summary: €{totalPrice.toFixed(2)}
             </div>
         </div>
     );
