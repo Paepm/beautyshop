@@ -16,6 +16,6 @@ urlpatterns = [
     path("profile/", user_profile_view, name="profile"),
     path("logout/", logout_view, name="logout"),
     path("me/", AuthInfoView.as_view(), name="auth_info"),
-    path("api/get-csrf/", AuthInfoView.as_view, name="get_csrf_token"),
+    path("get-csrf/", AuthInfoView.as_view(), name="get_csrf_token"),
     path("countries/", CountryListView.as_view(), name="country_list"),
 ]

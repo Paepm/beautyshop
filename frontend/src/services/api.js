@@ -9,5 +9,7 @@ const api = axios.create({
     baseURL: '/api/',
     withCredentials: true,  // for the sessionid cookie from Django backend
 });
+console.log("Axios baseURL:", api.defaults.baseURL);
+
 
 export default api;

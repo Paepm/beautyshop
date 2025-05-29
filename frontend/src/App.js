@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 
 import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/layout/Layout';
@@ -10,9 +11,13 @@ import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import CheckEmailPage from './pages/CheckEmailPage';
 import CartPage from './pages/CartPage';
-
+import { ensureCsrfCookie } from './services/csrf';
 
 function App() {
+  useEffect(() => {
+    ensureCsrfCookie();
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -21,11 +26,11 @@ function App() {
             <Route index element={<ProductList />} />
             <Route path="about" element={<About />} />
             <Route path="login" element={<LoginPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/sign_up" element={<RegisterPage />} />
-            <Route path="/verify/:token" element={<VerifyEmailPage />} />
-            <Route path="/check_email" element={<CheckEmailPage />} />
-            <Route path="/cart" element={<CartPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="sign_up" element={<RegisterPage />} />
+            <Route path="verify/:token" element={<VerifyEmailPage />} />
+            <Route path="check_email" element={<CheckEmailPage />} />
+            <Route path="cart" element={<CartPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

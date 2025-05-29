@@ -1,15 +1,39 @@
-import React from 'react';
+import Cookies from 'js-cookie';
 import api from '../services/api';
 
 function ProductCard({ product }) {
     const handleAddToCart = async () => {
         try {
-            await api.post(`/cart/add/${product.id}/`);
-            alert('Product added to cart successfully!');
+            const csrfToken = Cookies.get('csrftoken');
+
+            const formData = new URLSearchParams();
+            formData.append('action', 'increment');
+            formData.append('quantity', 1);
+
+            console.log('➡️ Sende an:', `cart/add/${product.id}/`);
+
+            await api.post(`cart/add/${product.id}/`, formData, {
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                responseType: 'json',
+            });
+
+            console.log("✅ Produkt hinzugefügt!");
+            alert('Produkt wurde zum Warenkorb hinzugefügt!');
         } catch (error) {
-            console.error('Error add to cart:', error);
-            alert('Issue adding product to cart. Please try again later.');
+            if (error.response) {
+                console.error('❌ Axios Response Error:', error.response.status, error.response.data);
+            } else if (error.request) {
+                console.error('❌ Axios No Response:', error.request);
+            } else {
+                console.error('❌ Axios Error:', error.message);
+            }
+
+            alert('Fehler beim Hinzufügen zum Warenkorb.');
         }
+
     };
 
     return (
@@ -19,13 +43,13 @@ function ProductCard({ product }) {
                 alt={product.name}
                 className="w-48 h-48 object-cover mb-4"
             />
-            <h2 className="text-lg font-semibold">{product.name}</h2>
+            <h2 className="text-lg font-semibold text-center">{product.name}</h2>
             <p className="text-gray-700 mb-2">{product.price} €</p>
             <button
                 onClick={handleAddToCart}
-                className="mt-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+                className="mt-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
             >
-                Add to Cart
+                add to cart
             </button>
         </div>
     );

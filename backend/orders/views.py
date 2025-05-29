@@ -74,7 +74,7 @@ def user_order_detail_view(request, order_id):
 
 def user_order_review_view(request):
     cart_service = CartService(user=request.user)
-    cart_items = cart_service.get_cart_items()
+    cart_items = cart_service.get_cart_products()
     total_price = cart_service.get_total_price()
     return render(
         request,
