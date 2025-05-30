@@ -14,6 +14,7 @@ import CartPage from './pages/CartPage';
 import { ensureCsrfCookie } from './services/csrf';
 import Checkout from './pages/Checkout';
 import LoosePwPage from './pages/LoosePwPage';
+import PasswordResetPage from './pages/PasswordResetPage';
 
 function App() {
   useEffect(() => {
@@ -35,7 +36,7 @@ function App() {
             <Route path="cart" element={<CartPage />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="password_reset" element={<LoosePwPage />} />
-
+            <Route path="password_reset/:token" element={<PasswordResetPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

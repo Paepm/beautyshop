@@ -2,6 +2,7 @@ from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.conf import settings
 from devtools.debug import debug
+from django.contrib.auth import get_user_model
 
 
 class EmailForgottenPasswordService:
@@ -20,7 +21,7 @@ class EmailForgottenPasswordService:
         Returns:
             str: The full forgotten password URL.
         """
-        return f"http://localhost:3000/password_reset//{token}"  # just for dev, is needed because django and react conflict! need to change in production to right url,
+        return f"http://localhost:3000/password_reset/{token}"  # just for dev, is needed because django and react conflict! need to change in production to right url,
 
     @staticmethod
     def send_reset_password_email(email: str, subject: str, message: str) -> None:
@@ -53,3 +54,27 @@ class EmailForgottenPasswordService:
             debug("SMTPException while sending email to %s: %s", email, str(e))
         except Exception as e:
             debug("Unexpected error while sending email to %s: %s", email, str(e))
+
+    def reset_user_password(self, user_id: str, new_password: str) -> bool:
+        """
+        Reset the user's password.
+
+        Args:
+            user_id (str): The ID of the user whose password is to be reset.
+            new_password (str): The new password to set for the user.
+
+        Returns:
+            bool: True if the password was successfully reset, False otherwise.
+        """
+        User = get_user_model()
+        try:
+            user = User.objects.get(id=user_id)
+            user.set_password(new_password)
+            user.save()
+            debug("Password successfully reset for user ID", user_id)
+            return True
+        except User.DoesNotExist:
+            debug("User with ID does not exist: ", user_id)
+            return False
+        except Exception as e:
+            debug("Unexpected error when updating password:", e)

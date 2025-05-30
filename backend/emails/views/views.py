@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.contrib.auth import get_user_model
 from devtools import debug
 from django.core.signing import Signer
+import json
 
 from accounts.services.confirmation_service import EmailConfirmationService
 from ..services.email_verification import VerificationEmailService
@@ -81,7 +82,48 @@ def forgotten_password_view(request: HttpRequest) -> HttpResponse:
     return JsonResponse({"status": "success", "message": "Password reset email sent."})
 
 
-def reset_password_view(request: HttpRequest) -> HttpResponse:
-    """ """
+def reset_password_view(request: HttpRequest, token: str) -> HttpResponse:
+    """"""
+    # get the new selected password from the user
+    data = json.loads(request.body)
+    new_password = data.get("password")
+    debug("NEUES PASSWORT:", new_password)
 
-    pass
+    signer = Signer()
+    User = get_user_model()
+
+    user_id = signer.unsign(token)
+
+    user = User.objects.get(id=user_id)
+    debug("USER_FOUND:", user)
+
+    debug("No user found with email:", user.email)
+
+    try:
+        user_id = signer.unsign(token)
+        debug("User ID from token:", user_id)
+
+    except:
+        debug("Invalid token provided for password reset")
+        return JsonResponse(
+            {"status": "error", "message": "Invalid or expired token"}, status=400
+        )
+    service = EmailForgottenPasswordService()
+    success = service.reset_user_password(user_id, new_password)
+
+    service.send_reset_password_email(
+        email=user.email,
+        subject=EmailTemplate.PASSWORD_RESET_CONFIRMATION.value["subject"],
+        message=EmailTemplate.PASSWORD_RESET_CONFIRMATION.value["message"].format(
+            name=user.first_name
+        ),
+    )
+
+    if success:
+        return JsonResponse(
+            {"status": "success", "message": "Password reset successfully."}
+        )
+    else:
+        return JsonResponse(
+            {"status": "error", "message": "Failed to reset password"}, status=500
+        )
