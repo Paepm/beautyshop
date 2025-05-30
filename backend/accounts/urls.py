@@ -1,11 +1,11 @@
 from django.urls import path
 
-from .views.api_info import AuthInfoView
-from .views.api_auth import logout_view, api_login_view
-from .views.profile import user_profile_view, CountryListView
-from .views.signup import SignupAPIView
+from .views.api_info_view import AuthInfoView
+from .views.api_auth_view import logout_view, api_login_view
+from .views.profile_view import user_profile_view, CountryListView
+from .views.signup_view import SignupAPIView
 from .views.reset_pw_view import forgotten_password_view, reset_password_view
-from .views.signup import SignupAPIView
+from .views.signup_view import SignupAPIView
 
 
 # This api_urls.py is for the React frontend
