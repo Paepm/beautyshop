@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_permissions",
             "groups",
         ]  # sensible fields enabled
+
         read_only_fields = [
             "id",
             "last_login",

@@ -12,6 +12,7 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import CheckEmailPage from './pages/CheckEmailPage';
 import CartPage from './pages/CartPage';
 import { ensureCsrfCookie } from './services/csrf';
+import Checkout from './pages/Checkout';
 
 function App() {
   useEffect(() => {
@@ -31,6 +32,7 @@ function App() {
             <Route path="verify/:token" element={<VerifyEmailPage />} />
             <Route path="check_email" element={<CheckEmailPage />} />
             <Route path="cart" element={<CartPage />} />
+            <Route path="checkout" element={<Checkout />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -119,6 +119,10 @@ const CartPage = () => {
             <div className="mt-8 text-right font-semibold text-lg">
                 Summary: €{totalPrice.toFixed(2)}
             </div>
+            <a href="/checkout/" class="px-4 py-2 bg-black text-white rounded hover:bg-gray-800">
+                Proceed to Checkout
+            </a>
+
         </div>
     );
 };
