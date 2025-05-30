@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import { AuthContext } from '../contexts/AuthContext';
 import { loginUser } from '../services/auth';
@@ -57,6 +57,10 @@ function LoginPage() {
                 >
                     Login
                 </button>
+
+                <Link to="/password_reset">
+                    Forgot your password? Click Here!
+                </Link>
             </form>
         </div>
     );

@@ -36,6 +36,19 @@ class EmailTemplate(Enum):
         ),
     }
 
+    PASSWORD_RESET = {
+        "subject": "Password Reset Request",
+        "message": (
+            "Hi {name},\n\n"
+            "We received a request to reset your password.\n\n"
+            "Please click the link below to reset your password:\n"
+            "{reset_link}\n\n"
+            "If you did not request this change, please ignore this email.\n\n"
+            "Best regards,\n"
+            "Beautyshop Team"
+        ),
+    }
+
     PASSWORD_RESET_CONFIRMATION = {
         "subject": "Password Reset Confirmation",
         "message": (

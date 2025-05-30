@@ -1,17 +1,28 @@
 import Cookies from 'js-cookie';
 import api from '../services/api';
+import { AuthContext } from '../contexts/AuthContext';
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import LoginPage from '../pages/LoginPage';
 
 function ProductCard({ product }) {
+
+    const { isAuthendicated } = useContext(AuthContext);
+    const navigate = useNavigate();
+
     const handleAddToCart = async () => {
+        if (!isAuthendicated) {
+            navigate('/login');
+            return;
+        }
+
         try {
             const csrfToken = Cookies.get('csrftoken');
-
             const formData = new URLSearchParams();
             formData.append('action', 'increment');
             formData.append('quantity', 1);
-
             console.log('➡️ Sende an:', `cart/add/${product.id}/`);
-
             await api.post(`cart/add/${product.id}/`, formData, {
                 headers: {
                     'X-CSRFToken': csrfToken,
@@ -19,7 +30,6 @@ function ProductCard({ product }) {
                 },
                 responseType: 'json',
             });
-
             console.log("✅ Produkt hinzugefügt!");
             alert('Produkt wurde zum Warenkorb hinzugefügt!');
         } catch (error) {
@@ -30,11 +40,10 @@ function ProductCard({ product }) {
             } else {
                 console.error('❌ Axios Error:', error.message);
             }
-
             alert('Fehler beim Hinzufügen zum Warenkorb.');
         }
-
     };
+
 
     return (
         <div className="border rounded-lg shadow-md p-4 flex flex-col items-center">

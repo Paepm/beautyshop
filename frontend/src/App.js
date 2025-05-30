@@ -13,6 +13,7 @@ import CheckEmailPage from './pages/CheckEmailPage';
 import CartPage from './pages/CartPage';
 import { ensureCsrfCookie } from './services/csrf';
 import Checkout from './pages/Checkout';
+import LoosePwPage from './pages/LoosePwPage';
 
 function App() {
   useEffect(() => {
@@ -33,6 +34,8 @@ function App() {
             <Route path="check_email" element={<CheckEmailPage />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="password_reset" element={<LoosePwPage />} />
+
           </Route>
         </Routes>
       </BrowserRouter>
