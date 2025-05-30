@@ -13,7 +13,7 @@ function LoosePwPage() {
         e.preventDefault();
         // setError('');
         try {
-            await api.post('emails/password_reset/', { email }, {
+            await api.post('accounts/password_reset/', { email }, {
                 headers: {
                     'X-CSRFToken': csrfToken,
                     "Content-Type": "application/x-www-form-urlencoded"    // JSON is not supported by the backend, with that we can send the data as form-urlencoded

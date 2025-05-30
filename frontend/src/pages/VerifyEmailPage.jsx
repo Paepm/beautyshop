@@ -12,7 +12,7 @@ function VerifyEmailPage() {
     useEffect(() => {
         const verify = async () => {
             try {
-                const response = await api.get(`/emails/verify/${token}/`);
+                const response = await api.get(`accounts/verify/${token}/`);
                 setStatus("success");
                 setMessage(response.data.message || "Email verified.");
                 setTimeout(() => navigate("/login"), 1000);

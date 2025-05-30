@@ -28,7 +28,6 @@ urlpatterns = [
     # Urls for FRONTEND STUFF TO GET PRODUCTS AS JSON
     path("api/products/", include("shop.urls")),
     path("api/accounts/", include("accounts.urls")),
-    path("api/emails/", include("emails.urls", namespace="emails")),
     path("api/cart/", include(("cart.urls", "cart"), namespace="cart")),
 ]
 

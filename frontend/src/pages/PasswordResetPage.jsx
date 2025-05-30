@@ -24,7 +24,7 @@ function PasswordResetPage() {
 
         try {
             const response = await api.post(
-                `emails/password_reset/${token}/`,
+                `accounts/password_reset/${token}/`,
                 { password },
                 {
                     headers: {

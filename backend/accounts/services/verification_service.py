@@ -62,14 +62,15 @@ class EmailVerificationService:
         )  # Convert date to string
         return signing.dumps(data)
 
-    def _get_verification_url(self, token: str) -> str:
+    @staticmethod
+    def _get_verification_url(token: str) -> str:
         """
-        Build the full verification URL using the signed token.
+        Generate a verification URL containing the signed token.
 
         Args:
-            token (str): The signed token representing the user data.
+            token (str): A signed token containing user registration data.
 
         Returns:
-            str: The full verification URL to be sent via email.
+            str: The full verification URL.
         """
-        return VerificationEmailService.get_verification_url(token)
+        return f"http://localhost:3000/verify/{token}"  # just for dev, is needed because django and react conflict! need to change in production to right url,
