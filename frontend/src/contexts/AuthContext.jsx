@@ -39,12 +39,11 @@ export function AuthProvider({ children }) {
         <AuthContext.Provider value={{
             isAuthenticated,
             setIsAuthenticated,
-            refreshAuth: fetchUser, // Function to refresh authentication state
+            refreshAuth: fetchUser,
+            loading // <-- neu!
         }}>
             {children}
         </AuthContext.Provider>
     );
-
 }
-
 

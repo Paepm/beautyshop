@@ -14,17 +14,16 @@ def reset_password_view(request: HttpRequest, token: str) -> HttpResponse:
     # get the new selected password from the user
     data = json.loads(request.body)
     new_password = data.get("password")
-    debug("NEUES PASSWORT:", new_password)
+    debug("New user generated PW:", new_password)
 
+    # service for the signer
     signer = Signer()
+
+    # get the usermodel and find by user_id
     User = get_user_model()
-
-    user_id = signer.unsign(token)
-
     user = User.objects.get(id=user_id)
-    debug("USER_FOUND:", user)
 
-    debug("No user found with email:", user.email)
+    debug("USER_FOUND:", user)
 
     try:
         user_id = signer.unsign(token)
