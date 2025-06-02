@@ -12,10 +12,12 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import CheckEmailPage from './pages/CheckEmailPage';
 import CartPage from './pages/CartPage';
 import { ensureCsrfCookie } from './services/csrf';
-import Checkout from './pages/Checkout';
+import Checkout from './pages/CheckoutPage';
 import LoosePwPage from './pages/LoosePwPage';
 import PasswordResetPage from './pages/PasswordResetPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import OrderList from './pages/OrderListPage';
+import OrderDetail from './pages/OrderDetailPage';
 
 function App() {
   useEffect(() => {
@@ -39,6 +41,8 @@ function App() {
             <Route path="password_reset" element={<LoosePwPage />} />
             <Route path="password_reset/:token" element={<PasswordResetPage />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="orderlist" element={<OrderList />} />
+            <Route path="order_detail/:id" element={<OrderDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>

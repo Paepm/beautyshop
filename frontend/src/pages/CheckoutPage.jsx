@@ -1,20 +1,24 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+
 import api from "../services/api";
+import { checkoutOrder } from "../services/orderService";
 
 function Checkout() {
     const [cartItems, setCartItems] = useState([]);
     const [shippingAddress, setShippingAddress] = useState({
-        "address": "",
-        "city": "",
-        "post_code": "",
-        "country": ""
+        address: "",
+        city: "",
+        post_code: "",
+        country: ""
     });
     const [shippingMethod, setShippingMethod] = useState("standard");
     const [shippingCost, setShippingCost] = useState(4.9);
     const [subtotal, setSubtotal] = useState(0);
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [countryList, setCountryList] = useState([]);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,20 +26,24 @@ function Checkout() {
     }, []);
 
     async function fetchCheckoutData() {
-        const cartResponse = await api.get("cart/");
-        const countryRes = await api.get("accounts/countries/");
-        setCountryList(countryRes.data);
-        setCartItems(cartResponse.data.items);
-        setSubtotal(cartResponse.data.total_price);
+        try {
+            const cartResponse = await api.get("cart/");
+            const countryRes = await api.get("accounts/countries/");
+            const profileResponse = await api.get("accounts/profile/");
 
-        const profileResponse = await api.get("accounts/profile/");
-        setShippingAddress({
-            address: profileResponse.data.address,
-            city: profileResponse.data.city,
-            post_code: profileResponse.data.post_code,
-            country: profileResponse.data.country
-        });
+            setCountryList(countryRes.data);
+            setCartItems(cartResponse.data.items);
+            setSubtotal(cartResponse.data.total_price);
 
+            setShippingAddress({
+                address: profileResponse.data.address,
+                city: profileResponse.data.city,
+                post_code: profileResponse.data.post_code,
+                country: profileResponse.data.country
+            });
+        } catch (err) {
+            console.error("Fehler beim Laden der Checkout-Daten", err);
+        }
     }
 
     function handleShippingChange(event) {
@@ -44,13 +52,33 @@ function Checkout() {
         setShippingCost(method === "express" ? 9.9 : 4.9);
     }
 
-    function handlePayment() {
+    async function handlePayment() {
         if (!agreedToTerms) {
             alert("Please Accept the GTC to proceed.");
             return;
         }
-        // Weiterleitung zur Zahlungsseite oder API-Aufruf starten
-        navigate("/payment");
+
+        if (!selectedPaymentMethod) {
+            alert("Please select a payment method.");
+            return;
+        }
+
+        try {
+            const payload = {
+                shipping_data: shippingAddress,
+                shipping_method: shippingMethod,
+                payment_provider: selectedPaymentMethod === "paypal" ? "paypal" : "stripe",
+                payment_method: selectedPaymentMethod
+            };
+
+            const response = await checkoutOrder(payload);
+            const redirectUrl = response.data.redirect_url;
+            window.location.href = redirectUrl;
+
+        } catch (err) {
+            console.error("Fehler beim Checkout:", err);
+            alert("Something went wrong. Please try again.");
+        }
     }
 
     const total = (parseFloat(subtotal) + parseFloat(shippingCost)).toFixed(2);
@@ -58,6 +86,20 @@ function Checkout() {
     return (
         <div className="max-w-4xl mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Continue to pay</h1>
+
+            <section className="mb-6">
+                <h2 className="text-xl font-semibold mb-2">Products</h2>
+                {cartItems.map((item) => (
+                    <div key={item.id} className="flex justify-between py-1 border-b">
+                        <span>{item.product.name} × {item.quantity}</span>
+                        <span>{(item.quantity * item.product.price).toFixed(2)} €</span>
+                    </div>
+                ))}
+                <div className="flex justify-between font-semibold mt-2">
+                    <span>Subtotal</span>
+                    <span>{subtotal.toFixed(2)} €</span>
+                </div>
+            </section>
 
             <section className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Delivery Address</h2>
@@ -120,21 +162,6 @@ function Checkout() {
                 </div>
             </section>
 
-
-            <section className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Products</h2>
-                {cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between py-1 border-b">
-                        <span>{item.product.name} × {item.quantity}</span>
-                        <span>{(item.quantity * item.product.price).toFixed(2)} €</span>
-                    </div>
-                ))}
-                <div className="flex justify-between font-semibold mt-2">
-                    <span>Subtotal</span>
-                    <span>{subtotal.toFixed(2)} €</span>
-                </div>
-            </section>
-
             <section className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Shipping method</h2>
                 <div className="space-y-2">
@@ -162,6 +189,42 @@ function Checkout() {
             </section>
 
             <section className="mb-6">
+                <h2 className="text-xl font-semibold mb-2">Payment Method</h2>
+                <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="card"
+                            checked={selectedPaymentMethod === "card"}
+                            onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                        />
+                        Credit Card (Stripe)
+                    </label>
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="klarna"
+                            checked={selectedPaymentMethod === "klarna"}
+                            onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                        />
+                        Klarna (Stripe)
+                    </label>
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="paypal"
+                            checked={selectedPaymentMethod === "paypal"}
+                            onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                        />
+                        PayPal
+                    </label>
+                </div>
+            </section>
+
+            <section className="mb-6">
                 <div className="flex justify-between text-lg font-bold">
                     <span>Total Price</span>
                     <span>{total} €</span>
@@ -182,7 +245,7 @@ function Checkout() {
             <button
                 onClick={handlePayment}
                 className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 disabled:opacity-50"
-                disabled={!agreedToTerms}
+                disabled={!agreedToTerms || !selectedPaymentMethod}
             >
                 pay now
             </button>

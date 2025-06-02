@@ -29,21 +29,15 @@ class OrderService:
         except ObjectDoesNotExist:
             return None
 
-    def process_order(self, payment_provider: str) -> Order:
-        """
-        Returns an existing open order from session or creates a new one.
-
-        Also updates the session with the current order ID.
-        """
-        existing_order = self.get_existing_open_order()
-        if existing_order:
-            return existing_order
-
-        new_order = OrderCreator(self.user).create_order(
-            payment_provider=payment_provider
+    def process_order(
+        self, payment_provider=None, shipping_data=None, shipping_method="standard"
+    ):
+        creator = OrderCreator(self.user)
+        return creator.create_order(
+            payment_provider=payment_provider,
+            shipping_data=shipping_data,
+            shipping_method=shipping_method,
         )
-        self.session["order_id"] = new_order.id
-        return new_order
 
     def set_paid(self) -> None:
         """ "

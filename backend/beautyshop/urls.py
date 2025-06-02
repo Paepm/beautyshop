@@ -13,6 +13,8 @@ urlpatterns = [
     path("api/products/", include("shop.urls")),
     path("api/accounts/", include("accounts.urls")),
     path("api/cart/", include(("cart.urls", "cart"), namespace="cart")),
+    path("api/orders/", include(("orders.urls", "orders"), namespace="orders")),
+    path("api/payments/", include(("payments.urls", "payments"), namespace="payments")),
 ]
 
 # for the media files

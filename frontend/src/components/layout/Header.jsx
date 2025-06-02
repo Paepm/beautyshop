@@ -24,6 +24,12 @@ function Header() {
                         >
                             🛒 <span>Go to Cart</span>
                         </Link>
+                        <Link
+                            to="/orderlist"
+                            className="flex items-center gap-1 text-sm px-3 py-1 border rounded hover:bg-gray-100"
+                        >
+                            📝 <span>My Orders</span>
+                        </Link>
                     </>
                 ) : (
                     <>

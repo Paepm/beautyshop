@@ -13,7 +13,41 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    shipping_address = models.CharField(max_length=255, blank=True, default="")
+    shipping_address = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Shipping address in the format: 'Street, Postcode City, Country'",
+    )
+    shipping_post_code = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        help_text="Postal code for shipping address",
+    )
+    shipping_city = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="City for shipping address",
+    )
+    shipping_country = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Country for shipping address",
+    )
+    shipping_method = models.CharField(
+        max_length=50,
+        default="standard",
+        help_text="Shipping method chosen by the user (e.g. standard, express)",
+    )
+    shipping_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        help_text="Shipping cost for the order in €",
+    )
 
     # get the payment_method from the webhook dict from stripe or paypal
     payment_method = models.CharField(
@@ -43,7 +77,7 @@ class Order(models.Model):
 
     def get_payment_provider_label(self):
         try:
-            return PaymentProvider(self.payment_provider).label
+            return PaymentProviders(self.payment_provider).label
         except ValueError:
             return self.payment_provider  # fallback
 
