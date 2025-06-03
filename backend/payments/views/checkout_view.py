@@ -46,7 +46,7 @@ class CheckoutView(APIView):
         )
 
         success_url = f"http://localhost:3000/payments/success_payment/{order.id}"
-        cancel_url = f"http://localhost:3000/payments/cancel_payment/{order.id}"
+        cancel_url = f"http://localhost:3000/payments/cancel_payment"
 
         try:
             redirect_url = dispatcher.dispatch(

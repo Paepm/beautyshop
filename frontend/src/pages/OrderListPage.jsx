@@ -42,7 +42,13 @@ function OrderList() {
                                         {new Date(order.created_at).toLocaleDateString()} – {order.payment_method}
                                     </p>
                                     <p className="mt-1 text-sm">
-                                        Status: <strong>{order.status}</strong>
+                                        Payment Status: <strong>{order.payment_status}</strong>
+                                    </p>
+                                    <p className="mt-1 text-sm">
+                                        Payment Method: <strong>{order.payment_method}</strong>
+                                    </p>
+                                    <p className="mt-1 text-sm">
+                                        Order Status: <strong>{order.order_status}</strong>
                                     </p>
                                 </div>
                                 <div className="text-right">

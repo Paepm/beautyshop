@@ -19,7 +19,7 @@ urlpatterns = [
         name="success_payment",
     ),
     path(
-        "cancel_payment/<int:order_id>/",
+        "cancel_payment/",
         PaymentCancelView.as_view(),
         name="cancel_payment",
     ),
