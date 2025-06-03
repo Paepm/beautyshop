@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from devtools import debug
 
+
 from orders.services.order_creator import OrderCreator
 from payments.services.payment_dispatcher import PaymentDispatcher
 
@@ -44,8 +45,8 @@ class CheckoutView(APIView):
             "[CHECKOUTVIEW] Dispatching payment service for provider:", payment_provider
         )
 
-        success_url = request.build_absolute_uri(f"/orders/success/{order.id}/")
-        cancel_url = request.build_absolute_uri("/payments/cancel/")
+        success_url = f"http://localhost:3000/payments/success_payment/{order.id}"
+        cancel_url = f"http://localhost:3000/payments/cancel_payment/{order.id}"
 
         try:
             redirect_url = dispatcher.dispatch(

@@ -18,6 +18,7 @@ import PasswordResetPage from './pages/PasswordResetPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import OrderList from './pages/OrderListPage';
 import OrderDetail from './pages/OrderDetailPage';
+import SuccessPage from './pages/SuccessPage';
 
 function App() {
   useEffect(() => {
@@ -43,6 +44,8 @@ function App() {
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="orderlist" element={<OrderList />} />
             <Route path="order_detail/:id" element={<OrderDetail />} />
+            <Route path="/payments/success_payment/:orderId" element={<SuccessPage />} />
+
           </Route>
         </Routes>
       </BrowserRouter>
