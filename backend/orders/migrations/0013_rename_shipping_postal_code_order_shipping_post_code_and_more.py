@@ -6,18 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0012_remove_order_shipping_address_order_shipping_city_and_more'),
+        ("orders", "0012_remove_order_shipping_address_order_shipping_city_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='order',
-            old_name='shipping_postal_code',
-            new_name='shipping_post_code',
+            model_name="order",
+            old_name="shipping_postal_code",
+            new_name="shipping_post_code",
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_address',
-            field=models.CharField(blank=True, help_text="Shipping address in the format: 'Street, Postcode City, Country'", max_length=255, null=True),
+            model_name="order",
+            name="shipping_address",
+            field=models.CharField(
+                blank=True,
+                help_text="Shipping address in the format: 'Street, Postcode City, Country'",
+                max_length=255,
+                null=True,
+            ),
         ),
     ]

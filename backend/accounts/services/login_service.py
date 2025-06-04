@@ -6,6 +6,7 @@ from accounts.models import CustomUser  # falls du ein CustomUser-Modell verwend
 
 User = get_user_model()
 
+
 class LoginService:
     """
     Handles user authentication and login logic.

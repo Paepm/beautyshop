@@ -7,18 +7,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0006_alter_customuser_phone_number_and_more'),
+        ("accounts", "0006_alter_customuser_phone_number_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='phone_number',
-            field=models.CharField(blank=True, max_length=20, null=True, validators=[django.core.validators.RegexValidator(message='Enter a valid phone number, e.g. +436641234567', regex='^\\+?\\d{6,15}$')]),
+            model_name="customuser",
+            name="phone_number",
+            field=models.CharField(
+                blank=True,
+                max_length=20,
+                null=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Enter a valid phone number, e.g. +436641234567",
+                        regex="^\\+?\\d{6,15}$",
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='customuser',
-            name='post_code',
-            field=models.CharField(blank=True, max_length=10, null=True, validators=[django.core.validators.RegexValidator(message='Enter a valid postcode using digits only.', regex='^[0-9]{4,10}$')]),
+            model_name="customuser",
+            name="post_code",
+            field=models.CharField(
+                blank=True,
+                max_length=10,
+                null=True,
+                validators=[
+                    django.core.validators.RegexValidator(
+                        message="Enter a valid postcode using digits only.",
+                        regex="^[0-9]{4,10}$",
+                    )
+                ],
+            ),
         ),
     ]

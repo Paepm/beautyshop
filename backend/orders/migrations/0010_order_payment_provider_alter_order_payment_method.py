@@ -6,18 +6,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0009_alter_order_payment_method_and_more'),
+        ("orders", "0009_alter_order_payment_method_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='payment_provider',
-            field=models.CharField(choices=[('Creditcard, Klara, Banctransfer, Googlepay, Applepay', 'Stripe'), ('paypal', 'Paypal')], default='Creditcard, Klara, Banctransfer, Googlepay, Applepay', max_length=80),
+            model_name="order",
+            name="payment_provider",
+            field=models.CharField(
+                choices=[
+                    ("Creditcard, Klara, Banctransfer, Googlepay, Applepay", "Stripe"),
+                    ("paypal", "Paypal"),
+                ],
+                default="Creditcard, Klara, Banctransfer, Googlepay, Applepay",
+                max_length=80,
+            ),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='payment_method',
-            field=models.CharField(blank=True, help_text='Set after successful checkout (e.g. card, klarna, google_pay)', max_length=50, null=True),
+            model_name="order",
+            name="payment_method",
+            field=models.CharField(
+                blank=True,
+                help_text="Set after successful checkout (e.g. card, klarna, google_pay)",
+                max_length=50,
+                null=True,
+            ),
         ),
     ]

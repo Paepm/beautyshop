@@ -8,7 +8,7 @@ class BasePaymentProvider(ABC):
 
     def __init__(self, user):
         self.user = user
-    
+
     @abstractmethod
     def create_payment_intent(self, amount: float, currency: str = "eur") -> dict:
         """
@@ -42,4 +42,3 @@ class BasePaymentProvider(ABC):
             bool: True if successfully cancelled, False otherwise.
         """
         pass
-

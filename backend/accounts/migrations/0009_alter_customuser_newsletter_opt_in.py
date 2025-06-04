@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0008_alter_customuser_phone_number'),
+        ("accounts", "0008_alter_customuser_phone_number"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='newsletter_opt_in',
+            model_name="customuser",
+            name="newsletter_opt_in",
             field=models.BooleanField(default=True),
         ),
     ]

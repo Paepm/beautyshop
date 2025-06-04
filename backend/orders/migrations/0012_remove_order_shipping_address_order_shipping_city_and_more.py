@@ -6,37 +6,61 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0011_alter_order_payment_provider'),
+        ("orders", "0011_alter_order_payment_provider"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='order',
-            name='shipping_address',
+            model_name="order",
+            name="shipping_address",
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_city',
-            field=models.CharField(blank=True, help_text='City for shipping address', max_length=100, null=True),
+            model_name="order",
+            name="shipping_city",
+            field=models.CharField(
+                blank=True,
+                help_text="City for shipping address",
+                max_length=100,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_cost',
-            field=models.DecimalField(decimal_places=2, default=0.0, help_text='Shipping cost for the order in €', max_digits=10),
+            model_name="order",
+            name="shipping_cost",
+            field=models.DecimalField(
+                decimal_places=2,
+                default=0.0,
+                help_text="Shipping cost for the order in €",
+                max_digits=10,
+            ),
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_country',
-            field=models.CharField(blank=True, help_text='Country for shipping address', max_length=100, null=True),
+            model_name="order",
+            name="shipping_country",
+            field=models.CharField(
+                blank=True,
+                help_text="Country for shipping address",
+                max_length=100,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_method',
-            field=models.CharField(default='standard', help_text='Shipping method chosen by the user (e.g. standard, express)', max_length=50),
+            model_name="order",
+            name="shipping_method",
+            field=models.CharField(
+                default="standard",
+                help_text="Shipping method chosen by the user (e.g. standard, express)",
+                max_length=50,
+            ),
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_postal_code',
-            field=models.CharField(blank=True, help_text='Postal code for shipping address', max_length=20, null=True),
+            model_name="order",
+            name="shipping_postal_code",
+            field=models.CharField(
+                blank=True,
+                help_text="Postal code for shipping address",
+                max_length=20,
+                null=True,
+            ),
         ),
     ]

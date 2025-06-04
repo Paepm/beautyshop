@@ -6,18 +6,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0008_order_order_status'),
+        ("orders", "0008_order_order_status"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='payment_method',
-            field=models.CharField(choices=[('card', 'Card'), ('paypal', 'Paypal')], max_length=30),
+            model_name="order",
+            name="payment_method",
+            field=models.CharField(
+                choices=[("card", "Card"), ("paypal", "Paypal")], max_length=30
+            ),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='payment_status',
-            field=models.CharField(choices=[('open', 'Open'), ('paid', 'Paid'), ('failed', 'Failed'), ('expired', 'Expired'), ('processing', 'Processing')], default='open', max_length=30),
+            model_name="order",
+            name="payment_status",
+            field=models.CharField(
+                choices=[
+                    ("open", "Open"),
+                    ("paid", "Paid"),
+                    ("failed", "Failed"),
+                    ("expired", "Expired"),
+                    ("processing", "Processing"),
+                ],
+                default="open",
+                max_length=30,
+            ),
         ),
     ]

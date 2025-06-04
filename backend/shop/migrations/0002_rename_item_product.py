@@ -6,14 +6,14 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0011_alter_order_payment_provider'),
-        ('cart', '0001_initial'),
-        ('shop', '0001_initial'),
+        ("orders", "0011_alter_order_payment_provider"),
+        ("cart", "0001_initial"),
+        ("shop", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Item',
-            new_name='Product',
+            old_name="Item",
+            new_name="Product",
         ),
     ]

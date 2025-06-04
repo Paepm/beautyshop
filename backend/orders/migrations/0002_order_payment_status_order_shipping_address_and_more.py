@@ -6,23 +6,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0001_initial'),
+        ("orders", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='payment_status',
-            field=models.CharField(choices=[('ooen', 'Open'), ('paid', 'Paid'), ('failed', 'Failed')], default='open', max_length=30),
+            model_name="order",
+            name="payment_status",
+            field=models.CharField(
+                choices=[("ooen", "Open"), ("paid", "Paid"), ("failed", "Failed")],
+                default="open",
+                max_length=30,
+            ),
         ),
         migrations.AddField(
-            model_name='order',
-            name='shipping_address',
-            field=models.CharField(blank=True, default='', max_length=255),
+            model_name="order",
+            name="shipping_address",
+            field=models.CharField(blank=True, default="", max_length=255),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.CharField(choices=[('new', 'New'), ('processing', 'Processing'), ('shipped', 'Shipped'), ('delivered', 'Delivered'), ('cancelled', 'Cancelled')], default='new', max_length=30),
+            model_name="order",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("new", "New"),
+                    ("processing", "Processing"),
+                    ("shipped", "Shipped"),
+                    ("delivered", "Delivered"),
+                    ("cancelled", "Cancelled"),
+                ],
+                default="new",
+                max_length=30,
+            ),
         ),
     ]
