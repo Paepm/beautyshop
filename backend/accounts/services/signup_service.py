@@ -7,7 +7,7 @@ from accounts.models import CustomUser
 from accounts.forms import SignupForm
 from emails.enums.email_templates import EmailTemplate
 from beautyshop.logging_config import setup_logger
-from backend.emails.services.email_service import EmailService
+from emails.services.email_service import EmailService
 
 
 class SignupService:

@@ -1,4 +1,4 @@
-from backend.accounts.serializers.user_serializer import UserSerializer
+from accounts.serializers.user_serializer import UserSerializer
 
 
 class UserProfileService:
