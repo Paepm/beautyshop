@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from backend.cart.services.cart_services import CartService
+from cart.services.cart_services import CartService
 
 
 class CartDetailView(APIView):
