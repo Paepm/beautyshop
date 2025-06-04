@@ -27,38 +27,27 @@ const CartPage = () => {
 
     const updateQuantity = async (itemId, action = null, quantity = null) => {
         try {
-            const csrfToken = Cookies.get('csrftoken');  // 👈 CSRF Token holen
             const formData = new FormData();
             if (action) formData.append('action', action);
             if (quantity !== null) formData.append('quantity', parseInt(quantity));
 
-            await api.post(`cart/update/${itemId}/`, formData, {
-                headers: {
-                    'X-CSRFToken': csrfToken,  // 👈 Token mitschicken
-                },
-            });
+            await api.post(`cart/update/${itemId}/`, formData);
 
             fetchCart();  // reload cart
         } catch (error) {
-            console.error('Fehler beim Ändern der Menge:', error);
+            console.error('Error by changing quantity:', error);
         }
     };
-
-
 
     const removeFromCart = async (ItemId) => {
         try {
-            const csrfToken = Cookies.get('csrftoken');
-            await api.post(`cart/remove/${ItemId}/`, null, {
-                headers: {
-                    'X-CSRFToken': csrfToken,  // CSRF Token mitschicken
-                },
-            });
+            await api.delete(`cart/remove/${ItemId}/`);
             fetchCart(); // reload cart after removal
         } catch (error) {
-            console.error('Fehler beim Entfernen:', error);
+            console.error('Error by delete product:', error);
         }
     };
+
 
     if (isLoading) return <p className="p-4"> Cart is loading....</p>;
     if (error) return <p className="p-4 text-red-500">{error}</p>;

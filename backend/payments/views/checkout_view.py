@@ -17,7 +17,6 @@ class CheckoutView(APIView):
         data = request.data
 
         shipping_data = data.get("shipping_data", {})
-        shipping_method = data.get("shipping_method")
         payment_provider = data.get("payment_provider")
         payment_method = data.get("payment_method")
         debug("[CHECKOUTVIEW] Received data:", data)
