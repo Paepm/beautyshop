@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from rest_framework import status
 from accounts.forms import SignupForm
 
-from backend.accounts.services.signup_service import SignupService
+from accounts.services.signup_service import SignupService
 
 
 class SignupAPIView(APIView):

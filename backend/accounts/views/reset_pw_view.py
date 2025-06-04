@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from backend.accounts.services.pw_reset_service import PwResetService
+from accounts.services.pw_reset_service import PwResetService
 
 
 class RequestPwResetView(APIView):
