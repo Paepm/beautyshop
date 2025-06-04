@@ -1,4 +1,5 @@
 import logging
+import os
 
 # ANSI color codes
 COLOR_RESET = "\033[0m"
@@ -37,6 +38,9 @@ def setup_logger(name: str) -> logging.Logger:
         logger.addHandler(console)
 
         # File Handler without colors
+        log_path = "backend/logs/beautyshop.log"
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
         file = logging.FileHandler("backend/logs/beautyshop.log")
         file.setLevel(logging.INFO)
         file_formatter = logging.Formatter(
