@@ -1,2 +1,5 @@
 django-extensions
 black==24.3.0
+Django>=4.2,<5.0
+python-decouple
+django-countries
