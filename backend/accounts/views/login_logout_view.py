@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import logout
 
-from backend.accounts.services.login_service import LoginService
+from accounts.services.login_service import LoginService
 
 
 class LoginAPIView(APIView):
