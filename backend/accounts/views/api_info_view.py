@@ -1,13 +1,19 @@
-from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
-from django.views import View
+from rest_framework.views import APIView
 from django.contrib.auth.models import AnonymousUser
 from devtools import debug
 
 
 @method_decorator(ensure_csrf_cookie, name="dispatch")
-class AuthInfoView(View):
+class AuthInfoView(APIView):
+    """
+    Returns authentication status and user info.
+    Also sets CSRF cookie for the frontend on first GET.
+    """
+
     def get(self, request):
         user = request.user
         debug("[AuthInfoView] GET request received. User: ", user)
@@ -15,14 +21,16 @@ class AuthInfoView(View):
 
         if isinstance(user, AnonymousUser) or not user.is_authenticated:
             debug("[AuthInfoView] User is not authenticated -->", user.is_authenticated)
-            return JsonResponse(
-                {"detail": "Authentication required."}, status=401  # <- important!
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
         debug("[AuthInfoView] User is authenticated: ", user)
-        return JsonResponse(
+        return Response(
             {
                 "is_authenticated": True,
                 "username": user.username,
                 "email": user.email,
-            }
+            },
+            status=status.HTTP_200_OK,
         )

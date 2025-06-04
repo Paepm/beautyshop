@@ -4,10 +4,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from rest_framework import status
 from accounts.forms import SignupForm
 
-from accounts.services.confirmation_service import EmailConfirmationService
-from emails.enums.email_templates import EmailTemplate
-from accounts.services.verification_service import EmailVerificationService
-from emails.services.email_verification import VerificationEmailService
+from backend.accounts.services.signup_service import SignupService
 
 
 class SignupAPIView(APIView):
@@ -19,7 +16,7 @@ class SignupAPIView(APIView):
         form = SignupForm(request.data)
 
         if form.is_valid():
-            service = EmailVerificationService(request, form.cleaned_data)
+            service = SignupService(request, form.cleaned_data)
 
             if service.prepare_and_send_verification_email():
                 return Response(
@@ -33,32 +30,29 @@ class SignupAPIView(APIView):
 
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def verify_account_view(request: HttpRequest, token: str) -> HttpResponse:
-        """
-        Handles the email verification by decoding the token, creating the user,
-        logging them in and sending a final welcome email.
 
-        Args:
-            request (HttpRequest): The incoming HTTP request.
-            token (str): A signed token containing user registration data.
+class VerifyAccountAPIView(APIView):
 
-        Returns:
-            HttpResponse: JSON response with success or error message.
-        """
-        service = EmailConfirmationService(request, token)
-        user, error = service.verify_and_create_user()
-        email_template = EmailTemplate
+    def get(self, request, token: str):
+        service = SignupService(request, form_data={})
+        user, error = service.verify_and_create_user(token)
 
         if user:
-            # Sends a final welcome email to the verified user
-            VerificationEmailService.send_verification_email(
-                user.email,
-                subject=email_template.USER_CREATED.value["subject"],
-                message=email_template.USER_CREATED.value["message"],
-            )
-
+            service.send_final_welcome_email(user)
             return JsonResponse({"status": "success", "message": "Account verified."})
-        else:
-            return JsonResponse(
-                {"status": "error", "error": error or "Invalid token"}, status=400
-            )
+        return JsonResponse(
+            {"status": "error", "message": error or "invalid token"}, status=400
+        )
+
+    def post(self, request: HttpRequest, token: str) -> HttpResponse:
+        service = SignupService(request, form_data={})  # no form data needed here
+        user, error = service.verify_and_create_user(token)
+
+        if user:
+            service.send_final_welcome_email(user)
+            return JsonResponse({"status": "success", "message": "Account verified."})
+
+        return JsonResponse(
+            {"status": "error", "message": error or "invalid token"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )

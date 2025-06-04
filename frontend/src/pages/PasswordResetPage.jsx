@@ -25,13 +25,7 @@ function PasswordResetPage() {
         try {
             const response = await api.post(
                 `accounts/password_reset/${token}/`,
-                { password },
-                {
-                    headers: {
-                        'X-CSRFToken': Cookies.get('csrftoken'),
-                        'Content-Type': 'application/json',
-                    },
-                }
+                { new_password: password },
             );
 
             if (response.data.status === 'success') {

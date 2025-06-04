@@ -15,7 +15,7 @@ function VerifyEmailPage() {
                 const response = await api.get(`accounts/verify/${token}/`);
                 setStatus("success");
                 setMessage(response.data.message || "Email verified.");
-                setTimeout(() => navigate("/login"), 1000);
+                setTimeout(() => navigate("/login"), 3000);
             } catch (err) {
                 setStatus("error");
                 if (err.response?.data?.message) {
