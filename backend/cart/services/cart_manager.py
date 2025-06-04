@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+# first static factory pattern in my life! nice to learn it
 class CartManager:
     """
     Responsible for retrieving or creating a Cart instance for a given user.

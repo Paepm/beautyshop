@@ -1,29 +1,34 @@
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 from .serializer.serializers import ProductSerializer
-from .models import Product
-from devtools import debug
+from .services.product_service import ProductService
 
 
-@api_view(["GET"])
-def product_list(request):
-    items = Product.objects.all()
-    serializer = ProductSerializer(items, many=True)
-    return Response(serializer.data)
+class ProductListView(APIView):
+    """
+    API view to list all products.
+    """
+
+    def get(self, request) -> Response:
+        """
+        Handle GET requests to retrieve all products.
+        """
+        products = ProductService.get_all_products()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(["GET"])
-def product_detail_view(request, pk):
-    debug(f"Fetching product with primary key: {pk}")
-    try:
-        product = Product.objects.get(pk=pk)
-        debug(f"Product found: {product.name}")
-    except Product.DoesNotExist:
-        return Response(
-            {"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND
-        )
+class ProductDetailView(APIView):
+    """
+    API view to retrieve a product by its ID.
+    """
 
-    serializer = ProductSerializer(product)
-    return Response(serializer.data)
+    def get(self, request, product_id) -> Response:
+        """
+        Handle GET requests to retrieve a product by its ID.
+        """
+        product = ProductService.get_product_by_id(product_id)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data, status=status.HTTP_200_OK)
