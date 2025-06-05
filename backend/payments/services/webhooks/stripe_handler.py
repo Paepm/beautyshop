@@ -2,7 +2,7 @@ from devtools import debug
 from django.utils.timezone import now
 from orders.models import Order
 from orders.enums.paymentstatus import PaymentStatus
-from backend.orders.services.old_order_service import OrderService
+from orders.services.old_order_service import OrderService
 from payments.services.payment_service import PaymentService
 
 

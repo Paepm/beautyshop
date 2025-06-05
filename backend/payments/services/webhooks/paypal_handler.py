@@ -4,7 +4,7 @@ import requests
 from orders.models import Order
 from orders.enums.paymentstatus import PaymentStatus
 from orders.enums.orderstatus import OrderStatus
-from backend.orders.services.old_order_service import OrderService
+from orders.services.old_order_service import OrderService
 from payments.services.providers.paypal_provider import PayPalProvider
 
 
