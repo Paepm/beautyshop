@@ -13,7 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         exclude = [
             "password",
-            "is_superuser",
             "user_permissions",
             "groups",
         ]  # sensible fields enabled
@@ -21,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "id",
             "last_login",
-            "is_staff",
             "is_active",
             "date_joined",
+            "is_superuser",
         ]

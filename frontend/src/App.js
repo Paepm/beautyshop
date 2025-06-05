@@ -20,6 +20,8 @@ import OrderList from './pages/OrderListPage';
 import OrderDetail from './pages/OrderDetailPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentCanclePage from './pages/PaymentCanclePage';
+import AdminOrdersPage from './pages/AdminOrdersPage';
+import AdminUserPage from './pages/AdminUsersPage';
 
 function App() {
   useEffect(() => {
@@ -47,6 +49,8 @@ function App() {
             <Route path="order_detail/:id" element={<OrderDetail />} />
             <Route path="payments/success_payment/:orderId" element={<PaymentSuccessPage />} />
             <Route path="payments/cancel_payment" element={<PaymentCanclePage />} />
+            <Route path="adminpanel/orders" element={<AdminOrdersPage />} />
+            <Route path="adminpanel/users" element={<AdminUserPage />} />
 
           </Route>
         </Routes>
