@@ -1,4 +1,4 @@
-from backend.orders.services.old_order_creator_serive import OrderCreatorService
+from orders.services.old_order_creator_serive import OrderCreatorService
 from orders.models import Order
 from django.core.exceptions import ObjectDoesNotExist
 from devtools import debug
