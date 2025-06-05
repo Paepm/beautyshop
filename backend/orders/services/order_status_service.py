@@ -1,4 +1,4 @@
-from backend.orders.models import Order, PaymentStatus, OrderStatus
+from orders.models import Order, PaymentStatus, OrderStatus
 
 
 class OrderStatusService:

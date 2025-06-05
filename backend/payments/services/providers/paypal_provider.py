@@ -5,9 +5,9 @@ from payments.services.providers.base import BasePaymentProvider
 
 
 class PayPalProvider(BasePaymentProvider):
-    def __init__(self, user, oder=None):
+    def __init__(self, user, order=None):
         super().__init__(user)
-        self.order = oder
+        self.order = order
         self.client_id = config("PAYPAL_CLIENT_ID")
         self.client_secret = config("PAYPAL_CLIENT_SECRET")
         self.base_url = "https://api-m.sandbox.paypal.com"  # Use sandbox for testing
@@ -16,9 +16,6 @@ class PayPalProvider(BasePaymentProvider):
     def _get_access_token(self) -> str:
         """
         Obtain an access token from PayPal using client credentials.
-
-        Returns:
-            str: The access token to authenticate API requests.
         """
         url = f"{self.base_url}/v1/oauth2/token"
         response = requests.post(
@@ -29,16 +26,9 @@ class PayPalProvider(BasePaymentProvider):
         response.raise_for_status()
         return response.json()["access_token"]
 
-    def create_checkout_session(self, success_url: str, cancel_url: str) -> dict:
+    def create_checkout_session(self, success_url: str, cancel_url: str) -> str:
         """
-        Create a PayPal Checkout session (Order) and return the redirect link.
-
-        Args:
-            success_url (str): URL to redirect after successful payment.
-            cancel_url (str): URL to redirect if user cancels.
-
-        Returns:
-            str: The PayPal approval URL to redirect the user.
+        Create a PayPal Checkout Order and return the approval URL for redirection.
         """
         if not self.order:
             raise ValueError("Order is not set. Please provide an order.")
@@ -56,8 +46,8 @@ class PayPalProvider(BasePaymentProvider):
                         "currency_code": "EUR",
                         "value": str(self.order.total_price),
                     },
-                    "custom_id": str(self.order.id),  # Custom ID to link order
-                },
+                    "custom_id": str(self.order.id),
+                }
             ],
             "application_context": {
                 "return_url": success_url,
@@ -67,31 +57,18 @@ class PayPalProvider(BasePaymentProvider):
 
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        links = response.json().get("links", [])
 
-        for link in links:
+        for link in response.json().get("links", []):
             if link["rel"] == "approve":
                 return link["href"]
 
-        raise Exception("No Approval link found in Paypal response.")
+        raise Exception("No approval URL found in PayPal response.")
 
-    def create_payment_intent(self, amount: float, currency: str = "eur") -> dict:
-        raise NotImplementedError("This provider uses checkout session instead.")
+    def create_payment_intent(self, amount: float, currency: str = "EUR") -> dict:
+        raise NotImplementedError("PayPal uses checkout sessions instead.")
 
     def confirm_payment(self, payment_intent_id: str) -> bool:
-        """
-        Confirms the payment with the given intent ID.
-
-        Returns:
-            bool: True if payment is confirmed, False otherwise.
-        """
-        return True
+        return True  # Placeholder – PayPal auto-confirms on capture
 
     def cancel_payment(self, payment_intent_id: str) -> bool:
-        """
-        Cancels the payment with the given intent ID.
-
-        Returns:
-            bool: True if successfully cancelled, False otherwise.
-        """
-        return False
+        return False  # Placeholder – capture cancellation not implemented

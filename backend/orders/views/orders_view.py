@@ -39,7 +39,7 @@ class OrderProductDetailView(APIView):
 
     def get(self, request, order_id):
         try:
-            order_items = OrderViewService.get_order_items(order__id=order_id)
+            order_items = OrderViewService.get_order_items(order_id=order_id)
             debug(f"[ORDER_PRODUCT_DETAIL_VIEW] order_items: {order_items}")
             serializer = OrderItemSerializer(order_items, many=True)
             debug(f"[ORDER_PRODUCT_DETAIL_VIEW] serialized data: {serializer.data}")

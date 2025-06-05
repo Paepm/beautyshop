@@ -4,6 +4,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from django.contrib.auth.models import AnonymousUser
+from rest_framework.permissions import IsAuthenticated
 from devtools import debug
 
 
@@ -13,6 +14,8 @@ class AuthInfoView(APIView):
     Returns authentication status and user info.
     Also sets CSRF cookie for the frontend on first GET.
     """
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user

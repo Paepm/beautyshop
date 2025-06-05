@@ -4,9 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from devtools import debug
 
-
-from orders.services.old_order_creator_serive import OrderCreatorService
-from payments.services.payment_dispatcher import PaymentDispatcher
+from payments.services.checkout_service import CheckoutService
 
 
 class CheckoutView(APIView):
@@ -15,45 +13,27 @@ class CheckoutView(APIView):
     def post(self, request):
         user = request.user
         data = request.data
-
         shipping_data = data.get("shipping_data", {})
         payment_provider = data.get("payment_provider")
         payment_method = data.get("payment_method")
-        debug("[CHECKOUTVIEW] Received data:", data)
 
-        # 1. Bestellung erstellen
-        order_creator = OrderCreatorService(user)
-        order = order_creator.create_order(payment_provider=payment_provider)
-        debug("[CHECKOUTVIEW] Order created:", order)
-
-        if not order:
-            debug("[CHECKOUTVIEW] Order creation failed.")
-            return Response(
-                {"detail": "Order creation failed."}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # 2. Adresse und Methode speichern
-        order.shipping_address = f"{shipping_data.get('address', '')}, {shipping_data.get('post_code', '')} {shipping_data.get('city', '')}, {shipping_data.get('country', '')}"
-        debug("[CHECKOUTVIEW] Shipping address set to:", order)
-        order.payment_method = payment_method
-        order.save()
-
-        # 3. PaymentService wählen
-        dispatcher = PaymentDispatcher(order=order, payment_method=payment_method)
-        debug(
-            "[CHECKOUTVIEW] Dispatching payment service for provider:", payment_provider
-        )
-
-        success_url = f"http://localhost:3000/payments/success_payment/{order.id}"
-        cancel_url = f"http://localhost:3000/payments/cancel_payment"
+        debug("[CHECKOUT_VIEW] Data received:", data)
 
         try:
-            redirect_url = dispatcher.dispatch(
-                success_url=success_url, cancel_url=cancel_url
+            checkout = CheckoutService(user)
+            checkout.create_order(payment_provider=payment_provider)
+            checkout.save_shipping_info(shipping_data, payment_method)
+
+            success_url = (
+                f"http://localhost:3000/payments/success_payment/{checkout.order.id}"
             )
-            debug("[CHECKOUTVIEW] Redirect URL from payment service:", redirect_url)
+            cancel_url = "http://localhost:3000/payments/cancel_payment"
+
+            redirect_url = checkout.start_checkout(success_url, cancel_url)
             return Response({"redirect_url": redirect_url}, status=status.HTTP_200_OK)
+
         except Exception as e:
+            debug("[CHECKOUT_VIEW] Error during checkout:", str(e))
             return Response(
                 {"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

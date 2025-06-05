@@ -17,6 +17,7 @@ urlpatterns = [
     path("profile/", ProfileView.as_view(), name="profile"),
     path("logout/", LogoutAPIView.as_view(), name="logout"),
     path("get-csrf/", AuthInfoView.as_view(), name="get_csrf_token"),
+    path("me/", AuthInfoView.as_view(), name="me"),
     path("countries/", CountryListView.as_view(), name="country_list"),
     path("verify/<str:token>/", VerifyAccountAPIView.as_view(), name="verify_email"),
     path("password_reset/", RequestPwResetView.as_view(), name="password_forgot_reset"),

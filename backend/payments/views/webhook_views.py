@@ -11,42 +11,28 @@ from payments.services.webhooks.paypal_handler import PayPalWebhookHandler
 
 @csrf_exempt
 def stripe_webhook_view(request):
-    """
-    Stripe Webhook Endpoint - verifies signature and dispatches event
-    """
-    # get the json-webhook from stripe
     payload = request.body
-    # safety header for verification
     sig_header = request.headers.get("stripe-signature")
-    # secret key from .env
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+    secret = settings.STRIPE_WEBHOOK_SECRET
 
     try:
-        # construct_event() --> check if payload, header and secret is valid
         event = stripe.Webhook.construct_event(
-            payload=payload, sig_header=sig_header, secret=endpoint_secret
+            payload=payload, sig_header=sig_header, secret=secret
         )
     except ValueError as e:
-        debug("VALUE ERROR:", e)
+        debug("Invalid Stripe payload:", e)
         return HttpResponseBadRequest(f"Invalid payload: {e}")
     except stripe.error.SignatureVerificationError as e:
-        debug("SIGNATURE ERROR:", e)
+        debug("Invalid Stripe signature:", e)
         return HttpResponseBadRequest(f"Invalid signature: {e}")
 
-    # handle the event
     handler = StripeWebhookHandler(request)
     response = handler.handle(event)
-
     return HttpResponse(response or "OK")
 
 
 @csrf_exempt
 def paypal_webhook_view(request):
-    """
-    Entry point for incoming PayPal webhook events.
-
-    Verifies and dispatches the event to the appropriate handler.
-    """
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
@@ -56,6 +42,5 @@ def paypal_webhook_view(request):
         return JsonResponse({"error": "Invalid JSON payload."}, status=400)
 
     handler = PayPalWebhookHandler(request)
-    response_message = handler.handle(payload)
-
-    return HttpResponse(response_message, status=200)
+    response = handler.handle(payload)
+    return HttpResponse(response, status=200)
