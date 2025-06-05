@@ -4,6 +4,7 @@ from orders.enums.paymentstatus import PaymentStatus
 
 from orders.services.order_status_service import OrderStatusService
 from payments.services.payment_metadata_service import PaymentMetadataService
+from cart.services.cart_services import CartService
 
 
 class StripeWebhookHandler:
@@ -38,6 +39,9 @@ class StripeWebhookHandler:
 
         OrderStatusService(order).set_paid()
         debug(f"[STRIPE_COMPLETED] Order {order_id} marked as PAID.")
+
+        # Clear the cart after successful payment
+        CartService(order.user).clear_cart()
 
         payment_intent_id = session.get("payment_intent")
         if payment_intent_id:
