@@ -22,6 +22,8 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentCanclePage from './pages/PaymentCanclePage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminUserPage from './pages/AdminUsersPage';
+import AdminPanelPage from './pages/AdminPanelPage';
+import AdminOrdersDetailPage from './pages/AdminOrdersDetailPage';
 
 function App() {
   useEffect(() => {
@@ -29,8 +31,8 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<ProductList />} />
@@ -51,11 +53,13 @@ function App() {
             <Route path="payments/cancel_payment" element={<PaymentCanclePage />} />
             <Route path="adminpanel/orders" element={<AdminOrdersPage />} />
             <Route path="adminpanel/users" element={<AdminUserPage />} />
+            <Route path="adminpanel" element={<AdminPanelPage />} />
+            <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
 
           </Route>
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

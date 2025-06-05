@@ -1,14 +1,14 @@
 from orders.models import Order
-from orders.serializer.serializer import OrderSerializer
+from adminpanel.serializers.serializers import AdminOrderSerializer
 
 
 class AdminOrderService:
     def __init__(self):
         pass
 
-    def get_all_orders(self) -> OrderSerializer:
+    def get_all_orders(self) -> AdminOrderSerializer:
 
         orders = Order.objects.all().order_by("-created_at")
-        serializer = OrderSerializer(orders, many=True)
+        serializer = AdminOrderSerializer(orders, many=True)
 
         return serializer

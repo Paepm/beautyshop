@@ -11,15 +11,15 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            "user",
             "id",
-            "created_at",
-            "total_price",
-            "payment_method",
-            "shipping_address",
-            "payment_provider",
+            "user",
+            "status",
             "payment_status",
-            "order_status",
+            "payment_provider",
+            "payment_method",
+            "total_price",
+            "created_at",
+            "updated_at",
             "items",
         ]
 

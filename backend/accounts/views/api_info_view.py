@@ -34,6 +34,7 @@ class AuthInfoView(APIView):
                 "is_authenticated": True,
                 "username": user.username,
                 "email": user.email,
+                "is_superuser": request.user.is_superuser,
             },
             status=status.HTTP_200_OK,
         )

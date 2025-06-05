@@ -1,8 +1,0 @@
-Django>=4.2,<5.0
-Pillow
-django-countries
-django-extensions
-devtools
-python-decouple
-stripe
-djangorestframework
