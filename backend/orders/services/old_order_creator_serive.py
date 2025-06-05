@@ -10,7 +10,7 @@ from orders.enums.paymentstatus import PaymentStatus
 from orders.enums.orderstatus import OrderStatus
 
 
-class OrderCreator:
+class OrderCreatorService:
     """Responsible for creating an Order and related OrderItems from a user's cart"""
 
     def __init__(self, user):

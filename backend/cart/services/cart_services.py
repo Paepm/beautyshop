@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from devtools import debug
 
-from cart.models import Cart, CartProduct
+from cart.models import CartProduct
 from beautyshop.logging_config import setup_logger
 from shop.models import Product
 from cart.services.cart_manager import CartManager

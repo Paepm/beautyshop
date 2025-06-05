@@ -5,7 +5,7 @@ from rest_framework import status
 from devtools import debug
 
 
-from orders.services.order_creator import OrderCreator
+from backend.orders.services.old_order_creator_serive import OrderCreatorService
 from payments.services.payment_dispatcher import PaymentDispatcher
 
 
@@ -22,7 +22,7 @@ class CheckoutView(APIView):
         debug("[CHECKOUTVIEW] Received data:", data)
 
         # 1. Bestellung erstellen
-        order_creator = OrderCreator(user)
+        order_creator = OrderCreatorService(user)
         order = order_creator.create_order(payment_provider=payment_provider)
         debug("[CHECKOUTVIEW] Order created:", order)
 

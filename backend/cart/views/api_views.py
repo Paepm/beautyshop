@@ -12,7 +12,7 @@ class CartDetailView(APIView):
     def get(self, request):
         service: CartService = CartService(request.user)
         cart_products: list = service.get_cart_products()
-        total_price = service.get_total_price()
+        total_price: float = service.get_total_price()
 
         return Response(
             {

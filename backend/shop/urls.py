@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ProductListView, ProductDetailView
+from .views.views import ProductListView, ProductDetailView
 
 # This api_urls.py is for the React frontend
 
