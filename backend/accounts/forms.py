@@ -1,11 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate
 from django.forms.widgets import SelectDateWidget
 from datetime import date
-import datetime
 
-from django.contrib.auth import get_user_model
 from .models import CustomUser
 
 

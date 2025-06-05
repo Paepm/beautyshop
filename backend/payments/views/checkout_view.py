@@ -20,8 +20,16 @@ class CheckoutView(APIView):
         debug("[CHECKOUT_VIEW] Data received:", data)
 
         try:
+            debug("[CHECKOUT_VIEW]paymentprovider:", payment_provider)
+            debug("[CHECKOUT_VIEW]shipping_data:", shipping_data)
+            debug("[CHECKOUT_VIEW]payment_method:", payment_method)
+
             checkout = CheckoutService(user)
-            checkout.create_order(payment_provider=payment_provider)
+            checkout.create_order(
+                payment_provider=payment_provider,
+                shipping_data=shipping_data,
+                payment_method=payment_method,
+            )
             checkout.save_shipping_info(shipping_data, payment_method)
 
             success_url = (

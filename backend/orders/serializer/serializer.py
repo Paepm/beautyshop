@@ -4,6 +4,10 @@ from orders.models import Order, OrderItem
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    """
+    Converts Order model instances into JSON format.
+    """
+
     class Meta:
         model = Order
         fields = [
@@ -21,6 +25,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    """
+    Converts Order model instances into JSON format.
+    """
+
     product_name = serializers.CharField(source="product.name", read_only=True)
     product_image = serializers.ImageField(source="product.image", read_only=True)
     product_description = serializers.CharField(

@@ -11,12 +11,18 @@ class CheckoutService:
         self.user = user
         self.order: Order | None = None
 
-    def create_order(self, payment_provider: str) -> Order | None:
+    def create_order(
+        self, payment_provider, shipping_data, payment_method
+    ) -> Order | None:
         """
         Create an order for the current user using the selected payment provider.
         """
         creator = OrderCreatorService(self.user)
-        self.order = creator.create_order(payment_provider=payment_provider)
+        self.order = creator.create_order(
+            payment_provider=payment_provider,
+            shipping_data=shipping_data,
+            payment_method=payment_method,
+        )
         return self.order
 
     def save_shipping_info(self, shipping_data: dict, payment_method: str) -> None:

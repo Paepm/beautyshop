@@ -1,13 +1,9 @@
-from django.utils import timezone
 from devtools import debug
-from django.db import transaction
-from decimal import Decimal
-
-from orders.models import Order, OrderItem
-from cart.models import Cart
 from beautyshop.logging_config import setup_logger
-from orders.enums.paymentstatus import PaymentStatus
-from orders.enums.orderstatus import OrderStatus
+
+from cart.models import Cart
+from orders.factories.order_factory import OrderFactory
+from orders.models import Order
 
 
 class OrderCreatorService:
@@ -38,55 +34,24 @@ class OrderCreatorService:
             return None
 
     def create_order(
-        self,
-        payment_provider: str | None = None,
-        shipping_data: dict | None = None,
-        shipping_method: str = "standard",
+        self, payment_provider, shipping_data, payment_method
     ) -> Order | None:
         """
-        Create a new Order object and related OrderItems based on the user's cart,
-        including optional shipping data and selected shipping method.
+        Use the OrderFactory to create an Order from the user's cart.
 
-        Returns:
-            Order | None: The created Order instance or None if no cart is found.
+        Return:
+             Order | None: The created Order instance if successful, otherwise None.
         """
         if not self.cart:
-            self.logger.info(
-                f"[ORDER] Cannot create order - no cart for user: {self.user.email}."
+            self.logger.error(
+                f"[ORDER_CREATOR] No cart found for user: {self.user.email}"
             )
             return None
 
-        cart_items = self.cart.items.select_related("product")
-        total_price = sum(item.product.price * item.quantity for item in cart_items)
-        debug("[ORDER_CREATOR] Total price calculated:", total_price)
+        factory = OrderFactory(user=self.user, cart=self.cart)
 
-        shipping_cost = Decimal(4.90 if shipping_method == "standard" else 9.90)
-        debug("[ORDER_CREATOR] Shipping cost determined:", shipping_cost)
-
-        with transaction.atomic():
-            order = Order.objects.create(
-                user=self.user,
-                total_price=total_price + shipping_cost,
-                created_at=timezone.now(),
-                payment_provider=payment_provider if payment_provider else None,
-                payment_status=PaymentStatus.OPEN,
-                order_status=OrderStatus.PENDING,
-                shipping_address=shipping_data.get("address") if shipping_data else "",
-                shipping_post_code=(
-                    shipping_data.get("post_code") if shipping_data else ""
-                ),
-                shipping_city=shipping_data.get("city") if shipping_data else "",
-                shipping_country=shipping_data.get("country") if shipping_data else "",
-                shipping_method=shipping_method,
-                shipping_cost=shipping_cost,
-            )
-
-            for item in cart_items:
-                OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    quantity=item.quantity,
-                    price=item.product.price,
-                )
-
-        return order
+        return factory.create(
+            payment_provider=payment_provider,
+            shipping_data=shipping_data,
+            payment_method=payment_method,
+        )
