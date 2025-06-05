@@ -5,7 +5,7 @@ from rest_framework import status
 from devtools import debug
 
 
-from backend.orders.services.old_order_creator_serive import OrderCreatorService
+from orders.services.old_order_creator_serive import OrderCreatorService
 from payments.services.payment_dispatcher import PaymentDispatcher
 
 
