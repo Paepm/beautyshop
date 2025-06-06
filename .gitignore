@@ -11,3 +11,5 @@ Thumbs.db
 *.log
 .devcontainer/
 node_modules/
+stripe.deb
+stripe.tar.gz
