@@ -31,6 +31,8 @@ class AdminOrderItemSerializer(serializers.ModelSerializer):
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
+    country = serializers.CharField(source="country.name")
+
     class Meta:
         model = CustomUser
         fields = [

@@ -24,6 +24,7 @@ import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminUserPage from './pages/AdminUsersPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import AdminOrdersDetailPage from './pages/AdminOrdersDetailPage';
+import AdminOrderStatusManager from './pages/AdminOrderStatusManager';
 
 function App() {
   useEffect(() => {
@@ -55,6 +56,7 @@ function App() {
             <Route path="adminpanel/users" element={<AdminUserPage />} />
             <Route path="adminpanel" element={<AdminPanelPage />} />
             <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
+            <Route path="adminpanel/order_status_manager" element={<AdminOrderStatusManager />} />
 
           </Route>
         </Routes>

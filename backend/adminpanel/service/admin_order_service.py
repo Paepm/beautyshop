@@ -1,5 +1,6 @@
 from django.utils.dateparse import parse_date
 from devtools import debug
+from rest_framework.exceptions import NotFound
 
 from orders.models import Order
 from adminpanel.serializers.serializers import AdminOrderSerializer
@@ -12,11 +13,9 @@ class AdminOrderService:
         serializer = AdminOrderSerializer(orders, many=True)
         return serializer.data
 
-    def get_order_by_id(self, order_id):
+    def get_order_by_id(self, pk):
         try:
-            order = Order.objects.get(pk=order_id)
-            debug("ORDER HERE", order)
-            debug("ASDASDASDASD", order.items.all())
+            order = Order.objects.get(pk=pk)
             serializer = AdminOrderSerializer(order)
             return serializer.data
         except Order.DoesNotExist:
@@ -44,3 +43,19 @@ class AdminOrderService:
                 orders = orders.filter(user__username__icontains=username)
 
         return orders
+
+    def update_order_status(self, pk, new_order_status, new_payment_status):
+        try:
+            order = Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            raise NotFound("Order not found")
+
+        if new_order_status is not None:
+            order.order_status = new_order_status
+
+        if new_payment_status is not None:
+            order.payment_status = new_payment_status
+
+        order.save()
+
+        return AdminOrderSerializer(order).data

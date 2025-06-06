@@ -18,7 +18,7 @@ class OrderStatusService:
             return
 
         self.order.payment_status = PaymentStatus.PAID
-        self.order.order_status = OrderStatus.PROCESSING
+        self.order.order_status = OrderStatus.PENDING
         self.order.save()
 
     def set_payment_failed(self):

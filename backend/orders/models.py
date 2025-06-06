@@ -17,25 +17,21 @@ class Order(models.Model):
         max_length=255,
         blank=True,
         null=True,
-        help_text="Shipping address in the format: 'Street, Postcode City, Country'",
     )
     shipping_post_code = models.CharField(
         max_length=20,
         blank=True,
         null=True,
-        help_text="Postal code for shipping address",
     )
     shipping_city = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        help_text="City for shipping address",
     )
     shipping_country = models.CharField(
         max_length=100,
         blank=True,
         null=True,
-        help_text="Country for shipping address",
     )
     shipping_method = models.CharField(
         max_length=50,

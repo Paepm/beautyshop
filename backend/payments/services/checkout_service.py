@@ -39,7 +39,7 @@ class CheckoutService:
             f"{shipping_data.get('country', '')}"
         )
         self.order.payment_method = payment_method
-        self.order.save(update_fields=["shipping_address", "payment_method"])
+        self.order.save()
 
     def start_checkout(self, success_url: str, cancel_url: str) -> str:
         """

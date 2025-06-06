@@ -11,6 +11,10 @@ from adminpanel.service.admin_order_export_service import OrderExportService
 
 
 class AdminOrderListView(APIView):
+    """
+    Handles the admin order list endpoint.
+    """
+
     permission_classes = [IsSuperUser]
 
     def get(self, request):
@@ -24,13 +28,18 @@ class AdminOrderDetailView(APIView):
 
     def get(self, request, pk):
         try:
-            serializer = AdminOrderService().get_order_by_id(order_id=pk)
+            serializer = AdminOrderService().get_order_by_id(pk=pk)
+            debug("[ADMIN_ORDER_DETAIL_VIEW] Order details:", serializer)
             return Response(serializer)
         except Order.DoesNotExist:
             return Response({"error": "Not found"}, status=404)
 
 
 class AdminOrderExportView(APIView):
+    """
+    Handles downloading orders as CSV or PDF.
+    """
+
     permission_classes = [IsSuperUser]
 
     def get(self, request):

@@ -42,10 +42,10 @@ function AdminPanelPage() {
                 </li>
                 <li>
                     <button
-                        disabled
-                        className="w-full text-left px-4 py-2 border rounded bg-gray-100 text-gray-400 cursor-not-allowed"
+                        onClick={() => navigate("/adminpanel/order_status_manager")}
+                        className="w-full text-left px-4 py-2 border rounded hover:bg-gray-100"
                     >
-                        🚚 Order Status Management (Coming Soon)
+                        🚚 Order Status Management
                     </button>
                 </li>
             </ul>

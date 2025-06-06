@@ -14,10 +14,11 @@ class CheckoutView(APIView):
         user = request.user
         data = request.data
         shipping_data = data.get("shipping_data", {})
+        debug("[CHECKOUT_VIEW] Shipping data received:", shipping_data)
         payment_provider = data.get("payment_provider")
         payment_method = data.get("payment_method")
 
-        debug("[CHECKOUT_VIEW] Data received:", data)
+        # debug("[CHECKOUT_VIEW] Data received:", data)
 
         try:
             debug("[CHECKOUT_VIEW]paymentprovider:", payment_provider)
