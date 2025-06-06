@@ -43,6 +43,10 @@ DJANGO_APPS = [
     "corsheaders",
 ]
 
+# APPEND_SLASH is set to True to ensure that URLs are properly formatted with a trailing slash.
+APPEND_SLASH = True
+
+
 THIRD_PARTY_APPS = [
     # "rest_framework",
     # "corsheaders",
@@ -67,6 +71,7 @@ LOGIN_REDIRECT_URL = "/"  # Redirect to Home after login
 LOGOUT_REDIRECT_URL = "/login/"  # Redirect to login page after logout
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -74,7 +79,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "beautyshop.urls"

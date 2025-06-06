@@ -38,10 +38,13 @@ function AdminOrdersDetailPage() {
     return (
         <div className="max-w-3xl mx-auto p-6">
             <h1 className="text-2xl font-bold mb-4">Order Detail (#{order.id})</h1>
-
+            <h2 className="text-xl font-semibold mt-6 mb-2">User Informations</h2>
             <div className="space-y-2">
                 <p><strong>Username:</strong> {order.username}</p>
                 <p><strong>User Email:</strong> {order.user?.email}</p>
+            </div>
+            <h2 className="text-xl font-semibold mt-6 mb-2">Order Informations</h2>
+            <div className="space-y-2">
                 <p><strong>Order Status:</strong> {order.order_status}</p>
                 <p><strong>Payment Status:</strong> {order.payment_status}</p>
                 <p><strong>Payment Provider:</strong> {order.payment_provider}</p>

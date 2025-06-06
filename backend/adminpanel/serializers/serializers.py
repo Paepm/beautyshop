@@ -56,7 +56,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
 
 
 class AdminOrderSerializer(serializers.ModelSerializer):
-    items = AdminOrderItemSerializer(source="orderitem_set", many=True, read_only=True)
+    items = AdminOrderItemSerializer(many=True, read_only=True)
     user = AdminUserSerializer(read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
 

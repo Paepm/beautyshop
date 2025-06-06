@@ -2,8 +2,8 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from beautyshop.settings import BASE_DIR
-from django.contrib.auth import views as auth_views
 from django.contrib import admin
+
 
 import os
 
@@ -15,7 +15,7 @@ urlpatterns = [
     path("api/cart/", include(("cart.urls", "cart"), namespace="cart")),
     path("api/orders/", include(("orders.urls", "orders"), namespace="orders")),
     path("api/payments/", include(("payments.urls", "payments"), namespace="payments")),
-    path("api/adminpanel/", include("adminpanel.urls")),
+    path("api/adminpanel/", include("adminpanel.urls", namespace="adminpanel")),
 ]
 
 # for the media files

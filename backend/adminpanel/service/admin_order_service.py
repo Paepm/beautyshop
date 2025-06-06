@@ -1,14 +1,46 @@
+from django.utils.dateparse import parse_date
+from devtools import debug
+
 from orders.models import Order
 from adminpanel.serializers.serializers import AdminOrderSerializer
 
 
 class AdminOrderService:
-    def __init__(self):
-        pass
 
-    def get_all_orders(self) -> AdminOrderSerializer:
-
-        orders = Order.objects.all().order_by("-created_at")
+    def get_all_orders(self, filters=None) -> AdminOrderSerializer:
+        orders = self.get_queryset(filters)
         serializer = AdminOrderSerializer(orders, many=True)
+        return serializer.data
 
-        return serializer
+    def get_order_by_id(self, order_id):
+        try:
+            order = Order.objects.get(pk=order_id)
+            debug("ORDER HERE", order)
+            debug("ASDASDASDASD", order.items.all())
+            serializer = AdminOrderSerializer(order)
+            return serializer.data
+        except Order.DoesNotExist:
+            return None
+
+    def get_queryset(self, filters):
+        orders = Order.objects.all().order_by("-created_at")
+
+        if filters:
+            payment_status = filters.get("payment_status")
+            order_status = filters.get("order_status")
+            date_from = filters.get("date_from")
+            date_to = filters.get("date_to")
+            username = filters.get("username")
+
+            if payment_status:
+                orders = orders.filter(payment_status=payment_status)
+            if order_status:
+                orders = orders.filter(order_status=order_status)
+            if date_from:
+                orders = orders.filter(created_at__date__gte=parse_date(date_from))
+            if date_to:
+                orders = orders.filter(created_at__date__lte=parse_date(date_to))
+            if username:
+                orders = orders.filter(user__username__icontains=username)
+
+        return orders

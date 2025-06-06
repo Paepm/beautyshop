@@ -7,10 +7,11 @@ from adminpanel.views.admin_order_view import (
 )
 from adminpanel.views.admin_user_view import AdminUserListView
 
+app_name = "adminpanel"
 
 urlpatterns = [
     path("orders/", AdminOrderListView.as_view(), name="admin_order_list"),
-    path("users/", AdminUserListView.as_view(), name="admin_user_list"),
-    path("orders/<int:pk>/", AdminOrderDetailView.as_view(), name="admin_order_detail"),
     path("orders/export/", AdminOrderExportView.as_view(), name="admin-orders-export"),
+    path("orders/<int:pk>/", AdminOrderDetailView.as_view(), name="admin_order_detail"),
+    path("users/", AdminUserListView.as_view(), name="admin_user_list"),
 ]
