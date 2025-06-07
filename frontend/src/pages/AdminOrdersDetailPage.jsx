@@ -43,7 +43,7 @@ function AdminOrdersDetailPage() {
                 payment_status: newPaymentStatus,
             });
 
-            setMessage("✅ Status erfolgreich aktualisiert.");
+            setMessage("✅ Status successfully updated.");
             setShowModal(false);
 
             // Refresh order details
@@ -51,7 +51,7 @@ function AdminOrdersDetailPage() {
             setOrder(response.data);
         } catch (err) {
             console.error("Update failed:", err);
-            setMessage("❌ Fehler beim Aktualisieren des Status.");
+            setMessage("❌ Error by update Status.");
         }
     };
 
@@ -149,7 +149,6 @@ function AdminOrdersDetailPage() {
                                 value={newPaymentStatus}
                                 onChange={(e) => setNewPaymentStatus(e.target.value)}
                             >
-                                <option value="">-- Auswahl --</option>
                                 <option value="open">Open</option>
                                 <option value="paid">Paid</option>
                                 <option value="failed">Failed</option>
