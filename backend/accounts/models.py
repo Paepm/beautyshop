@@ -33,6 +33,8 @@ class CustomUserManager(BaseUserManager):
 
 # # CustomUser model
 class CustomUser(AbstractUser):
+    is_deleted = models.BooleanField(default=False)
+
     email = models.EmailField(unique=True)
     country = CountryField(blank_label="select country", null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)

@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
             const response = await api.get('/accounts/me/');
             console.log('Authenticated user:', response.data);
             setIsAuthenticated(true);
-            setUser(response.data); // <-- user setzen
+            setUser(response.data);
         } catch (error) {
             if (error.response?.status === 401) {
                 console.warn('User is not authenticated:', error.response.data);

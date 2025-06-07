@@ -22,7 +22,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     old_price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True
-    )  # <--- NEU
+    )
     available = models.BooleanField(default=True)
     image = models.ImageField(upload_to="products/", blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)

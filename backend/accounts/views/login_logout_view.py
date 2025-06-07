@@ -9,6 +9,7 @@ from accounts.services.login_service import LoginService
 class LoginAPIView(APIView):
 
     def post(self, request):
+        # get data from react user input
         username_or_email = request.data.get("username_or_email")
         password = request.data.get("password")
 

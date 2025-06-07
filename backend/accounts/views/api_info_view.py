@@ -19,8 +19,8 @@ class AuthInfoView(APIView):
 
     def get(self, request):
         user = request.user
-        debug("[AuthInfoView] GET request received. User: ", user)
-        debug("Cookies:", request.COOKIES)
+        # debug("[AuthInfoView] GET request received. User: ", user)
+        # debug("Cookies:", request.COOKIES)
 
         if isinstance(user, AnonymousUser) or not user.is_authenticated:
             debug("[AuthInfoView] User is not authenticated -->", user.is_authenticated)

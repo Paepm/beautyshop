@@ -79,6 +79,18 @@ function ProfilePage() {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone, just by admins!")) return;
+        try {
+            await api.delete("accounts/profile/")
+            alert("Account deleted successfully.");
+            window.location.href = "/"; // Redirect to home page after deletion
+        } catch (err) {
+            console.error("Error deleting account:", err);
+            alert("Failed to delete account.");
+        }
+    }
+
     if (loading || !userData) return <div>Loading...</div>;
 
     return (
@@ -261,6 +273,13 @@ function ProfilePage() {
                     className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
                 >
                     Save Changes
+                </button>
+
+                <button
+                    type="button"
+                    onClick={handleDeleteAccount}
+                    className="w-full bg-red-600 text-white py-2 rounded mt-4 hover:bg-red-700">
+                    Delete My Account
                 </button>
             </form>
         </div>

@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, get_user_model
 from django.http import HttpRequest
 from typing import Optional
+from django.db.models import Q
 
 from accounts.models import CustomUser  # falls du ein CustomUser-Modell verwendest
 
@@ -34,14 +35,14 @@ class LoginService:
         Returns:
             bool: True if authentication was successful, False otherwise.
         """
-        try:
-            user = User.objects.filter(email=self.username_or_email).first()
-            username = user.username if user else self.username_or_email
-        except Exception:
-            username = self.username_or_email
-
-        self.user = authenticate(username=username, password=self.password)
-        return self.user is not None
+        # Q is used vor bought Loginvalues in the same query
+        user = User.objects.filter(
+            Q(username=self.username_or_email) | Q(email=self.username_or_email)
+        ).first()
+        if user and user.check_password(self.password) and not user.is_deleted:
+            self.user = user
+            return True
+        return False
 
     def login_user(self) -> None:
         """

@@ -30,6 +30,18 @@ class ProfileView(APIView):
         debug("[PROFILEVIEW PATCH] error", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request):
+        # this is just a soft delete, the user will be marked as deleted not deleted in db
+        user = request.user
+        user.is_active = False
+        user.email = f"deleted_{user.id}@example.com"
+        user.set_unusable_password()
+        user.save()
+
+        return Response(
+            {"message": "User marked as deleted"}, status=status.HTTP_200_OK
+        )
+
 
 class CountryListView(APIView):
     def get(self, request):
