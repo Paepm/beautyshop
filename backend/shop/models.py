@@ -5,7 +5,6 @@ from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.name
@@ -16,17 +15,35 @@ class Product(models.Model):
         Category, on_delete=models.CASCADE, related_name="products"
     )
     name = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True)
-    on_sale = models.BooleanField(default=False)
     description = models.TextField(blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price = models.DecimalField(
+
+    price_purchase = models.DecimalField(  # Einkaufspreis (intern)
+        max_digits=10, decimal_places=2
+    )
+    price_old = models.DecimalField(  # früherer Preis (für Rabattanzeige)
         max_digits=10, decimal_places=2, blank=True, null=True
     )
+    price_current = models.DecimalField(  # aktueller Preis
+        max_digits=10, decimal_places=2
+    )
+
+    stock = models.PositiveIntegerField(default=0)
     available = models.BooleanField(default=True)
+
     image = models.ImageField(upload_to="products/", blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Optional: SEO, Slug, Meta
+    slug = models.SlugField(unique=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        from django.utils.text import slugify
+
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
