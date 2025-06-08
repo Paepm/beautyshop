@@ -22,6 +22,12 @@ class CustomUserAdmin(UserAdmin):
         "city",
         "address",
         "date_of_birth",
+        "is_deleted",
+        "newsletter_opt_in",
+        "terms_accepted",
+        "last_login",
+        "date_joined",
+        "is_active",
     )
 
     # fields to be displayed in the admin panel

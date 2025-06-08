@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import logout
+from devtools import debug
 
 from accounts.services.login_service import LoginService
 
@@ -12,6 +13,7 @@ class LoginAPIView(APIView):
         # get data from react user input
         username_or_email = request.data.get("username_or_email")
         password = request.data.get("password")
+        debug(username_or_email, "adad", password)
 
         if not username_or_email or not password:
             return Response(

@@ -5,9 +5,12 @@ from django.contrib.auth.models import BaseUserManager
 from django.core.validators import RegexValidator
 
 
-# class is needed to handle user and superuser creations --> django does not know how to handle the superuser when customUser gets created
-# CustomUserManager is needed to handle the creation of users and superusers
 class CustomUserManager(BaseUserManager):
+    """
+    class is needed to handle user and superuser creations --> django does not know how to handle the superuser when customUser gets created
+    CustomUserManager is needed to handle the creation of users and superusers
+    """
+
     use_in_migrations = True
 
     # Create CustomUser
