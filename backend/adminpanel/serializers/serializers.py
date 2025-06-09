@@ -10,15 +10,10 @@ class AdminProductSerializer(serializers.ModelSerializer):
         fields = [
             "category",
             "name",
-            "slug",
-            "on_sale",
             "description",
-            "price",
-            "old_price",
-            "available",
-            "image",
-            "created",
-            "updated",
+            "price_current",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -27,7 +22,7 @@ class AdminOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ["id", "product", "quantity", "price"]
+        fields = ["id", "product", "quantity", "price_current"]
 
 
 class AdminUserSerializer(serializers.ModelSerializer):

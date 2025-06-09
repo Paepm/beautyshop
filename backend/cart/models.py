@@ -22,4 +22,4 @@ class CartProduct(models.Model):
         return f"{self.quantity} x {self.product.name}"
 
     def model_get_total_price(self) -> float:
-        return self.quantity * self.product.price
+        return self.quantity * self.product.price_current

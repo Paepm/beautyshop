@@ -26,30 +26,27 @@ class CartService:
 
     def add_product(self, product_id: int) -> CartProduct:
         """
-        Add a product to the user's cart. If the product is already present, increase the quantity.
-        Otherwise, create a new CartItem for the product.
-
-        Args:
-            product_id (int): The ID of the product to be added to the cart.
-
-        Returns:
-            CartItem: The created or updated cart item.
+        Add a product to the user's cart. Check if the total quantity (in cart + 1) exceeds the stock.
         """
         product: Product = get_object_or_404(Product, id=product_id)
 
-        # Check if the cart already exists, if not, create a new one
+        if not product.available:
+            raise ValueError("Product is not available.")
+
         cart_item: CartProduct = CartProduct.objects.filter(
             cart=self.cart, product=product
         ).first()
 
+        current_quantity = cart_item.quantity if cart_item else 0
+        if current_quantity + 1 > product.stock:
+            raise ValueError("Not enough stock available.")
+
         if cart_item:
-            # if found, increase the quantity
             cart_item.quantity += 1
+            cart_item.save()
         else:
-            # if not found, create a new cart item
             cart_item = CartProduct.objects.create(cart=self.cart, product=product)
 
-        cart_item.save()
         return cart_item
 
     def get_cart_products(self) -> list[CartProduct]:
@@ -95,6 +92,7 @@ class CartService:
     ) -> bool:
         """
         Update the quantity of a specific cart item, either by increment/decrement or a direct input.
+        Checks if the product is not out of stock before let user updating the quantity.
 
         Args:
             product_id (int): The ID of the CartItem to update.
@@ -108,6 +106,11 @@ class CartService:
             item = get_object_or_404(CartProduct, id=product_id, cart=self.cart)
 
             if action == CartAction.INCREMENT.value:
+                if item.product.stock <= item.quantity:
+                    self.logger.warning(
+                        f"Cannot increment quantity for {item.product.name}, stock limit reached."
+                    )
+                    return False
                 item.quantity += 1
             elif action == CartAction.DECREMENT.value:
                 item.quantity = max(1, item.quantity - 1)

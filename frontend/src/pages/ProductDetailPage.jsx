@@ -34,7 +34,7 @@ function ProductDetailPage() {
                 className="w-64 h-64 object-cover rounded mb-6 shadow"
             />
             <p className="text-gray-700 text-lg mb-4">{product.description}</p>
-            <p className="text-xl font-semibold mb-6">{product.price} €</p>
+            <p className="text-xl font-semibold mb-6">{product.price_current} €</p>
 
             <button
                 className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"

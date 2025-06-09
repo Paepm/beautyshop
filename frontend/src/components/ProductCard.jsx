@@ -1,20 +1,25 @@
 import Cookies from 'js-cookie';
 import api from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import LoginPage from '../pages/LoginPage';
-
 function ProductCard({ product }) {
-
     const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const [added, setAdded] = useState(false);
+    const [error, setError] = useState('');
+
     const handleAddToCart = async () => {
-        console.log("User is authenticated:", isAuthenticated);
+        setError('');
         if (!isAuthenticated) {
             navigate('/login');
+            return;
+        }
+
+        if (product.stock === 0 || !product.available) {
+            setError('Product is out of stock ');
             return;
         }
 
@@ -23,7 +28,6 @@ function ProductCard({ product }) {
             const formData = new URLSearchParams();
             formData.append('action', 'increment');
             formData.append('quantity', 1);
-            console.log('➡️ Sende an:', `cart/add/${product.id}/`);
             await api.post(`cart/add/${product.id}/`, formData, {
                 headers: {
                     'X-CSRFToken': csrfToken,
@@ -31,41 +35,68 @@ function ProductCard({ product }) {
                 },
                 responseType: 'json',
             });
-            console.log("✅ Produkt hinzugefügt!");
-            alert('Produkt wurde zum Warenkorb hinzugefügt!');
+            setAdded(true);
+            setTimeout(() => setAdded(false), 2000);
         } catch (error) {
-            if (error.response) {
-                console.error('❌ Axios Response Error:', error.response.status, error.response.data);
-            } else if (error.request) {
-                console.error('❌ Axios No Response:', error.request);
-            } else {
-                console.error('❌ Axios Error:', error.message);
-            }
-            alert('Fehler beim Hinzufügen zum Warenkorb.');
+            setError('Out of stock');
+            setTimeout(() => setError(''), 1000);
         }
     };
 
-
     return (
-        <div className="border rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-lg transition">
+        <div className="border rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-lg transition relative">
+
+            {/* Erfolgs-Badge */}
+            {added && (
+                <div className="absolute top-2 right-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded shadow">
+                    Successfully added
+                </div>
+            )}
+
+            {/* Fehleranzeige */}
+            {error && (
+                <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded shadow animate-pulse">
+                    {error}
+                </div>
+            )}
 
             {/* Klickbarer Bereich für Detailseite */}
-            <Link to={`/products/${product.id}`} className="w-full flex flex-col items-center no-underline text-black">
+            <Link
+                to={`/products/${product.id}`}
+                className="w-full flex flex-col items-center no-underline text-black"
+            >
                 <img
                     src={product.image}
                     alt={product.name}
                     className="w-48 h-48 object-cover mb-4"
                 />
                 <h2 className="text-lg font-semibold text-center">{product.name}</h2>
-                <p className="text-gray-700 mb-2">{product.price} €</p>
+
+                {product.sale ? (
+                    <div className="mb-2 text-center">
+                        <span className="text-red-600 font-bold text-lg">
+                            {product.price_current} €
+                        </span>
+                        <span className="line-through text-gray-500 text-sm ml-2">
+                            {product.price_old} €
+                        </span>
+                    </div>
+                ) : (
+                    <p className="text-gray-700 mb-2">{product.price_current} €</p>
+                )}
+
+                {!product.available && (
+                    <span className="text-sm text-red-600 font-medium">not available</span>
+                )}
             </Link>
 
-            {/* Add-to-cart bleibt separat */}
+            {/* Add-to-cart Button */}
             <button
                 onClick={handleAddToCart}
-                className="mt-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
+                className="mt-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors disabled:opacity-50"
+                disabled={product.stock === 0 || !product.available}
             >
-                add to cart
+                Add to cart
             </button>
         </div>
     );

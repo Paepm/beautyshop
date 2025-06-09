@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from devtools import debug
 
 from ..serializer.serializers import ProductSerializer
 from ..services.product_service import ProductService
@@ -15,8 +16,12 @@ class ProductListView(APIView):
         """
         Handle GET requests to retrieve all products.
         """
-        products = ProductService.get_all_products()
+        category = request.query_params.get("category")
+        sale = request.query_params.get("sale")
+        debug("CATEGORY IN VIEW", category)
+        products = ProductService.get_all_products(category=category, sale=sale)
         serializer = ProductSerializer(products, many=True)
+        debug("SERIALIZER DATA", serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

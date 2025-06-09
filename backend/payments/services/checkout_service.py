@@ -17,6 +17,7 @@ class CheckoutService:
         """
         Create an order for the current user using the selected payment provider.
         """
+
         creator = OrderCreatorService(self.user)
         self.order = creator.create_order(
             payment_provider=payment_provider,

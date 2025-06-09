@@ -88,6 +88,6 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(product, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
-    price = models.DecimalField(
+    price_current = models.DecimalField(
         max_digits=10, decimal_places=2
     )  # item price at order time

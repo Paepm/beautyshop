@@ -25,8 +25,15 @@ class OrderFactory:
         if not self.cart:
             return None
 
+        # check if the cart has items and if all products have sufficient stock
         cart_items = self.cart.items.select_related("product")
-        total_price = sum(item.product.price * item.quantity for item in cart_items)
+        for item in cart_items:
+            if item.product.stock < item.quantity:
+                return None
+
+        total_price = sum(
+            item.product.price_current * item.quantity for item in cart_items
+        )
         shipping_cost = Decimal(4.90 if payment_method == "standard" else 9.90)
 
         with transaction.atomic():
@@ -50,7 +57,7 @@ class OrderFactory:
                     order=order,
                     product=item.product,
                     quantity=item.quantity,
-                    price=item.product.price,
+                    price_current=item.product.price_current,
                 )
 
         return order

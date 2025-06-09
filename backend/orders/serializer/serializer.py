@@ -32,5 +32,5 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "product_image",
             "product_description",
             "quantity",
-            "price",
+            "price_current",
         ]

@@ -37,6 +37,18 @@ class StripeWebhookHandler:
             debug(f"[STRIPE_COMPLETED] Order {order_id} already marked as PAID.")
             return "Already paid"
 
+        # Update stock before marking the order as paid
+        for item in order.items.all():
+            product = item.product
+
+            if product.stock < item.quantity:
+                debug("[STRIPE_COMPLETED] Not enough stock for product: ", product.name)
+                return "Stock error"
+
+            product.stock = max(product.stock - item.quantity, 0)
+            product.available = False if product.stock == 0 else product.available
+            product.save()
+
         OrderStatusService(order).set_paid()
         debug(f"[STRIPE_COMPLETED] Order {order_id} marked as PAID.")
 

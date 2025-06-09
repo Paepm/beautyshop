@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from devtools.debug import debug
 
 from cart.services.cart_services import CartService
 
@@ -13,6 +14,8 @@ class CartDetailView(APIView):
         service: CartService = CartService(request.user)
         cart_products: list = service.get_cart_products()
         total_price: float = service.get_total_price()
+        for product in cart_products:
+            debug(product.product.price_current, product.quantity)
 
         return Response(
             {
@@ -23,7 +26,7 @@ class CartDetailView(APIView):
                         "product": {
                             "id": product.product.id,
                             "name": product.product.name,
-                            "price": float(product.product.price),
+                            "price": float(product.product.price_current),
                             "image": (
                                 product.product.image.url
                                 if product.product.image
@@ -43,7 +46,14 @@ class CartAddProductView(APIView):
 
     def post(self, request, product_id):
         service = CartService(request.user)
-        item = service.add_product(product_id=product_id)
+
+        try:
+            item = service.add_product(product_id=product_id)
+        except ValueError as e:
+            return Response(
+                {"success": False, "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if item:
             return Response({"success": True})

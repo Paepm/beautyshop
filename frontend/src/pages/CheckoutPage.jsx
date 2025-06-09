@@ -42,7 +42,7 @@ function Checkout() {
                 country: profileResponse.data.country
             });
         } catch (err) {
-            console.error("Fehler beim Laden der Checkout-Daten", err);
+            console.error("Error during loading checkout datas", err);
         }
     }
 

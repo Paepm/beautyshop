@@ -14,16 +14,17 @@ class CheckoutView(APIView):
         user = request.user
         data = request.data
         shipping_data = data.get("shipping_data", {})
-        debug("[CHECKOUT_VIEW] Shipping data received:", shipping_data)
+        # debug("[CHECKOUT_VIEW] Shipping data received:", shipping_data)
+        debug("[CHECKOUT_VIEW] Data received:", data)
         payment_provider = data.get("payment_provider")
         payment_method = data.get("payment_method")
 
         # debug("[CHECKOUT_VIEW] Data received:", data)
 
         try:
-            debug("[CHECKOUT_VIEW]paymentprovider:", payment_provider)
-            debug("[CHECKOUT_VIEW]shipping_data:", shipping_data)
-            debug("[CHECKOUT_VIEW]payment_method:", payment_method)
+            # debug("[CHECKOUT_VIEW]paymentprovider:", payment_provider)
+            # debug("[CHECKOUT_VIEW]shipping_data:", shipping_data)
+            # debug("[CHECKOUT_VIEW]payment_method:", payment_method)
 
             checkout = CheckoutService(user)
             checkout.create_order(

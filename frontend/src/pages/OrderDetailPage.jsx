@@ -50,9 +50,8 @@ export default function OrderDetail() {
                     <div key={index} className="p-3 border rounded shadow-sm">
                         <img src={item.product_image} alt={item.product_name} className="w-24 h-24 object-cover mb-2" />
                         <p><strong>Product:</strong> {item.product_name}</p>
-                        <p><strong>Description:</strong> {item.product_description}</p>
                         <p><strong>Quantity:</strong> {item.quantity}</p>
-                        <p><strong>Price:</strong> {item.price} €</p>
+                        <p><strong>Price:</strong> {item.price_current} €</p>
                     </div>
                 ))}
             </div>
