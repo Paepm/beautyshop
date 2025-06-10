@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../services/api';
-import Cookies from 'js-cookie';
+import { useCart } from "../contexts/CartContext";
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { refreshCart } = useCart();
 
     useEffect(() => {
         fetchCart();
@@ -32,7 +33,7 @@ const CartPage = () => {
             if (quantity !== null) formData.append('quantity', parseInt(quantity));
 
             await api.post(`cart/update/${itemId}/`, formData);
-
+            refreshCart();  // refresh cart count in context
             fetchCart();  // reload cart
         } catch (error) {
             console.error('Error by changing quantity:', error);
@@ -42,6 +43,7 @@ const CartPage = () => {
     const removeFromCart = async (ItemId) => {
         try {
             await api.delete(`cart/remove/${ItemId}/`);
+            refreshCart(); // refresh cart count in context
             fetchCart(); // reload cart after removal
         } catch (error) {
             console.error('Error by delete product:', error);

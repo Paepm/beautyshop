@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
+import LogoutButton from '../LogoutButton';
 
 import { AuthContext } from '../../contexts/AuthContext';
-import LogoutButton from '../LogoutButton';
+import { useCart } from '../../contexts/CartContext';
 
 function Header() {
     const { isAuthenticated, user } = useContext(AuthContext);
+    const { cartCount } = useCart();
 
 
     return (
@@ -27,12 +29,16 @@ function Header() {
             <nav className="flex justify-end items-center space-x-4 col-start-3">
                 {isAuthenticated ? (
                     <>
-                        <Link
-                            to="/cart"
-                            className="flex items-center gap-1 text-sm px-3 py-1 border rounded hover:bg-gray-100"
-                        >
-                            🛒 <span>Go to Cart</span>
-                        </Link>
+                        <nav className="flex gap-6 items-center">
+                            <Link to="/cart" className="relative">
+                                <span className="text-2xl">🛒</span>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </Link>
+                        </nav>
                         <Link
                             to="/orderlist"
                             className="flex items-center gap-1 text-sm px-3 py-1 border rounded hover:bg-gray-100"

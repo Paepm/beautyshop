@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 
 import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext'; // <--- neu
+
 import Layout from './components/layout/Layout';
 import ProductList from './components/ProductList';
 import About from './pages/About';
@@ -34,32 +36,33 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<ProductList />} />
-            <Route path="about" element={<About />} />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="sign_up" element={<RegisterPage />} />
-            <Route path="verify/:token" element={<VerifyEmailPage />} />
-            <Route path="check_email" element={<CheckEmailPage />} />
-            <Route path="cart" element={<CartPage />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="password_reset" element={<LoosePwPage />} />
-            <Route path="password_reset/:token" element={<PasswordResetPage />} />
-            <Route path="products/:id" element={<ProductDetailPage />} />
-            <Route path="orderlist" element={<OrderList />} />
-            <Route path="order_detail/:id" element={<OrderDetail />} />
-            <Route path="payments/success_payment/:orderId" element={<PaymentSuccessPage />} />
-            <Route path="payments/cancel_payment" element={<PaymentCanclePage />} />
-            <Route path="adminpanel/orders" element={<AdminOrdersPage />} />
-            <Route path="adminpanel/users" element={<AdminUserPage />} />
-            <Route path="adminpanel" element={<AdminPanelPage />} />
-            <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
-            <Route path="adminpanel/order_status_manager" element={<AdminOrderStatusManager />} />
-
-          </Route>
-        </Routes>
+        <CartProvider> {/* <--- HIER eingefügt */}
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<ProductList />} />
+              <Route path="about" element={<About />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="sign_up" element={<RegisterPage />} />
+              <Route path="verify/:token" element={<VerifyEmailPage />} />
+              <Route path="check_email" element={<CheckEmailPage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="password_reset" element={<LoosePwPage />} />
+              <Route path="password_reset/:token" element={<PasswordResetPage />} />
+              <Route path="products/:id" element={<ProductDetailPage />} />
+              <Route path="orderlist" element={<OrderList />} />
+              <Route path="order_detail/:id" element={<OrderDetail />} />
+              <Route path="payments/success_payment/:orderId" element={<PaymentSuccessPage />} />
+              <Route path="payments/cancel_payment" element={<PaymentCanclePage />} />
+              <Route path="adminpanel/orders" element={<AdminOrdersPage />} />
+              <Route path="adminpanel/users" element={<AdminUserPage />} />
+              <Route path="adminpanel" element={<AdminPanelPage />} />
+              <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
+              <Route path="adminpanel/order_status_manager" element={<AdminOrderStatusManager />} />
+            </Route>
+          </Routes>
+        </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   );
