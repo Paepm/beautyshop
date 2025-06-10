@@ -18,10 +18,13 @@ class ProductListView(APIView):
         """
         category = request.query_params.get("category")
         sale = request.query_params.get("sale")
-        debug("CATEGORY IN VIEW", category)
-        products = ProductService.get_all_products(category=category, sale=sale)
+        available = request.query_params.get("available")
+        # debug("AVAILABLE IN VIEW", available)
+        products = ProductService.get_all_products(
+            category=category, sale=sale, available=available
+        )
         serializer = ProductSerializer(products, many=True)
-        debug("SERIALIZER DATA", serializer.data)
+        # debug("SERIALIZER DATA", serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

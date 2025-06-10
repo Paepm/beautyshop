@@ -29,10 +29,6 @@ function ProductCard({ product }) {
             formData.append('action', 'increment');
             formData.append('quantity', 1);
             await api.post(`cart/add/${product.id}/`, formData, {
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
                 responseType: 'json',
             });
             setAdded(true);

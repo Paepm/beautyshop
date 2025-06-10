@@ -10,7 +10,9 @@ class ProductService:
     """
 
     @staticmethod
-    def get_all_products(category: str = None, sale: str = None) -> list[Product]:
+    def get_all_products(
+        category: str = None, sale: str = None, available: bool = None
+    ) -> list[Product]:
         """Fetch all products from the database and filter by category if provided
         and the 2. filter for products on sale.
         """
@@ -23,6 +25,8 @@ class ProductService:
             queryset = queryset.filter(
                 price_old__isnull=False, price_old__gt=F("price_current")
             )
+        if available == "true":
+            queryset = queryset.filter(stock__gt=0)
         return list(queryset)
 
     @staticmethod

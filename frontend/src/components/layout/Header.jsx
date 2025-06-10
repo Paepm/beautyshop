@@ -1,11 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 
 import { AuthContext } from '../../contexts/AuthContext';
 import LogoutButton from '../LogoutButton';
 
 function Header() {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, user } = useContext(AuthContext);
 
 
     return (
@@ -13,6 +13,11 @@ function Header() {
             <Link to="/" className="text-2xl font-bold text-gray-800">
                 BeautyShop
             </Link>
+            {isAuthenticated && user && (
+                <h1 className="text-lg font-medium text-center text-gray-700">
+                    Hello {user.username}, have fun with shopping!
+                </h1>
+            )}
             <nav className="space-x-4">
                 {isAuthenticated ? (
                     <>

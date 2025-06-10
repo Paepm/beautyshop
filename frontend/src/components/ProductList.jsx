@@ -7,6 +7,7 @@ function ProductList() {
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState('');
     const [filterSale, setFilterSale] = useState(false);
+    const [filterIsAvailable, setFilterIsAvailable] = useState(false);
 
     const categories = [
         'chairs',
@@ -26,6 +27,7 @@ function ProductList() {
                 const params = new URLSearchParams();
                 if (category) params.append('category', category);
                 if (filterSale) params.append('sale', 'true');
+                if (filterIsAvailable) params.append('available', 'true');
 
                 const url = params.toString()
                     ? `products/?${params.toString()}`
@@ -41,7 +43,7 @@ function ProductList() {
         };
 
         fetchProducts();
-    }, [category, filterSale]); // refresh on category OR sale filter change
+    }, [category, filterSale, filterIsAvailable]); // refresh on category OR sale filter change
 
     return (
         <div className="product-list-wrapper">
@@ -68,7 +70,15 @@ function ProductList() {
                         onChange={(e) => setFilterSale(e.target.checked)}
                         className="form-checkbox"
                     />
-                    Nur Angebote anzeigen
+                    show offers only
+                </label>
+                <label className="flex items-center gap-2">
+                    <input type="checkbox"
+                        checked={filterIsAvailable}
+                        onChange={(e) => setFilterIsAvailable(e.target.checked)}
+                        className="form-checkbox"
+                    />
+                    is available
                 </label>
             </div>
 
