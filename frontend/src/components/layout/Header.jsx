@@ -11,18 +11,16 @@ function Header() {
     return (
         <header className="p-4 shadow bg-white flex justify-between items-center">
             <Link to="/" className="text-2xl font-bold text-gray-800">
-                BeautyShop
+                WohnSinnn
             </Link>
             {isAuthenticated && user && (
-                <h1 className="text-lg font-medium text-center text-gray-700">
+                <h1 className="text-center text-gray-700 text-lg font-medium col-start-2">
                     Hello {user.username}, have fun with shopping!
                 </h1>
             )}
-            <nav className="space-x-4">
+            <nav className="flex justify-end items-center space-x-4 col-start-3">
                 {isAuthenticated ? (
                     <>
-                        <LogoutButton />
-                        <Link to="/profile">Profile</Link>
                         <Link
                             to="/cart"
                             className="flex items-center gap-1 text-sm px-3 py-1 border rounded hover:bg-gray-100"
@@ -35,6 +33,8 @@ function Header() {
                         >
                             📝 <span>My Orders</span>
                         </Link>
+                        <Link to="/profile">Profile</Link>
+                        <LogoutButton />
                     </>
                 ) : (
                     <>
