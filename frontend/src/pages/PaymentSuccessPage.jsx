@@ -41,12 +41,16 @@ const SuccessPage = () => {
 
             <div className="border p-4 rounded-xl shadow-lg text-left">
                 <p>Status: <strong>{order.payment_status}</strong></p>
-                <p>Gesamtbetrag: <strong>{(order.total_price / 100).toFixed(2)} €</strong></p>
+                <p>Gesamtbetrag: <strong>{(order.total_price)} €</strong></p>
                 <p>Versandadresse: <br /> {order.shipping_address}</p>
             </div>
 
             <div className="mt-6">
-                <a href="/" className="text-blue-600 hover:underline">Zurück zur Startseite</a>
+                <button>
+                    <span className="text-blue-500 hover:underline" onClick={() => navigate("/")}>
+                        Back to Home
+                    </span>
+                </button>
             </div>
         </div>
     );

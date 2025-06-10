@@ -10,8 +10,14 @@ function Header() {
 
     return (
         <header className="p-4 shadow bg-white flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold text-gray-800">
-                WohnSinnn
+            <Link to="/" className="flex items-center space-x-4">
+                <div className="relative w-60 h0">
+                    <img
+                        src="http://localhost:8000/media/shop_page/WohnsSinn_logo1.png"
+                        alt="Logo"
+                        className="absolute top-[-30px] left-0 h-16 drop-shadow-md hover:scale-105 transition-transform"
+                    />
+                </div>
             </Link>
             {isAuthenticated && user && (
                 <h1 className="text-center text-gray-700 text-lg font-medium col-start-2">
