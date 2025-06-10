@@ -29,7 +29,9 @@ class OrderFactory:
         cart_items = self.cart.items.select_related("product")
         for item in cart_items:
             if item.product.stock < item.quantity:
-                return None
+                raise ValueError(
+                    f"{item.product.name} is out of stock or insufficient stock for quantity {item.quantity}."
+                )
 
         total_price = sum(
             item.product.price_current * item.quantity for item in cart_items

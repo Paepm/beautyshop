@@ -20,6 +20,7 @@ function Checkout() {
     const [countryList, setCountryList] = useState([]);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         fetchCheckoutData();
@@ -43,6 +44,8 @@ function Checkout() {
             });
         } catch (err) {
             console.error("Error during loading checkout datas", err);
+            const errorDetail = err.response?.data?.detail || "Something went wrong. Please try again.";
+            setErrorMessage(errorDetail);
         }
     }
 
@@ -241,6 +244,11 @@ function Checkout() {
                     I accept the <a href="/agb" className="text-blue-600">GTC</a>
                 </label>
             </section>
+            {errorMessage && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <strong>Error:</strong> {errorMessage}
+                </div>
+            )}
 
             <button
                 onClick={handlePayment}

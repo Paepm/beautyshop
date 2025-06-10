@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
 import api from "../services/api";
-import { Link } from "react-router-dom";
 
 function AdminUserPage() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user, isAuthenticated } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isAuthenticated || !user?.is_superuser) {
+            navigate("/");
+            return;
+        }
         fetchUsers();
     }, []);
 

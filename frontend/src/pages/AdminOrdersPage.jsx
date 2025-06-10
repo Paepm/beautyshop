@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveAs } from 'file-saver';
+import { AuthContext } from "../contexts/AuthContext";
 import api from '../services/api';
 
 
@@ -14,10 +15,14 @@ function AdminOrdersPage() {
         date_from: '',
         date_to: ''
     });
-
+    const { user, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isAuthenticated || !user?.is_superuser) {
+            navigate("/");
+            return;
+        }
         fetchOrders();
     }, [filters]);
 

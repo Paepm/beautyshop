@@ -11,17 +11,17 @@ class CheckoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = request.user
-        data = request.data
-        shipping_data = data.get("shipping_data", {})
-        # debug("[CHECKOUT_VIEW] Shipping data received:", shipping_data)
-        debug("[CHECKOUT_VIEW] Data received:", data)
-        payment_provider = data.get("payment_provider")
-        payment_method = data.get("payment_method")
-
-        # debug("[CHECKOUT_VIEW] Data received:", data)
-
         try:
+            user = request.user
+            data = request.data
+            shipping_data = data.get("shipping_data", {})
+            # debug("[CHECKOUT_VIEW] Shipping data received:", shipping_data)
+            debug("[CHECKOUT_VIEW] Data received:", data)
+            payment_provider = data.get("payment_provider")
+            payment_method = data.get("payment_method")
+
+            # debug("[CHECKOUT_VIEW] Data received:", data)
+
             # debug("[CHECKOUT_VIEW]paymentprovider:", payment_provider)
             # debug("[CHECKOUT_VIEW]shipping_data:", shipping_data)
             # debug("[CHECKOUT_VIEW]payment_method:", payment_method)
@@ -41,6 +41,10 @@ class CheckoutView(APIView):
 
             redirect_url = checkout.start_checkout(success_url, cancel_url)
             return Response({"redirect_url": redirect_url}, status=status.HTTP_200_OK)
+
+        except ValueError as ve:
+            debug("[CHECKOUT_VIEW] ValueError during checkout:", str(ve))
+            return Response({"detail": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             debug("[CHECKOUT_VIEW] Error during checkout:", str(e))

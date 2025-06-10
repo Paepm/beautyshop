@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from '../contexts/AuthContext';
 import api from "../services/api";
 
 function AdminOrderStatusPage() {
@@ -6,7 +8,17 @@ function AdminOrderStatusPage() {
     const [message, setMessage] = useState("");
     const [newOrderStatus, setNewOrderStatus] = useState("");
     const [newPaymentStatus, setNewPaymentStatus] = useState("");
+    const navigate = useNavigate();
+    const { user, isAuthenticated, loading } = useContext(AuthContext);
 
+
+    useEffect(() => {
+        if (!loading) {
+            if (!isAuthenticated || !user?.is_superuser) {
+                navigate("/");  // Weiterleitung wenn kein Superuser
+            }
+        }
+    }, [isAuthenticated, user, loading, navigate]);
 
 
     const handleStatusChange = async () => {
