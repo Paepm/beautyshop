@@ -16,7 +16,7 @@ function FilterHeader() {
     };
 
     return (
-        <div className="bg-yellow-100 border-b border-yellow-100 px-4 py-2 flex flex-wrap justify-center gap-3">
+        <div className="bg-yellow-100 border-b border-yellow-200 px-4 py-2 flex flex-wrap justify-center gap-3">
             {/* ALL button zuerst */}
             <button
                 onClick={() => handleClick("")}

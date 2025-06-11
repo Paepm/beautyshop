@@ -31,7 +31,7 @@ function Header() {
     }, []);
 
     return (
-        <header className="bg-white shadow px-6 py-4">
+        <header className="bg-zinc-100 shadow px-6 py-4">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap relative">
 
                 {/* Search */}
@@ -65,7 +65,7 @@ function Header() {
                             >
                                 🛒
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-red-400 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
                                         {cartCount}
                                     </span>
                                 )}
@@ -117,14 +117,14 @@ function Header() {
                         <>
                             <Link
                                 to="/login"
-                                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-black hover:text-white transition-all"
+                                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500"
                             >
                                 Login
                             </Link>
 
                             <Link
                                 to="/sign_up"
-                                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-black hover:text-white transition-all"
+                                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500"
                             >
                                 Register
                             </Link>

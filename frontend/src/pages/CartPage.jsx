@@ -74,54 +74,45 @@ const CartPage = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-5xl mx-auto p-4">
             <h2 className="text-2xl font-semibold mb-4">
                 {user?.username ? `${user.username}, that is your Cart` : 'Your Cart'}
             </h2>
 
-            <p className="text-sm text-gray-600 mb-6">({cartItems.length} Artikle)</p>
+            <p className="text-sm text-gray-600 mb-6">({cartItems.length} Artikel)</p>
 
-            <ul className="space-y-6">
+            <div className="space-y-6">
                 {cartItems.map((item) => (
-                    <li key={item.id} className="flex justify-between items-center border-b pb-4">
-                        <div>
-                            <Link to={`/products/${item.product.id}`} className="flex items-center gap-4">
-                                <img
-                                    src={item.product.image}
-                                    alt={item.product.name}
-                                    className="w-16 h-16 object-cover rounded shadow"
-                                />
-                                <p className="font-medium">{item.product.name}</p>
-                            </Link>
-                            <p className="text-sm text-gray-600">
-                                {item.quantity} × €{item.product.price.toFixed(2)}
-                            </p>
-                            <p className="text-sm text-gray-800">
-                                Subtotal: €{(item.quantity * item.product.price).toFixed(2)}
-                            </p>
-                            {quantityErros[item.id] && (
-                                <p className="text-sm text-red-600 font-medium">{quantityErros[item.id]}</p>
-                            )}
+                    <div key={item.id} className="flex flex-col md:flex-row justify-between border-b pb-6 gap-6">
+                        {/* Produktinformationen */}
+                        <div className="flex gap-4 w-full md:w-1/3">
+                            <img
+                                src={item.product.image}
+                                alt={item.product.name}
+                                className="w-20 h-20 object-cover rounded shadow"
+                            />
+                            <div>
+                                <Link to={`/products/${item.product.id}`} className="font-medium hover:underline">
+                                    {item.product.name}
+                                </Link>
+                                {quantityErros[item.id] && (
+                                    <p className="text-sm text-red-600 font-medium mt-1">{quantityErros[item.id]}</p>
+                                )}
+                            </div>
                         </div>
 
-
-                        <div className="flex items-center gap-2">
+                        {/* Quantity-Steuerung & Delete */}
+                        <div className="flex items-center gap-2 justify-center md:w-1/3">
                             <button
-                                onClick={() => {
-                                    if (item.quantity > 1) {
-                                        updateQuantity(item.id, "decrement");
-                                    }
-                                }}
-                                className="px-2 py-1 border rounded"
+                                onClick={() => item.quantity > 1 && updateQuantity(item.id, "decrement")}
+                                className="px-3 py-1 border rounded"
                             >
                                 –
                             </button>
-
-                            <span className="w-6 text-center">{item.quantity}</span>
-
+                            <span className="w-8 text-center">{item.quantity}</span>
                             <button
                                 onClick={() => updateQuantity(item.id, "increment")}
-                                className="px-2 py-1 border rounded"
+                                className="px-3 py-1 border rounded"
                             >
                                 +
                             </button>
@@ -129,23 +120,33 @@ const CartPage = () => {
                                 onClick={() => removeFromCart(item.id)}
                                 className="ml-4 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
                             >
-                                delete
+                                ✖
                             </button>
                         </div>
-                    </li>
 
+                        {/* Rechte Tabelle */}
+                        <div className="text-sm text-right md:w-1/3">
+                            <div>Price per Unit: <span className="font-medium">€{item.product.price.toFixed(2)}</span></div>
+                            <div>Quantity: <span className="font-medium">{item.quantity}</span></div>
+                            <div className="mt-1">Subtotal: <span className="font-semibold text-lg">€{(item.quantity * item.product.price).toFixed(2)}</span></div>
+                        </div>
+                    </div>
                 ))}
-            </ul>
-
-            <div className="mt-8 text-right font-semibold text-lg">
-                Summary: €{totalPrice.toFixed(2)}
             </div>
-            <a href="/checkout/" className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800">
-                Proceed to Checkout
-            </a>
 
+            {/* Summary & Checkout */}
+            <div className="mt-10 text-right">
+                <p className="font-semibold text-xl mb-2">Summary: €{totalPrice.toFixed(2)}</p>
+                <a
+                    href="/checkout/"
+                    className="inline-block px-6 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+                >
+                    Proceed to Checkout
+                </a>
+            </div>
         </div>
     );
+
 }
 
 export default CartPage;

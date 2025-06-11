@@ -10,7 +10,7 @@ function Layout() {
             <div className="fixed top-0 left-0 w-full z-50 bg-white shadow">
                 <div className="relative max-w-7xl mx-auto">
                     {/* Logo über allem */}
-                    <div className="absolute top-3 left-4 z-50">
+                    <div className="absolute top-2 left-4 z-50">
                         <Link to="/">
                             <img
                                 src="http://localhost:8000/media/shop_page/WohnsSinn_logo1.png"
