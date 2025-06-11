@@ -31,24 +31,22 @@ const SuccessPage = () => {
     }, [authLoading, isAuthenticated, orderId, navigate]);
 
 
-    if (loading) return <p className="text-center mt-10">Lade Bestellinformationen...</p>;
-    if (!order) return <p className="text-center mt-10">Bestellung nicht gefunden.</p>;
+    if (loading) return <p className="text-center mt-10">Download order information...</p>;
+    if (!order) return <p className="text-center mt-10">Order not found.</p>;
 
     return (
         <div className="max-w-xl mx-auto text-center mt-10">
-            <h1 className="text-3xl font-bold mb-4">Vielen Dank für deine Bestellung!</h1>
-            <p className="text-lg mb-6">Bestellnummer: <strong>#{order.id}</strong></p>
+            <h1 className="text-3xl font-bold mb-4">Thank you for your order!</h1>
 
             <div className="border p-4 rounded-xl shadow-lg text-left">
-                <p>Status: <strong>{order.payment_status}</strong></p>
-                <p>Gesamtbetrag: <strong>{(order.total_price)} €</strong></p>
-                <p>Versandadresse: <br /> {order.shipping_address}</p>
+                <h3>Your order will now be processed by us, you should receive a confirmation email on the email address you provided. Thank you for your trust and your purchase
+                    Best regards your WohnSinn team</h3>
             </div>
 
             <div className="mt-6">
                 <button>
-                    <span className="text-blue-500 hover:underline" onClick={() => navigate("/")}>
-                        Back to Home
+                    <span className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 disabled:opacity-50" onClick={() => navigate("/")}>
+                        Continue Shopping
                     </span>
                 </button>
             </div>

@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 function FilterHeader() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const activeCategory = searchParams.get("category") || "";
 
     const categories = [
         'chairs', 'benches', 'cloth hanger', 'tables',
@@ -17,11 +16,11 @@ function FilterHeader() {
     };
 
     return (
-        <div className="bg-yellow-100 border-b border-yellow-300 px-4 py-2 flex flex-wrap justify-center gap-3">
+        <div className="bg-yellow-100 border-b border-yellow-100 px-4 py-2 flex flex-wrap justify-center gap-3">
             {/* ALL button zuerst */}
             <button
                 onClick={() => handleClick("")}
-                className={`px-4 py-1 rounded-full text-sm whitespace-nowrap transition-all`}
+                className={`px-4 py-1 rounded-full text-sm whitespace-nowrap transition-all hover:underline hover:font-bold`}
             >
                 All
             </button>
@@ -31,8 +30,7 @@ function FilterHeader() {
                 <button
                     key={cat}
                     onClick={() => handleClick(cat)}
-                    className={`px-4 py-1 rounded-full text-sm whitespace-nowrap transition-all
-                        ${activeCategory === cat ? "bg-black text-white" : "bg-white hover:bg-black hover:text-white"}`}
+                    className={`px-4 py-1 rounded-full text-sm whitespace-nowrap transition-all hover:underline hover:font-bold`}
                 >
                     {cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 import api from "../services/api";
@@ -94,8 +94,15 @@ function Checkout() {
                 <h2 className="text-xl font-semibold mb-2">Products</h2>
                 {cartItems.map((item) => (
                     <div key={item.id} className="flex justify-between py-1 border-b">
-                        <span>{item.product.name} × {item.quantity}</span>
-                        <span>{(item.quantity * item.product.price).toFixed(2)} €</span>
+                        <Link to={`/products/${item.product.id}`} className="flex items-center gap-4">
+                            <img
+                                src={item.product.image}
+                                alt={item.product.name}
+                                className="w-16 h-16 object-cover rounded shadow"
+                            />
+                            <span>{item.product.name} × {item.quantity}</span>
+                            <span>{(item.quantity * item.product.price).toFixed(2)} €</span>
+                        </Link>
                     </div>
                 ))}
                 <div className="flex justify-between font-semibold mt-2">

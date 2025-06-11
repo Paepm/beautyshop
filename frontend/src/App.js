@@ -28,6 +28,9 @@ import AdminUserPage from './pages/AdminUsersPage';
 import AdminPanelPage from './pages/AdminPanelPage';
 import AdminOrdersDetailPage from './pages/AdminOrdersDetailPage';
 import AdminOrderStatusManager from './pages/AdminOrderStatusManager';
+import ImprintPage from './pages/ImprintPage';
+import PrivacyPage from './pages/PrivacyPage';
+import GTCPage from './pages/GTCPage';
 
 function App() {
   useEffect(() => {
@@ -40,8 +43,8 @@ function App() {
         <CartProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} /> {/* ✅ neue Startseite */}
-              <Route path="productlist" element={<ProductList />} /> {/* ✅ Produktübersicht verschoben */}
+              <Route index element={<HomePage />} />
+              <Route path="productlist" element={<ProductList />} />
               <Route path="about" element={<About />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="profile" element={<ProfilePage />} />
@@ -62,6 +65,9 @@ function App() {
               <Route path="adminpanel" element={<AdminPanelPage />} />
               <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
               <Route path="adminpanel/order_status_manager" element={<AdminOrderStatusManager />} />
+              <Route path="imprint" element={<ImprintPage />} />
+              <Route path="privacy" element={<PrivacyPage />} />
+              <Route path="gtc" element={<GTCPage />} />
             </Route>
           </Routes>
         </CartProvider>

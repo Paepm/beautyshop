@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import ProductCard from './ProductCard';
 
@@ -11,8 +11,8 @@ function ProductList() {
 
     const [searchParams] = useSearchParams();
     const category = searchParams.get("category") || "";
-    const [searchTerm, setSearchTerm] = useState("");
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -20,19 +20,18 @@ function ProductList() {
             try {
                 const params = new URLSearchParams(location.search);
                 const category = params.get("category") || '';
-                const search = params.get("search") || '';
                 const sale = params.get("sale") === "true";
                 const available = params.get("available") === "true";
+                const search = params.get("search") || '';
 
-                setSearchTerm(search);
                 setFilterSale(sale);
                 setFilterIsAvailable(available);
 
                 const requestParams = new URLSearchParams();
                 if (category) requestParams.append("category", category);
-                if (search) requestParams.append("search", search);
                 if (sale) requestParams.append("sale", "true");
                 if (available) requestParams.append("available", "true");
+                if (search) requestParams.append("search", search);
 
                 const url = requestParams.toString()
                     ? `products/?${requestParams.toString()}`
@@ -48,7 +47,17 @@ function ProductList() {
         };
 
         fetchProducts();
-    }, [category, filterSale, filterIsAvailable, location.search]);
+    }, [location.search]);
+
+    const updateFilterParam = (key, value) => {
+        const params = new URLSearchParams(location.search);
+        if (value) {
+            params.set(key, "true");
+        } else {
+            params.delete(key);
+        }
+        navigate({ search: params.toString() });
+    };
 
     return (
         <div className="product-list-wrapper px-4">
@@ -59,23 +68,25 @@ function ProductList() {
                     <input
                         type="checkbox"
                         checked={filterSale}
-                        onChange={(e) => setFilterSale(e.target.checked)}
+                        onChange={(e) => updateFilterParam("sale", e.target.checked)}
                         className="form-checkbox"
                     />
+
                     show offers only
                 </label>
                 <label className="flex items-center gap-2">
                     <input
                         type="checkbox"
                         checked={filterIsAvailable}
-                        onChange={(e) => setFilterIsAvailable(e.target.checked)}
+                        onChange={(e) => updateFilterParam("available", e.target.checked)}
                         className="form-checkbox"
                     />
+
                     is available
                 </label>
             </div>
 
-            {/* Produktliste */}
+            {/* Productlist */}
             {loading ? (
                 <p>Loading products…</p>
             ) : products.length === 0 ? (
