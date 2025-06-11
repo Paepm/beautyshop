@@ -11,7 +11,10 @@ class ProductService:
 
     @staticmethod
     def get_all_products(
-        category: str = None, sale: str = None, available: bool = None
+        category: str = None,
+        sale: str = None,
+        available: bool = None,
+        search_term: str = None,
     ) -> list[Product]:
         """Fetch all products from the database and filter by category if provided
         and the 2. filter for products on sale.
@@ -27,6 +30,9 @@ class ProductService:
             )
         if available == "true":
             queryset = queryset.filter(stock__gt=0)
+
+        if search_term:
+            queryset = queryset.filter(name__icontains=search_term)
         return list(queryset)
 
     @staticmethod

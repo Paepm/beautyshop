@@ -19,9 +19,10 @@ class ProductListView(APIView):
         category = request.query_params.get("category")
         sale = request.query_params.get("sale")
         available = request.query_params.get("available")
+        search_term = request.query_params.get("search")
         # debug("AVAILABLE IN VIEW", available)
         products = ProductService.get_all_products(
-            category=category, sale=sale, available=available
+            category=category, sale=sale, available=available, search_term=search_term
         )
         serializer = ProductSerializer(products, many=True)
         # debug("SERIALIZER DATA", serializer.data)

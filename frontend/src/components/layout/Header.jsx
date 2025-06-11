@@ -1,19 +1,26 @@
-import { Link } from 'react-router-dom';
-import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useContext, useState } from 'react';
 import LogoutButton from '../LogoutButton';
-
 import { AuthContext } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 
 function Header() {
-    const { isAuthenticated, user } = useContext(AuthContext);
+    const { isAuthenticated } = useContext(AuthContext);
     const { cartCount } = useCart();
+    const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
 
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        const params = new URLSearchParams();
+        if (searchTerm) params.set("search", searchTerm);
+        navigate({ pathname: "/productlist", search: params.toString() });
+    };
 
     return (
-        <header className="p-4 shadow bg-white flex justify-between items-center">
+        <header className="p-4 shadow bg-white flex flex-wrap items-center justify-between gap-4">
             <Link to="/" className="flex items-center space-x-4">
-                <div className="relative w-60 h0">
+                <div className="relative w-60 h-0">
                     <img
                         src="http://localhost:8000/media/shop_page/WohnsSinn_logo1.png"
                         alt="Logo"
@@ -21,11 +28,24 @@ function Header() {
                     />
                 </div>
             </Link>
-            {isAuthenticated && user && (
-                <h1 className="text-center text-gray-700 text-lg font-medium col-start-2">
-                    Hello {user.username}, have fun with shopping!
-                </h1>
-            )}
+
+            {/* search field with button */}
+            <form onSubmit={handleSearchSubmit} className="flex flex-1 max-w-md border rounded shadow-sm overflow-hidden">
+                <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="flex-grow px-4 py-2 outline-none"
+                />
+                <button
+                    type="submit"
+                    className="bg-yellow-300 px-4 text-black hover:bg-yellow-400 transition-all"
+                >
+                    🔍
+                </button>
+            </form>
+
             <nav className="flex justify-end items-center space-x-4 col-start-3">
                 {isAuthenticated ? (
                     <>
@@ -52,7 +72,6 @@ function Header() {
                     <>
                         <Link to="/login">Login</Link>
                         <Link to="/sign_up">Register</Link>
-
                     </>
                 )}
             </nav>

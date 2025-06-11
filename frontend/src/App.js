@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 
 import { AuthProvider } from './contexts/AuthContext';
-import { CartProvider } from './contexts/CartContext'; // <--- neu
+import { CartProvider } from './contexts/CartContext';
 
+import HomePage from './pages/HomePage'; // ✅ Neu: Startseite
 import Layout from './components/layout/Layout';
 import ProductList from './components/ProductList';
 import About from './pages/About';
@@ -36,10 +37,11 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <CartProvider> {/* <--- HIER eingefügt */}
+        <CartProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<ProductList />} />
+              <Route index element={<HomePage />} /> {/* ✅ neue Startseite */}
+              <Route path="productlist" element={<ProductList />} /> {/* ✅ Produktübersicht verschoben */}
               <Route path="about" element={<About />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="profile" element={<ProfilePage />} />
