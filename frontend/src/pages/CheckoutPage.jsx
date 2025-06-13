@@ -95,18 +95,30 @@ function Checkout() {
             <section className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Products</h2>
                 {cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between py-1 border-b">
-                        <Link to={`/products/${item.product.id}`} className="flex items-center gap-4">
+                    <div key={item.id} className="flex items-center justify-between py-3 border-b text-sm">
+                        {/* Link + Bild + Name */}
+                        <Link to={`/products/${item.product.id}`} className="flex items-center gap-4 flex-1">
                             <img
                                 src={item.product.image}
                                 alt={item.product.name}
                                 className="w-16 h-16 object-cover rounded shadow"
                             />
-                            <span>{item.product.name} × {item.quantity}</span>
-                            <span>{(item.quantity * item.product.price).toFixed(2)} €</span>
+                            <span className="hover:underline">{item.product.name}</span>
                         </Link>
+
+                        {/* Mengenangabe */}
+                        <div className="w-20 text-center">{item.quantity}×</div>
+
+                        {/* Einzelpreis */}
+                        <div className="w-24 text-right">{item.product.price.toFixed(2)} €</div>
+
+                        {/* Gesamtpreis für dieses Produkt */}
+                        <div className="w-24 text-right font-medium">
+                            {(item.quantity * item.product.price).toFixed(2)} €
+                        </div>
                     </div>
                 ))}
+
                 <div className="flex justify-between font-semibold mt-2">
                     <span>Subtotal</span>
                     <span>{subtotal.toFixed(2)} €</span>

@@ -1,3 +1,4 @@
+import './i18n'; // Importing i18n configuration for translations
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

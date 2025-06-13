@@ -36,6 +36,15 @@ function AdminOrdersDetailPage() {
         fetchOrder();
     }, [id, isAuthenticated, user, loading, navigate]);
 
+    const [checkedItems, setCheckedItems] = useState({});
+
+    const toggleChecked = (itemId) => {
+        setCheckedItems((prev) => ({
+            ...prev,
+            [itemId]: !prev[itemId],
+        }));
+    };
+
     const handleStatusUpdate = async () => {
         try {
             await api.patch(`/adminpanel/orders_status_manager/${id}/`, {
@@ -74,6 +83,54 @@ function AdminOrdersDetailPage() {
             </div>
 
             {message && <p className="text-sm text-green-600">{message}</p>}
+            {/* Ordered Items */}
+            <div className="bg-white shadow-md rounded-lg p-5">
+                <h2 className="text-xl font-semibold mb-4">🧴 Ordered Items</h2>
+
+                <div className="overflow-x-auto">
+                    <table className="min-w-full table-auto text-sm text-left text-gray-700">
+                        <thead className="bg-gray-100 font-semibold">
+                            <tr>
+                                <th className="p-2">Product</th>
+                                <th className="p-2">Article No.</th>
+                                <th className="p-2 text-center">Qty</th>
+                                <th className="p-2 text-center">Checked</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {order.items?.map((item) => (
+                                <tr key={item.id} className="border-t hover:bg-gray-50">
+                                    <td className="p-2">{item.product?.name}</td>
+                                    <td className="p-2 font-mono text-xs text-gray-500">
+                                        {item.product?.article_number || "—"}
+                                    </td>
+                                    <td className="p-2 text-center">{item.quantity}</td>
+                                    <td className="p-2 text-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={checkedItems[item.id] || false}
+                                            onChange={() => toggleChecked(item.id)}
+                                            className="accent-green-600 w-4 h-4"
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Shipping Info */}
+            <div className="bg-white shadow-md rounded-lg p-5">
+                <h2 className="text-xl font-semibold mb-3">🚚 Shipping Information</h2>
+                <div className="grid grid-cols-2 gap-4">
+                    <p><strong>Address:</strong> {order.shipping_address}</p>
+                    <p><strong>City:</strong> {order.shipping_city}</p>
+                    <p><strong>Post Code:</strong> {order.shipping_post_code}</p>
+                    <p><strong>Country:</strong> {order.shipping_country}</p>
+                    <p><strong>Shipping Cost:</strong> €{order.shipping_cost}</p>
+                </div>
+            </div>
 
             {/* User Information */}
             <div className="bg-white shadow-md rounded-lg p-5">
@@ -97,30 +154,6 @@ function AdminOrdersDetailPage() {
                 </div>
             </div>
 
-            {/* Shipping Info */}
-            <div className="bg-white shadow-md rounded-lg p-5">
-                <h2 className="text-xl font-semibold mb-3">🚚 Shipping Information</h2>
-                <div className="grid grid-cols-2 gap-4">
-                    <p><strong>Address:</strong> {order.shipping_address}</p>
-                    <p><strong>City:</strong> {order.shipping_city}</p>
-                    <p><strong>Post Code:</strong> {order.shipping_post_code}</p>
-                    <p><strong>Country:</strong> {order.shipping_country}</p>
-                    <p><strong>Shipping Cost:</strong> €{order.shipping_cost}</p>
-                </div>
-            </div>
-
-            {/* Items */}
-            <div className="bg-white shadow-md rounded-lg p-5">
-                <h2 className="text-xl font-semibold mb-3">🧴 Ordered Items</h2>
-                <ul className="space-y-2">
-                    {order.items?.map(item => (
-                        <li key={item.id} className="border p-3 rounded flex justify-between items-center">
-                            <span>{item.product?.name} × {item.quantity}</span>
-                            <span className="font-semibold">€{item.price}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
             {/* MODAL */}
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">

@@ -31,6 +31,7 @@ import AdminOrderStatusManager from './pages/AdminOrderStatusManager';
 import ImprintPage from './pages/ImprintPage';
 import PrivacyPage from './pages/PrivacyPage';
 import GTCPage from './pages/GTCPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   useEffect(() => {
@@ -68,6 +69,7 @@ function App() {
               <Route path="imprint" element={<ImprintPage />} />
               <Route path="privacy" element={<PrivacyPage />} />
               <Route path="gtc" element={<GTCPage />} />
+              <Route path="contact" element={<ContactPage />} />
             </Route>
           </Routes>
         </CartProvider>

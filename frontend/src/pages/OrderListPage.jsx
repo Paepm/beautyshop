@@ -27,7 +27,23 @@ function OrderList() {
             <h1 className="text-2xl font-bold mb-4">My Orders</h1>
 
             {orders.length === 0 ? (
-                <p>You do not have any orders yet.</p>
+                <div className="flex flex-col items-center justify-center text-center py-20 px-4 bg-gray-100 rounded">
+                    <img
+                        src="/media/shop_page/cart_img.png"
+                        alt="Empty Cart"
+                        className="w-20 h-20 mb-4"
+                    />
+                    <h2 className="text-2xl font-bold mb-2">Your Orderlist is empty.</h2>
+                    <p className="text-gray-600 mb-6 max-w-md">
+                        Browse our wide range of furniture and find your new favorites for every room.
+                    </p>
+                    <a
+                        href="/productlist"
+                        className="inline-block px-6 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+                    >
+                        Go to Products
+                    </a>
+                </div>
             ) : (
                 <div className="space-y-4">
                     {orders.map((order) => (
@@ -55,7 +71,7 @@ function OrderList() {
                                     <p className="font-bold">{order.total_price} €</p>
                                     <Link
                                         to={`/order_detail/${order.id}`}
-                                        className="text-blue-600 hover:underline text-sm"
+                                        className="inline-block px-3 py-1 bg-black text-white rounded hover:bg-gray-800 transition"
                                     >
                                         Show Details
                                     </Link>

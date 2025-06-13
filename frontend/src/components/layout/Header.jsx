@@ -79,7 +79,7 @@ function Header() {
                                     title="Profile"
                                 >
                                     <img
-                                        src="http://localhost:8000/media/shop_page/profile.png"
+                                        src="/media/shop_page/profile.png"
                                         alt="profile"
                                         className="h-6 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:scale-110"
                                     />
