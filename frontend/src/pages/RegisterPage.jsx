@@ -56,11 +56,16 @@ function RegisterPage() {
     const [countryList, setCountryList] = useState([]);
     const navigate = useNavigate();
 
+    const allowedCountries = ["AT", "DE", "LI", "CH"];
+
     useEffect(() => {
         const fetchCountries = async () => {
             try {
                 const response = await api.get("accounts/countries/");
-                setCountryList(response.data);
+                const filtered = response.data.filter((c) =>
+                    allowedCountries.includes(c.code)
+                );
+                setCountryList(filtered);
             } catch (error) {
                 console.error("Error loading countries:", error);
             }
@@ -102,7 +107,7 @@ function RegisterPage() {
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Row 1 */}
+                    {/* Username and Email */}
                     <div>
                         <label className="block font-semibold mb-1">Username</label>
                         <input
@@ -128,101 +133,50 @@ function RegisterPage() {
                         {errors.email && <p className="text-red-600 text-sm">{errors.email}</p>}
                     </div>
 
-                    {/* Row 2 */}
+                    {/* Personal Info */}
                     <div>
                         <label className="block font-semibold mb-1">First Name</label>
-                        <input
-                            type="text"
-                            name="first_name"
-                            value={formData.first_name}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="text" name="first_name" value={formData.first_name} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
                     <div>
                         <label className="block font-semibold mb-1">Last Name</label>
-                        <input
-                            type="text"
-                            name="last_name"
-                            value={formData.last_name}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="text" name="last_name" value={formData.last_name} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
                     <div>
                         <label className="block font-semibold mb-1">Phone Number</label>
-                        <input
-                            type="tel"
-                            name="phone_number"
-                            placeholder="optional"
-                            value={formData.phone_number}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="tel" name="phone_number" placeholder="optional" value={formData.phone_number} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
 
-                    {/* Row 3 */}
+                    {/* Address Info */}
                     <div>
                         <label className="block font-semibold mb-1">City</label>
-                        <input
-                            type="text"
-                            name="city"
-                            placeholder="optional"
-                            value={formData.city}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="text" name="city" placeholder="optional" value={formData.city} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
                     <div>
                         <label className="block font-semibold mb-1">Post Code</label>
-                        <input
-                            type="text"
-                            name="post_code"
-                            placeholder="optional"
-                            value={formData.post_code}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="text" name="post_code" placeholder="optional" value={formData.post_code} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
                     <div>
                         <label className="block font-semibold mb-1">Address</label>
-                        <input
-                            type="text"
-                            name="address"
-                            placeholder="optional"
-                            value={formData.address}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="text" name="address" placeholder="optional" value={formData.address} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
 
-                    {/* Row 4 */}
+                    {/* Date and Gender */}
                     <div>
                         <label className="block font-semibold mb-1">Date of Birth</label>
-                        <input
-                            type="date"
-                            name="date_of_birth"
-                            value={formData.date_of_birth}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        />
+                        <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
                     </div>
-
-                    {/* Row 5 */}
                     <div>
                         <label className="block font-semibold mb-1">Gender</label>
-                        <select
-                            name="gender"
-                            value={formData.gender} placeholder="optional"
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border rounded"
-                        >
+                        <select name="gender" value={formData.gender} onChange={handleChange} className="w-full px-3 py-2 border rounded">
                             <option value="">Select Gender</option>
                             <option value="M">Male</option>
                             <option value="F">Female</option>
                             <option value="D">Diverse</option>
                         </select>
                     </div>
+
+                    {/* Country Selector (gefiltert) */}
                     <div>
                         <label className="block font-semibold mb-1">Country</label>
                         <select
@@ -241,52 +195,25 @@ function RegisterPage() {
                         {errors.country && <p className="text-red-600 text-sm">{errors.country}</p>}
                     </div>
 
-                    {/* Row 6 */}
-                    <PasswordInput
-                        label="Password"
-                        name="password1"
-                        value={formData.password1}
-                        onChange={handleChange}
-                        error={errors.password1}
-                    />
-                    <PasswordInput
-                        label="Confirm Password"
-                        name="password2"
-                        value={formData.password2}
-                        onChange={handleChange}
-                        error={errors.password2}
-                    />
+                    {/* Passwords */}
+                    <PasswordInput label="Password" name="password1" value={formData.password1} onChange={handleChange} error={errors.password1} />
+                    <PasswordInput label="Confirm Password" name="password2" value={formData.password2} onChange={handleChange} error={errors.password2} />
 
-                    {/* Row 7 */}
+                    {/* Options */}
                     <div className="md:col-span-3 flex flex-col md:flex-row gap-6 mt-4">
                         <label className="inline-flex items-center">
-                            <input
-                                type="checkbox"
-                                name="newsletter_opt_in"
-                                checked={formData.newsletter_opt_in}
-                                onChange={handleChange}
-                                className="form-checkbox h-5 w-5 text-black"
-                            />
+                            <input type="checkbox" name="newsletter_opt_in" checked={formData.newsletter_opt_in} onChange={handleChange} className="form-checkbox h-5 w-5 text-black" />
                             <span className="ml-2">Subscribe to newsletter</span>
                         </label>
                         <label className="inline-flex items-center">
-                            <input
-                                type="checkbox"
-                                name="terms_accepted"
-                                checked={formData.terms_accepted}
-                                onChange={handleChange}
-                                className="form-checkbox h-5 w-5 text-black"
-                            />
+                            <input type="checkbox" name="terms_accepted" checked={formData.terms_accepted} onChange={handleChange} className="form-checkbox h-5 w-5 text-black" />
                             <span className="ml-2">Accept Terms</span>
                         </label>
                     </div>
                 </div>
 
                 <div className="flex justify-center">
-                    <button
-                        type="submit"
-                        className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-                    >
+                    <button type="submit" className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
                         Register
                     </button>
                 </div>

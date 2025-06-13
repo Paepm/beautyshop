@@ -37,5 +37,9 @@ class ProductService:
 
     @staticmethod
     def get_product_by_id(product_id: int) -> Product:
-        """Fetch a product by its ID."""
-        return get_object_or_404(Product, id=product_id)
+        """
+        Fetch a product by its ID, including prefetch of images.
+        """
+        return get_object_or_404(
+            Product.objects.prefetch_related("images"), id=product_id
+        )

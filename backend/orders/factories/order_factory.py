@@ -25,6 +25,12 @@ class OrderFactory:
         if not self.cart:
             return None
 
+        # just allow specific countries for shipping
+        allowed_countries = {"AT", "DE", "LI", "CH"}
+        country_code = (shipping_data or {}).get("country", "").upper()
+        if country_code not in allowed_countries:
+            raise ValueError("Shipping to this country is not available.")
+
         # check if the cart has items and if all products have sufficient stock
         cart_items = self.cart.items.select_related("product")
         for item in cart_items:

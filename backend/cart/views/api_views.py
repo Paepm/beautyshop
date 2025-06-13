@@ -46,9 +46,10 @@ class CartAddProductView(APIView):
 
     def post(self, request, product_id):
         service = CartService(request.user)
+        quantity = int(request.data.get("quantity", 1))
 
         try:
-            item = service.add_product(product_id=product_id)
+            item = service.add_product(product_id=product_id, quantity=quantity)
         except ValueError as e:
             return Response(
                 {"success": False, "error": str(e)},

@@ -8,13 +8,18 @@ function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState({});
 
+    const allowedCountries = ["AT", "DE", "LI", "CH"];
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const profileRes = await api.get("accounts/profile/");
                 const countryRes = await api.get("accounts/countries/");
+                const filtered = countryRes.data.filter((c) =>
+                    allowedCountries.includes(c.code)
+                );
                 setUserData(profileRes.data);
-                setCountryList(countryRes.data);
+                setCountryList(filtered);
             } catch (err) {
                 console.error("Error loading data:", err);
             } finally {

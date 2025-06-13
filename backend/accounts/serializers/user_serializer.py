@@ -24,3 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
             "date_joined",
             "is_superuser",
         ]
+
+    def validate_country(self, value):
+        allowed_countries = ["AT", "DE", "LI", "CH"]
+        if value.code not in allowed_countries:
+            raise serializers.ValidationError("Only AT, DE, LI, and CH are allowed.")
+        return value

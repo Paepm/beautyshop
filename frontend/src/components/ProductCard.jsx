@@ -58,6 +58,13 @@ function ProductCard({ product }) {
                 </div>
             )}
 
+            {/* Sale-Badge */}
+            {product.sale && product.discount_percent && (
+                <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                    -{product.discount_percent}%
+                </div>
+            )}
+
             {/* Klickbarer Bereich für Detailseite */}
             <Link
                 to={`/products/${product.id}`}

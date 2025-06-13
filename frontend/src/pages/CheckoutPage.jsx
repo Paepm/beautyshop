@@ -19,8 +19,9 @@ function Checkout() {
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [countryList, setCountryList] = useState([]);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-    const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
+    const allowedCountries = ["AT", "DE", "LI", "CH"];
+
 
     useEffect(() => {
         fetchCheckoutData();
@@ -32,7 +33,8 @@ function Checkout() {
             const countryRes = await api.get("accounts/countries/");
             const profileResponse = await api.get("accounts/profile/");
 
-            setCountryList(countryRes.data);
+            const filtered = countryRes.data.filter((c) => allowedCountries.includes(c.code));
+            setCountryList(filtered);
             setCartItems(cartResponse.data.items);
             setSubtotal(cartResponse.data.total_price);
 

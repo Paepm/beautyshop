@@ -24,9 +24,9 @@ class CartService:
         self.cart = CartManager.get_or_create_cart(user)
         self.logger = setup_logger(__name__)
 
-    def add_product(self, product_id: int) -> CartProduct:
+    def add_product(self, product_id: int, quantity: int = 1) -> CartProduct:
         """
-        Add a product to the user's cart. Check if the total quantity (in cart + 1) exceeds the stock.
+        Add a product to the user's cart. Check if the total quantity (in cart + quantity) exceeds the stock.
         """
         product: Product = get_object_or_404(Product, id=product_id)
 
@@ -38,14 +38,18 @@ class CartService:
         ).first()
 
         current_quantity = cart_item.quantity if cart_item else 0
-        if current_quantity + 1 > product.stock:
+        new_quantity = current_quantity + quantity
+
+        if new_quantity > product.stock:
             raise ValueError("Not enough stock available.")
 
         if cart_item:
-            cart_item.quantity += 1
+            cart_item.quantity = new_quantity
             cart_item.save()
         else:
-            cart_item = CartProduct.objects.create(cart=self.cart, product=product)
+            cart_item = CartProduct.objects.create(
+                cart=self.cart, product=product, quantity=quantity
+            )
 
         return cart_item
 

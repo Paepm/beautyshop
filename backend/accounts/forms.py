@@ -37,3 +37,10 @@ class SignupForm(UserCreationForm):
             "newsletter_opt_in",
             "terms_accepted",
         ]
+
+    def clean_country(self):
+        country = self.cleaned_data.get("country")
+        allowed_countries = ["AT", "DE", "LI", "CH"]
+        if country not in allowed_countries:
+            raise forms.ValidationError("Only AT, DE, LI and CH are allowed.")
+        return country
