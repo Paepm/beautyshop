@@ -16,6 +16,7 @@ function Footer() {
                             <img src="/media/shop_page/paypal_logo.png" alt="PayPal" className="h-6" />
                             <img src="/media/shop_page/mastercard_logo.png" alt="Mastercard" className="h-6" />
                             <img src="/media/shop_page/visa_logo.png" alt="Visa" className="h-5" />
+                            <img src="/media/shop_page/klarna_logo.png" alt="Klarna" className="h-6" />
                         </div>
                     </div>
 

@@ -74,13 +74,13 @@ function Header() {
                                     <span className="text-xs mt-1 text-gray-800 group-hover:text-blue-500 transition">Profile</span>
                                 </button>
 
-                                {/* Dropdown-Menü bleibt unverändert */}
+                                {/* Dropdown-Menü */}
                                 {dropdownOpen && (
                                     <div className="absolute top-10 w-40 bg-white border border-gray-300 rounded shadow-lg z-50">
                                         <p className="block px-4 py-2 text-sm font-medium text-gray-800 border-b border-gray-200">
                                             Hello {user.username}
                                         </p>
-                                        <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">Profile Page</Link>
+                                        <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Profile</Link>
                                         <Link to="/orderlist" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Orders</Link>
                                         <Link to="/wishlist" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Wishlist</Link>
                                         <Link to="/cart" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Cart</Link>
@@ -100,6 +100,7 @@ function Header() {
                                 )}
                                 <span className="text-xs mt-1 text-gray-800 group-hover:text-red-500 transition">Wishlist</span>
                             </Link>
+
 
                             {/* Cart */}
                             <Link to="/cart" className="group flex flex-col items-center relative" title="Cart">

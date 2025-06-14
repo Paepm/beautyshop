@@ -10,12 +10,13 @@ function LoginPage() {
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const navigate = useNavigate();
-    const { setIsAuthenticated } = useContext(AuthContext);
+    const { setIsAuthenticated, refreshAuth } = useContext(AuthContext);
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             await loginUser(usernameOrEmail, password); // Call the loginUser function to perform the login
+            await refreshAuth(); // Refresh the authentication state after login, is needed to get user from AuthContext in ProfileDropdown
             setIsAuthenticated(true); // Update the authentication state to is authenticated
             navigate('/');
         } catch (error) {
