@@ -1,8 +1,12 @@
-import api from '../services/api';
-import { AuthContext } from '../contexts/AuthContext';
 import { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from "../contexts/CartContext";
+import { FaHeart } from 'react-icons/fa';
+
+import api from '../services/api';
+import { AuthContext } from '../contexts/AuthContext';
+import { useWishlist } from '../contexts/WishlistContext';
+
 
 function ProductCard({ product }) {
     const { isAuthenticated } = useContext(AuthContext);
@@ -12,6 +16,8 @@ function ProductCard({ product }) {
     const [error, setError] = useState('');
 
     const { refreshCart } = useCart();
+    const { fetchWishlist } = useWishlist();
+
 
     const handleAddToCart = async () => {
         setError('');
@@ -46,9 +52,10 @@ function ProductCard({ product }) {
 
             {/* Erfolgs-Badge */}
             {added && (
-                <div className="absolute top-2 right-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded shadow">
+                <div className="absolute bottom-2 right-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded shadow">
                     Successfully added
                 </div>
+
             )}
 
             {/* Fehleranzeige */}
@@ -65,16 +72,38 @@ function ProductCard({ product }) {
                 </div>
             )}
 
+            {isAuthenticated && (
+                <button
+                    onClick={async (e) => {
+                        e.preventDefault(); // verhindert Weiterleitung durch <Link>
+                        try {
+                            await api.post(`/wishlist/add/${product.id}/`);
+                            await fetchWishlist();
+                            // Optional: Feedback
+                        } catch (err) {
+                            console.error("Fehler beim Hinzufügen zur Wunschliste:", err);
+                        }
+                    }}
+                    className="absolute top-1 right-1 text-white bg-black/50 hover:bg-red-500 p-2 rounded-full"
+                    title="Add to Wishlist"
+                >
+                    <FaHeart className="w-4 h-4" />
+                </button>
+            )}
+
             {/* Klickbarer Bereich für Detailseite */}
             <Link
                 to={`/products/${product.id}`}
                 className="w-full flex flex-col items-center no-underline text-black"
             >
-                <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-48 h-48 object-cover mb-4"
-                />
+                <div className="relative w-48 h-48 mb-4">
+                    <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover rounded"
+                    />
+                </div>
+
                 <h2 className="text-lg font-semibold text-center">{product.name}</h2>
 
                 {product.sale ? (

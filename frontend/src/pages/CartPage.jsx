@@ -41,7 +41,7 @@ const CartPage = () => {
             refreshCart();
             fetchCart();
 
-            // ✅ Fehler zurücksetzen
+            // Fehler zurücksetzen
             setQuantityErrors(prev => ({ ...prev, [itemId]: null }));
         } catch (error) {
             console.error('Error by changing quantity:', error);

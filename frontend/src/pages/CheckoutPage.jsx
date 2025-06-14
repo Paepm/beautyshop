@@ -93,35 +93,50 @@ function Checkout() {
             <h1 className="text-2xl font-bold mb-4">Continue to pay</h1>
 
             <section className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Products</h2>
+                <h2 className="text-xl font-semibold mb-4">Products</h2>
+
+                {/* Tabellenkopf */}
+                <div className="hidden md:grid grid-cols-12 gap-4 font-semibold text-sm border-b pb-2 mb-2">
+                    <div className="col-span-6">Product</div>
+                    <div className="col-span-2 text-center">Quantity</div>
+                    <div className="col-span-2 text-right">Unit Price</div>
+                    <div className="col-span-2 text-right">Total</div>
+                </div>
+
+                {/* Einzelne Produkte */}
                 {cartItems.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between py-3 border-b text-sm">
-                        {/* Link + Bild + Name */}
-                        <Link to={`/products/${item.product.id}`} className="flex items-center gap-4 flex-1">
+                    <div key={item.id} className="grid grid-cols-12 gap-4 items-center text-sm border-b py-3">
+                        {/* Produktname + Bild */}
+                        <div className="col-span-6 flex items-center gap-4">
                             <img
                                 src={item.product.image}
                                 alt={item.product.name}
                                 className="w-16 h-16 object-cover rounded shadow"
                             />
-                            <span className="hover:underline">{item.product.name}</span>
-                        </Link>
+                            <Link to={`/products/${item.product.id}`} className="hover:underline">
+                                {item.product.name}
+                            </Link>
+                        </div>
 
-                        {/* Mengenangabe */}
-                        <div className="w-20 text-center">{item.quantity}×</div>
+                        {/* Menge */}
+                        <div className="col-span-2 text-center">{item.quantity}</div>
 
                         {/* Einzelpreis */}
-                        <div className="w-24 text-right">{item.product.price.toFixed(2)} €</div>
+                        <div className="col-span-2 text-right">{item.product.price.toFixed(2)} €</div>
 
-                        {/* Gesamtpreis für dieses Produkt */}
-                        <div className="w-24 text-right font-medium">
+                        {/* Gesamtpreis */}
+                        <div className="col-span-2 text-right font-medium">
                             {(item.quantity * item.product.price).toFixed(2)} €
                         </div>
                     </div>
                 ))}
 
-                <div className="flex justify-between font-semibold mt-2">
-                    <span>Subtotal</span>
-                    <span>{subtotal.toFixed(2)} €</span>
+                {/* Zwischensumme */}
+                <div className="flex justify-end font-semibold mt-4">
+                    <div className="w-full max-w-sm flex justify-between border-t pt-4">
+                        <span>Subtotal</span>
+                        <span>{subtotal.toFixed(2)} €</span>
+                    </div>
                 </div>
             </section>
 
@@ -262,7 +277,7 @@ function Checkout() {
                         checked={agreedToTerms}
                         onChange={(e) => setAgreedToTerms(e.target.checked)}
                     />
-                    I accept the <a href="/agb" className="text-blue-600">GTC</a>
+                    I accept the <a href="/gtc" className="text-blue-600">GTC</a>
                 </label>
             </section>
             {errorMessage && (

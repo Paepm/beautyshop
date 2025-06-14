@@ -25,7 +25,7 @@ function Layout() {
             </div>
 
             {/* Abstand unterhalb des fixierten Bereichs */}
-            <div className="h-[144px]" /> {/* <- Höhe von Header + FilterHeader + Logo */}
+            <div className="h-[96px]" /> {/* <- Höhe von Header + FilterHeader + Logo */}
 
             {/* Hauptinhalt */}
             <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">

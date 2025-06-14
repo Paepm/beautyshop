@@ -1,12 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { ShoppingCart, HeartHandshake, UserRound } from "lucide-react";
+
 import LogoutButton from '../LogoutButton';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { useWishlist } from '../../contexts/WishlistContext';
+
+
 
 function Header() {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, user } = useContext(AuthContext);
     const { cartCount } = useCart();
+    const { wishlistCount } = useWishlist();
     const [searchTerm, setSearchTerm] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef();
@@ -31,13 +37,12 @@ function Header() {
     }, []);
 
     return (
-        <header className="bg-zinc-100 shadow px-6 py-4">
-            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap relative">
-
-                {/* Search */}
+        <header className="bg-zinc-100 shadow py-4 relative">
+            <div className="max-w-5xl mx-auto relative">
+                {/* Suchleiste – zentriert */}
                 <form
                     onSubmit={handleSearchSubmit}
-                    className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-lg flex border border-gray-300 rounded overflow-hidden shadow-sm"
+                    className="mx-auto max-w-xl flex border border-gray-300 rounded overflow-hidden shadow-sm"
                 >
                     <input
                         type="text"
@@ -54,83 +59,70 @@ function Header() {
                     </button>
                 </form>
 
-                {/* Navigation */}
-                <nav className="flex items-center gap-2 text-sm ml-auto">
+                {/* Icons */}
+                <div className="absolute top-1/2 -translate-y-1/2 left-[calc(50%+350px)] flex items-center gap-6">
                     {isAuthenticated ? (
                         <>
-                            <Link
-                                to="/cart"
-                                className="relative right-10 text-xl hover:scale-110 transition"
-                                title="Cart"
-                            >
-                                🛒
-                                {cartCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
-                                        {cartCount}
-                                    </span>
-                                )}
-                            </Link>
-
-                            {/* Profile Dropdown */}
-                            <div className="relative right-5" ref={dropdownRef}>
+                            {/* Profile */}
+                            <div className="group flex flex-col items-center relative" ref={dropdownRef}>
                                 <button
                                     onClick={() => setDropdownOpen(prev => !prev)}
-                                    className="group focus:outline-none"
+                                    className="focus:outline-none flex flex-col items-center"
                                     title="Profile"
                                 >
-                                    <img
-                                        src="/media/shop_page/profile.png"
-                                        alt="profile"
-                                        className="h-6 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:scale-110"
-                                    />
+                                    <UserRound className="w-6 h-6 text-gray-800 group-hover:text-blue-500 transition" />
+                                    <span className="text-xs mt-1 text-gray-800 group-hover:text-blue-500 transition">Profile</span>
                                 </button>
 
+                                {/* Dropdown-Menü bleibt unverändert */}
                                 {dropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-300 rounded shadow-lg z-50">
-                                        <Link
-                                            to="/profile"
-                                            className="block px-4 py-2 text-sm hover:bg-gray-100 transition"
-                                            onClick={() => setDropdownOpen(false)}
-                                        >
-                                            Profile Page
-                                        </Link>
-                                        <Link
-                                            to="/orderlist"
-                                            className="block px-4 py-2 text-sm hover:bg-gray-100 transition"
-                                            onClick={() => setDropdownOpen(false)}
-                                        >
-                                            My Orders
-                                        </Link>
-                                        <Link
-                                            to="/cart"
-                                            className="block px-4 py-2 text-sm hover:bg-gray-100 transition"
-                                            onClick={() => setDropdownOpen(false)}>
-                                            My Cart
-                                        </Link>
+                                    <div className="absolute top-10 w-40 bg-white border border-gray-300 rounded shadow-lg z-50">
+                                        <p className="block px-4 py-2 text-sm font-medium text-gray-800 border-b border-gray-200">
+                                            Hello {user.username}
+                                        </p>
+                                        <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">Profile Page</Link>
+                                        <Link to="/orderlist" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Orders</Link>
+                                        <Link to="/wishlist" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Wishlist</Link>
+                                        <Link to="/cart" className="block px-4 py-2 text-sm hover:bg-gray-100 transition">My Cart</Link>
+                                        <hr className="border-t border-gray-200 my-1" />
+                                        <LogoutButton />
                                     </div>
                                 )}
                             </div>
 
-                            <LogoutButton />
+                            {/* Wishlist */}
+                            <Link to="/wishlist" className="group flex flex-col items-center relative" title="Wishlist">
+                                <HeartHandshake className="w-6 h-6 text-gray-800 group-hover:text-red-500 transition" />
+                                {wishlistCount > 0 && (
+                                    <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5">
+                                        {wishlistCount}
+                                    </span>
+                                )}
+                                <span className="text-xs mt-1 text-gray-800 group-hover:text-red-500 transition">Wishlist</span>
+                            </Link>
+
+                            {/* Cart */}
+                            <Link to="/cart" className="group flex flex-col items-center relative" title="Cart">
+                                <ShoppingCart className="w-6 h-6 text-gray-800 group-hover:text-green-500 transition" />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-2 bg-green-500 text-white text-xs font-bold rounded-full px-1.5">
+                                        {cartCount}
+                                    </span>
+                                )}
+                                <span className="text-xs mt-1 text-gray-800 group-hover:text-green-500 transition">Cart</span>
+                            </Link>
                         </>
                     ) : (
                         <>
-                            <Link
-                                to="/login"
-                                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500"
-                            >
+                            <Link to="/login" className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500">
                                 Login
                             </Link>
-
-                            <Link
-                                to="/sign_up"
-                                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500"
-                            >
+                            <Link to="/sign_up" className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500">
                                 Register
                             </Link>
                         </>
                     )}
-                </nav>
+                </div>
             </div>
         </header>
     );

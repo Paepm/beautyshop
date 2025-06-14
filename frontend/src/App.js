@@ -32,6 +32,8 @@ import ImprintPage from './pages/ImprintPage';
 import PrivacyPage from './pages/PrivacyPage';
 import GTCPage from './pages/GTCPage';
 import ContactPage from './pages/ContactPage';
+import WishlistPage from './pages/WishlistPage';
+import { WishlistProvider } from './contexts/WishlistContext';
 
 function App() {
   useEffect(() => {
@@ -41,38 +43,41 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <CartProvider>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
-              <Route path="productlist" element={<ProductList />} />
-              <Route path="about" element={<About />} />
-              <Route path="login" element={<LoginPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="sign_up" element={<RegisterPage />} />
-              <Route path="verify/:token" element={<VerifyEmailPage />} />
-              <Route path="check_email" element={<CheckEmailPage />} />
-              <Route path="cart" element={<CartPage />} />
-              <Route path="checkout" element={<Checkout />} />
-              <Route path="password_reset" element={<LoosePwPage />} />
-              <Route path="password_reset/:token" element={<PasswordResetPage />} />
-              <Route path="products/:id" element={<ProductDetailPage />} />
-              <Route path="orderlist" element={<OrderList />} />
-              <Route path="order_detail/:id" element={<OrderDetail />} />
-              <Route path="payments/success_payment/:orderId" element={<PaymentSuccessPage />} />
-              <Route path="payments/cancel_payment" element={<PaymentCanclePage />} />
-              <Route path="adminpanel/orders" element={<AdminOrdersPage />} />
-              <Route path="adminpanel/users" element={<AdminUserPage />} />
-              <Route path="adminpanel" element={<AdminPanelPage />} />
-              <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
-              <Route path="adminpanel/order_status_manager" element={<AdminOrderStatusManager />} />
-              <Route path="imprint" element={<ImprintPage />} />
-              <Route path="privacy" element={<PrivacyPage />} />
-              <Route path="gtc" element={<GTCPage />} />
-              <Route path="contact" element={<ContactPage />} />
-            </Route>
-          </Routes>
-        </CartProvider>
+        <WishlistProvider>
+          <CartProvider>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<HomePage />} />
+                <Route path="productlist" element={<ProductList />} />
+                <Route path="about" element={<About />} />
+                <Route path="login" element={<LoginPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="sign_up" element={<RegisterPage />} />
+                <Route path="verify/:token" element={<VerifyEmailPage />} />
+                <Route path="check_email" element={<CheckEmailPage />} />
+                <Route path="cart" element={<CartPage />} />
+                <Route path="checkout" element={<Checkout />} />
+                <Route path="password_reset" element={<LoosePwPage />} />
+                <Route path="password_reset/:token" element={<PasswordResetPage />} />
+                <Route path="products/:id" element={<ProductDetailPage />} />
+                <Route path="orderlist" element={<OrderList />} />
+                <Route path="order_detail/:id" element={<OrderDetail />} />
+                <Route path="payments/success_payment/:orderId" element={<PaymentSuccessPage />} />
+                <Route path="payments/cancel_payment" element={<PaymentCanclePage />} />
+                <Route path="adminpanel/orders" element={<AdminOrdersPage />} />
+                <Route path="adminpanel/users" element={<AdminUserPage />} />
+                <Route path="adminpanel" element={<AdminPanelPage />} />
+                <Route path="adminpanel/orders/:id" element={<AdminOrdersDetailPage />} />
+                <Route path="adminpanel/order_status_manager" element={<AdminOrderStatusManager />} />
+                <Route path="imprint" element={<ImprintPage />} />
+                <Route path="privacy" element={<PrivacyPage />} />
+                <Route path="gtc" element={<GTCPage />} />
+                <Route path="contact" element={<ContactPage />} />
+                <Route path="wishlist" element={<WishlistPage />} />
+              </Route>
+            </Routes>
+          </CartProvider>
+        </WishlistProvider>
       </AuthProvider>
     </BrowserRouter>
   );

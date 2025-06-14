@@ -60,6 +60,7 @@ LOCAL_APPS = [
     "payments",
     "emails",
     "adminpanel",
+    "wishlist",
 ]
 
 
