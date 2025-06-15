@@ -34,6 +34,8 @@ class CheckoutView(APIView):
             )
             checkout.save_shipping_info(shipping_data, payment_method)
 
+            debug("[CHECKOUT_VIEW] Order created successfully:", checkout.order)
+
             success_url = (
                 f"http://localhost:3000/payments/success_payment/{checkout.order.id}"
             )

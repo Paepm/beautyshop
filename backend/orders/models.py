@@ -19,24 +19,28 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # shipping details
+    shipping_first_name = models.CharField(max_length=100, blank=False, null=False)
+    shipping_last_name = models.CharField(max_length=100, blank=False, null=False)
     shipping_address = models.CharField(
         max_length=255,
-        blank=True,
+        blank=False,
         null=True,
     )
     shipping_post_code = models.CharField(
         max_length=20,
-        blank=True,
+        blank=False,
         null=True,
     )
     shipping_city = models.CharField(
         max_length=100,
-        blank=True,
+        blank=False,
         null=True,
     )
     shipping_country = models.CharField(
         max_length=100,
-        blank=True,
+        blank=False,
         null=True,
     )
     shipping_method = models.CharField(
@@ -50,6 +54,14 @@ class Order(models.Model):
         default=0.00,
         help_text="Shipping cost for the order in €",
     )
+
+    # invoice details
+    invoice_address = models.CharField(max_length=255, blank=False, null=False)
+    invoice_post_code = models.CharField(max_length=20, blank=False, null=False)
+    invoice_city = models.CharField(max_length=100, blank=False, null=False)
+    invoice_country = models.CharField(max_length=100, blank=False, null=False)
+    invoice_first_name = models.CharField(max_length=100, blank=False, null=False)
+    invoice_last_name = models.CharField(max_length=100, blank=False, null=False)
 
     # get the payment_method from the webhook dict from stripe or paypal
     payment_method = models.CharField(

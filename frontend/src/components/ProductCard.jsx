@@ -7,17 +7,16 @@ import api from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
 import { useWishlist } from '../contexts/WishlistContext';
 
-
 function ProductCard({ product }) {
     const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const [added, setAdded] = useState(false);
     const [error, setError] = useState('');
+    const [wishlistError, setWishlistError] = useState(''); // Zustand für Wishlist-Fehler
 
     const { refreshCart } = useCart();
-    const { fetchWishlist } = useWishlist();
-
+    const { wishlistItems, fetchWishlist } = useWishlist();
 
     const handleAddToCart = async () => {
         setError('');
@@ -27,7 +26,7 @@ function ProductCard({ product }) {
         }
 
         if (product.stock === 0 || !product.available) {
-            setError('Product is out of stock ');
+            setError('Product is out of stock');
             return;
         }
 
@@ -47,6 +46,28 @@ function ProductCard({ product }) {
         }
     };
 
+    const handleWishlistClick = async (e) => {
+        e.preventDefault();
+        const alreadyInWishlist = wishlistItems?.some(item => item.product.id === product.id);
+
+        if (alreadyInWishlist) {
+            setWishlistError('Already in wishlist');
+            setTimeout(() => setWishlistError(''), 1000);
+            return;
+        }
+
+        try {
+            await api.post(`/wishlist/add/${product.id}/`);
+            await fetchWishlist();
+            setWishlistError('Added to wishlist!');
+            setTimeout(() => setWishlistError(''), 1000);
+        } catch (err) {
+            console.error("Error by add Product to wishlist:", err);
+            setWishlistError('Error adding to wishlist');
+            setTimeout(() => setWishlistError(''), 1000);
+        }
+    };
+
     return (
         <div className="border rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-lg transition relative">
 
@@ -55,13 +76,20 @@ function ProductCard({ product }) {
                 <div className="absolute bottom-2 right-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded shadow">
                     Successfully added
                 </div>
-
             )}
 
-            {/* Fehleranzeige */}
+            {/* Fehleranzeige (Cart) */}
             {error && (
                 <div className="absolute bottom-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded shadow animate-pulse">
                     {error}
+                </div>
+            )}
+
+            {/* Wishlist-Meldung */}
+            {wishlistError && (
+                <div className={`absolute bottom-2 left-2 text-white text-xs font-semibold px-2 py-1 rounded shadow animate-pulse
+                    ${wishlistError === 'Added to wishlist!' ? 'bg-green-600' : 'bg-red-500'}`}>
+                    {wishlistError}
                 </div>
             )}
 
@@ -72,18 +100,10 @@ function ProductCard({ product }) {
                 </div>
             )}
 
+            {/* Wishlist-Button */}
             {isAuthenticated && (
                 <button
-                    onClick={async (e) => {
-                        e.preventDefault(); // verhindert Weiterleitung durch <Link>
-                        try {
-                            await api.post(`/wishlist/add/${product.id}/`);
-                            await fetchWishlist();
-                            // Optional: Feedback
-                        } catch (err) {
-                            console.error("Fehler beim Hinzufügen zur Wunschliste:", err);
-                        }
-                    }}
+                    onClick={handleWishlistClick}
                     className="absolute top-1 right-1 text-white bg-black/50 hover:bg-red-500 p-2 rounded-full"
                     title="Add to Wishlist"
                 >
@@ -91,7 +111,7 @@ function ProductCard({ product }) {
                 </button>
             )}
 
-            {/* Klickbarer Bereich für Detailseite */}
+            {/* Klickbarer Bereich für Produktdetails */}
             <Link
                 to={`/products/${product.id}`}
                 className="w-full flex flex-col items-center no-underline text-black"

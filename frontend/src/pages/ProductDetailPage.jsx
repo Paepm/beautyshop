@@ -1,5 +1,7 @@
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
+
+import { useWishlist } from '../contexts/WishlistContext';
 import { AuthContext } from '../contexts/AuthContext';
 import api from '../services/api';
 import { useCart } from '../contexts/CartContext';
@@ -17,7 +19,8 @@ function ProductDetailPage() {
     const { refreshCart } = useCart();
     const [outOfStockNotice, setOutOfStockNotice] = useState(false);
 
-
+    const [wishlistError, setWishlistError] = useState('');
+    const { wishlistItems, fetchWishlist } = useWishlist();
 
 
     useEffect(() => {
@@ -47,6 +50,28 @@ function ProductDetailPage() {
         console.log("Aktuelles Bild:", product.images?.[currentImageIndex]);
 
         setCurrentImageIndex((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+    };
+
+    const handleWishlistClick = async (e) => {
+        e.preventDefault();
+        const alreadyInWishlist = wishlistItems?.some(item => item.product.id === product.id);
+
+        if (alreadyInWishlist) {
+            setWishlistError('Already in wishlist');
+            setTimeout(() => setWishlistError(''), 1000);
+            return;
+        }
+
+        try {
+            await api.post(`/wishlist/add/${product.id}/`);
+            await fetchWishlist();
+            setWishlistError('Added to wishlist!');
+            setTimeout(() => setWishlistError(''), 1000);
+        } catch (err) {
+            console.error("Error by add Product to wishlist:", err);
+            setWishlistError('Error adding to wishlist');
+            setTimeout(() => setWishlistError(''), 1000);
+        }
     };
 
 
@@ -131,7 +156,7 @@ function ProductDetailPage() {
 
             <div className="space-y-6">
                 <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
-
+                handleWishlistClick
                 {product.sale ? (
                     <div>
                         <p className="text-2xl font-bold text-red-600">{product.price_current} €</p>
@@ -173,18 +198,25 @@ function ProductDetailPage() {
                     >
                         {added ? "Added" : product.stock === 0 ? "Not available" : "Add to Cart"}
                     </button>
-
-                    <Link to="/productlist">
-                        <button className="px-6 py-3 border border-gray-400 text-gray-800 rounded hover:bg-gray-100">
-                            Back to Products
-                        </button>
-                    </Link>
+                    <button
+                        onClick={handleWishlistClick}
+                        className="px-6 py-3 rounded-2xl bg-black text-white font-semibold hover:bg-red-600 transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
+                    >
+                        ❤️ Add to Wishlist
+                    </button>
                 </div>
 
-                <div className="pt-6 border-t">
-                    <h2 className="text-lg font-semibold mb-2">Description</h2>
-                    <p className="text-gray-700 whitespace-pre-wrap">{product.description}</p>
-                </div>
+
+                <Link to="/productlist">
+                    <button className="px-6 py-3 border border-gray-400 text-gray-800 rounded hover:bg-gray-100">
+                        Back to Products
+                    </button>
+                </Link>
+            </div>
+
+            <div className="pt-6 border-t">
+                <h2 className="text-lg font-semibold mb-2">Description</h2>
+                <p className="text-gray-700 whitespace-pre-wrap">{product.description}</p>
             </div>
         </div>
     );

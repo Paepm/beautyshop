@@ -90,7 +90,10 @@ function ProductList() {
             {loading ? (
                 <p>Loading products…</p>
             ) : products.length === 0 ? (
-                <p>No products available</p>
+                <div className="p-6 text-center text-gray-500">
+                    <p>No products found.</p>
+                    <p className="text-sm">Try adjusting your filters or search terms.</p>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {products.map((product) => (

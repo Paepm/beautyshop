@@ -8,6 +8,8 @@ import { checkoutOrder } from "../services/orderService";
 function Checkout() {
     const [cartItems, setCartItems] = useState([]);
     const [shippingAddress, setShippingAddress] = useState({
+        first_name: "",
+        last_name: "",
         address: "",
         city: "",
         post_code: "",
@@ -39,6 +41,8 @@ function Checkout() {
             setSubtotal(cartResponse.data.total_price);
 
             setShippingAddress({
+                first_name: profileResponse.data.first_name,
+                last_name: profileResponse.data.last_name,
                 address: profileResponse.data.address,
                 city: profileResponse.data.city,
                 post_code: profileResponse.data.post_code,
@@ -144,6 +148,26 @@ function Checkout() {
                 <h2 className="text-xl font-semibold mb-2">Delivery Address</h2>
 
                 <div className="border p-3 rounded space-y-2">
+                    <label className="block text-sm font-medium mb-1">First Name</label>
+                    <input
+                        type="text"
+                        placeholder="First Name"
+                        value={shippingAddress.first_name}
+                        onChange={(e) =>
+                            setShippingAddress({ ...shippingAddress, first_name: e.target.value })
+                        }
+                        className="w-full border px-2 py-1 rounded"
+                    />
+                    <label className="block text-sm font-medium mb-1">Last Name</label>
+                    <input
+                        type="text"
+                        placeholder="Last Name"
+                        value={shippingAddress.last_name}
+                        onChange={(e) =>
+                            setShippingAddress({ ...shippingAddress, last_name: e.target.value })
+                        }
+                        className="w-full border px-2 py-1 rounded"
+                    />
                     <label className="block text-sm font-medium mb-1">Street</label>
                     <input
                         type="text"

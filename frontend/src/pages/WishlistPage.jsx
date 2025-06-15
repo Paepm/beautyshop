@@ -13,6 +13,7 @@ const WishlistPage = () => {
     const { refreshCart } = useCart();
     const { fetchWishlist } = useWishlist();
     const navigate = useNavigate();
+    const [cartMessage, setCartMessage] = useState({});
 
     useEffect(() => {
         if (loading || !isAuthenticated) return;
@@ -49,10 +50,28 @@ const WishlistPage = () => {
 
             await api.post(`cart/add/${productId}/`, formData);
             refreshCart();
+
+            // success message
+            setCartMessage(prev => ({
+                ...prev,
+                [productId]: "added to cart!",
+            }));
         } catch (error) {
-            console.error("Error adding to cart:", error);
+            const msg =
+                error?.response?.data?.error ||
+                'Error adding to cart. Try again later.';
+
+            console.log("ASDADSD", msg);
+            setCartMessage(prev => ({
+                ...prev,
+                [productId]: msg,
+            }));
+
+            setTimeout(() => {
+                setCartMessage(prev => ({ ...prev, [productId]: '' }));
+            }, 1000);
         }
-    };
+    }
 
     if (wishlistItems.length === 0) {
         return (
@@ -125,12 +144,23 @@ const WishlistPage = () => {
                             >
                                 ✖
                             </button>
-                            <button
-                                onClick={() => handleAddToCart(item.product.id, quantities[item.product.id])}
-                                className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
-                            >
-                                Add to cart
-                            </button>
+                            <div className="flex flex-col items-center min-w-[120px]">
+                                <button
+                                    onClick={() => handleAddToCart(item.product.id, quantities[item.product.id])}
+                                    className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition"
+                                >
+                                    Add to cart
+                                </button>
+
+                                {cartMessage[item.product.id] && (
+                                    <div className={`text-sm mt-3 text-right ${cartMessage[item.product.id].startsWith('added') ? 'text-green-600' : 'text-red-600'
+                                        }`}>
+                                        {cartMessage[item.product.id]}
+                                    </div>
+                                )}
+                            </div>
+
+
                         </div>
                     </div>
                 ))}

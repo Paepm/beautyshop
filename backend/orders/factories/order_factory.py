@@ -52,6 +52,8 @@ class OrderFactory:
                 payment_provider=payment_provider,
                 payment_status=PaymentStatus.OPEN,
                 order_status=OrderStatus.PENDING,
+                shipping_first_name=shipping_data.get("first_name", ""),
+                shipping_last_name=shipping_data.get("last_name", ""),
                 shipping_address=shipping_data.get("address", ""),
                 shipping_post_code=shipping_data.get("post_code", ""),
                 shipping_city=shipping_data.get("city", ""),
