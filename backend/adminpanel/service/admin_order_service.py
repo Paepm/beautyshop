@@ -44,7 +44,14 @@ class AdminOrderService:
 
         return orders
 
-    def update_order_status(self, pk, new_order_status, new_payment_status):
+    def update_order_and_tracking_status(
+        self,
+        pk,
+        new_order_status,
+        new_shipping_provider=None,
+        new_tracking_id=None,
+        new_tracking_url=None,
+    ):
         try:
             order = Order.objects.get(pk=pk)
         except Order.DoesNotExist:
@@ -53,8 +60,14 @@ class AdminOrderService:
         if new_order_status is not None:
             order.order_status = new_order_status
 
-        if new_payment_status is not None:
-            order.payment_status = new_payment_status
+        if new_shipping_provider is not None:
+            order.shipping_provider = new_shipping_provider
+
+        if new_tracking_id is not None:
+            order.tracking_id = new_tracking_id
+
+        if new_tracking_url is not None:
+            order.tracking_url = new_tracking_url
 
         order.save()
 

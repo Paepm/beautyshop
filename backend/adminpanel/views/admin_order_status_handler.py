@@ -19,10 +19,16 @@ class AdminOrderStatusHandlerView(APIView):
 
         # get the status from frontend
         new_order_status: str = request.data.get("order_status")
-        new_payment_status: str = request.data.get("payment_status")
+        new_shipping_provider: str = request.data.get("shipping_provider")
+        new_tracking_id: str = request.data.get("tracking_id")
+        new_tracking_url: str = request.data.get("tracking_url")
 
-        update_data = AdminOrderService().update_order_status(
-            pk, new_order_status, new_payment_status
+        update_data = AdminOrderService().update_order_and_tracking_status(
+            pk,
+            new_order_status,
+            new_shipping_provider,
+            new_tracking_id,
+            new_tracking_url,
         )
         debug("UPDATE DATA", update_data)
 

@@ -10,10 +10,25 @@ function AdminOrdersDetailPage() {
     const [order, setOrder] = useState(null);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [newOrderStatus, setNewOrderStatus] = useState("");
-    const [newPaymentStatus, setNewPaymentStatus] = useState("");
     const [message, setMessage] = useState("");
+    const [newOrderStatus, setNewOrderStatus] = useState("");
+    const [newShippingProvider, setNewShippingProvider] = useState("");
+    const [newTrackingId, setNewTrackingId] = useState("");
+    const [newTrackingUrl, setNewTrackingUrl] = useState("");
 
+    const [checkedItems, setCheckedItems] = useState({});
+
+    // Modal: States aktualisieren beim Öffnen
+    useEffect(() => {
+        if (showModal && order) {
+            setNewOrderStatus(order.order_status || "");
+            setNewShippingProvider(order.shipping_provider || "");
+            setNewTrackingId(order.tracking_id || "");
+            setNewTrackingUrl(order.tracking_url || "");
+        }
+    }, [showModal, order]);
+
+    // Hauptdaten laden
     useEffect(() => {
         if (loading) return;
 
@@ -25,7 +40,6 @@ function AdminOrdersDetailPage() {
         const fetchOrder = async () => {
             try {
                 const response = await api.get(`/adminpanel/orders/${id}/`);
-                console.log("Fetched order:", response.data);
                 setOrder(response.data);
             } catch (err) {
                 console.error("Failed to fetch order:", err);
@@ -35,8 +49,6 @@ function AdminOrdersDetailPage() {
 
         fetchOrder();
     }, [id, isAuthenticated, user, loading, navigate]);
-
-    const [checkedItems, setCheckedItems] = useState({});
 
     const toggleChecked = (itemId) => {
         setCheckedItems((prev) => ({
@@ -49,13 +61,22 @@ function AdminOrdersDetailPage() {
         try {
             await api.patch(`/adminpanel/orders_status_manager/${id}/`, {
                 order_status: newOrderStatus,
-                payment_status: newPaymentStatus,
+                shipping_provider: newShippingProvider,
+                tracking_id: newTrackingId,
+                tracking_url: newTrackingUrl,
+            });
+
+            console.log({
+                order_status: newOrderStatus,
+                shipping_provider: newShippingProvider,
+                tracking_id: newTrackingId,
+                tracking_url: newTrackingUrl,
             });
 
             setMessage("✅ Status successfully updated.");
             setShowModal(false);
 
-            // Refresh order details
+            // Order-Daten neu laden
             const response = await api.get(`/adminpanel/orders/${id}/`);
             setOrder(response.data);
         } catch (err) {
@@ -63,8 +84,6 @@ function AdminOrdersDetailPage() {
             setMessage("❌ Error by update Status.");
         }
     };
-
-
 
     if (loading || !user) return <p className="text-center mt-10">Loading...</p>;
     if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
@@ -78,15 +97,15 @@ function AdminOrdersDetailPage() {
                     className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     onClick={() => setShowModal(true)}
                 >
-                    ✏️ Order and Payment Status Handler
+                    ✏️ Shipping and status handler
                 </button>
             </div>
 
             {message && <p className="text-sm text-green-600">{message}</p>}
+
             {/* Ordered Items */}
             <div className="bg-white shadow-md rounded-lg p-5">
                 <h2 className="text-xl font-semibold mb-4">🧴 Ordered Items</h2>
-
                 <div className="overflow-x-auto">
                     <table className="min-w-full table-auto text-sm text-left text-gray-700">
                         <thead className="bg-gray-100 font-semibold">
@@ -124,6 +143,8 @@ function AdminOrdersDetailPage() {
             <div className="bg-white shadow-md rounded-lg p-5">
                 <h2 className="text-xl font-semibold mb-3">🚚 Shipping Information</h2>
                 <div className="grid grid-cols-2 gap-4">
+                    <p><strong>First Name:</strong> {order.shipping_first_name}</p>
+                    <p><strong>Last Name:</strong> {order.shipping_last_name}</p>
                     <p><strong>Address:</strong> {order.shipping_address}</p>
                     <p><strong>City:</strong> {order.shipping_city}</p>
                     <p><strong>Post Code:</strong> {order.shipping_post_code}</p>
@@ -135,10 +156,8 @@ function AdminOrdersDetailPage() {
             {/* User Information */}
             <div className="bg-white shadow-md rounded-lg p-5">
                 <h2 className="text-xl font-semibold mb-3">👤 User Information</h2>
-                <div className="space-y-1">
-                    <p><strong>Username:</strong> {order.username}</p>
-                    <p><strong>User Email:</strong> {order.user?.email}</p>
-                </div>
+                <p><strong>Username:</strong> {order.username}</p>
+                <p><strong>User Email:</strong> {order.user?.email}</p>
             </div>
 
             {/* Order Details */}
@@ -176,18 +195,35 @@ function AdminOrdersDetailPage() {
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">Payment Status</label>
+                            <label className="block text-sm font-medium mb-1">Shipping Provider</label>
                             <select
                                 className="w-full border px-3 py-2 rounded"
-                                value={newPaymentStatus}
-                                onChange={(e) => setNewPaymentStatus(e.target.value)}
+                                value={newShippingProvider}
+                                onChange={(e) => setNewShippingProvider(e.target.value)}
                             >
-                                <option value="open">Open</option>
-                                <option value="paid">Paid</option>
-                                <option value="failed">Failed</option>
-                                <option value="expired">Expired</option>
-                                <option value="processing">Processing</option>
+                                <option value="DPD">DPD</option>
+                                <option value="Post AT">Post AT</option>
                             </select>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-1">Tracking ID</label>
+                            <input
+                                type="text"
+                                className="w-full border px-3 py-2 rounded"
+                                value={newTrackingId}
+                                onChange={(e) => setNewTrackingId(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-1">Tracking URL</label>
+                            <input
+                                type="text"
+                                className="w-full border px-3 py-2 rounded"
+                                value={newTrackingUrl}
+                                onChange={(e) => setNewTrackingUrl(e.target.value)}
+                            />
                         </div>
 
                         <div className="flex justify-end gap-2">
@@ -195,7 +231,7 @@ function AdminOrdersDetailPage() {
                                 className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
                                 onClick={() => setShowModal(false)}
                             >
-                                Cancle
+                                Cancel
                             </button>
                             <button
                                 className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
@@ -207,9 +243,8 @@ function AdminOrdersDetailPage() {
                     </div>
                 </div>
             )}
-
         </div>
-    )
+    );
 }
 
 export default AdminOrdersDetailPage;

@@ -1,11 +1,11 @@
 from django.db import models
 from django.conf import settings
 
-from cart.models import CartProduct
 from shop.models import Product as product
 from payments.enums.payment_providers import PaymentProviders
 from orders.enums.paymentstatus import PaymentStatus
 from orders.enums.orderstatus import OrderStatus
+from orders.enums.shipping_providers import ShippingProviderChoices
 
 
 class Order(models.Model):
@@ -62,6 +62,27 @@ class Order(models.Model):
     invoice_country = models.CharField(max_length=100, blank=False, null=False)
     invoice_first_name = models.CharField(max_length=100, blank=False, null=False)
     invoice_last_name = models.CharField(max_length=100, blank=False, null=False)
+
+    # shipping provider data
+    tracking_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="Tracking ID for the shipment, if available",
+    )
+    tracking_url = models.URLField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="URL to track the shipment, if available",
+    )
+    shipping_provider = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        choices=ShippingProviderChoices.choices,
+        help_text="The shipping provider handling this order",
+    )
 
     # get the payment_method from the webhook dict from stripe or paypal
     payment_method = models.CharField(

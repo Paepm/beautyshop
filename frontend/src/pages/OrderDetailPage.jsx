@@ -34,19 +34,37 @@ export default function OrderDetail() {
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow rounded">
             <h1 className="text-2xl font-bold mb-6">Order #{order.id}</h1>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-sm text-gray-700">
+                {/* Tracking Informations */}
                 <div className="p-4 border rounded bg-gray-50">
-                    <h2 className="font-semibold mb-2 text-gray-900">Order Information</h2>
+                    <h2 className="font-semibold mb-2 text-gray-900">Tracking Informations</h2>
+                    <p><span className="font-medium">Tracking-ID:</span> {" "}
+                        {order.tracking_id ? order.tracking_id : "not shipped yet"}</p>
+                    <p><span className="font-medium">Tracking-Link:</span> {" "}
+                        {order.tracking_url ? order.tracking_url : "not shipped yet"}</p>
+                </div>
+                {/* Shipping Informations */}
+                <div className="p-4 border rounded bg-gray-50">
+                    <h2 className="font-semibold mb-2 text-gray-900">Shipping Inforamtions</h2>
+                    <p><span className="font-medium">Shipping-Provider:</span> {" "}
+                        {order.shipping_provider ? order.shipping_provider : "not shipped yet"}</p>
+                    <p><span className="font-medium">Shipping costs</span> {order.shipping_cost}</p>
+                    <p><span className="font-medium">Shipping Name:</span> {order.shipping_first_name} {order.shipping_last_name}</p>
+                    <p><span className="font-medium">Address:</span> {order.shipping_address}</p>
+                </div>
+                {/* Order information */}
+                <div className="p-4 border rounded bg-gray-50">
+                    <h2 className="font-semibold mb-2 text-gray-900">Order Informations</h2>
                     <p><span className="font-medium">Date:</span> {new Date(order.created_at).toLocaleDateString()}</p>
                     <p><span className="font-medium">Status:</span> {order.order_status}</p>
                     <p><span className="font-medium">Total:</span> {order.total_price} €</p>
                 </div>
+                {/* Payment Informations */}
                 <div className="p-4 border rounded bg-gray-50">
-                    <h2 className="font-semibold mb-2 text-gray-900">Payment & Shipping</h2>
-                    <p><span className="font-medium">Payment:</span> {order.payment_method} ({order.payment_method})</p>
-                    <p><span className="font-medium">Shipping:</span> {order.shipping_cost}</p>
-                    <p><span className="font-medium">Address:</span> {order.shipping_address}</p>
+                    <h2 className="font-semibold mb-2 text-gray-900">Payment Informations</h2>
+                    <p><span className="font-medium">Payment:</span> {order.payment_method}</p>
+                    <p><span className="font-medium">Payment Status:</span> {order.payment_status} </p>
+
                 </div>
             </div>
 
