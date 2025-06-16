@@ -15,6 +15,15 @@ function Checkout() {
         post_code: "",
         country: ""
     });
+    const [invoiceAddress, setInvoiceAddress] = useState({
+        first_name: "",
+        last_name: "",
+        address: "",
+        city: "",
+        post_code: "",
+        country: ""
+    });
+    const [showShippingFields, setShowShippingFields] = useState(false);
     const [shippingMethod, setShippingMethod] = useState("standard");
     const [shippingCost, setShippingCost] = useState(4.9);
     const [subtotal, setSubtotal] = useState(0);
@@ -48,6 +57,15 @@ function Checkout() {
                 post_code: profileResponse.data.post_code,
                 country: profileResponse.data.country
             });
+            setInvoiceAddress({
+                first_name: profileResponse.data.first_name,
+                last_name: profileResponse.data.last_name,
+                address: profileResponse.data.address,
+                city: profileResponse.data.city,
+                post_code: profileResponse.data.post_code,
+                country: profileResponse.data.country
+            });
+
         } catch (err) {
             console.error("Error during loading checkout datas", err);
             const errorDetail = err.response?.data?.detail || "Something went wrong. Please try again.";
@@ -74,11 +92,13 @@ function Checkout() {
 
         try {
             const payload = {
-                shipping_data: shippingAddress,
+                invoice_data: invoiceAddress,
+                shipping_data: showShippingFields ? shippingAddress : invoiceAddress,
                 shipping_method: shippingMethod,
                 payment_provider: selectedPaymentMethod === "paypal" ? "paypal" : "stripe",
                 payment_method: selectedPaymentMethod
             };
+
 
             const response = await checkoutOrder(payload);
             const redirectUrl = response.data.redirect_url;
@@ -143,87 +163,67 @@ function Checkout() {
                     </div>
                 </div>
             </section>
-
             <section className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Delivery Address</h2>
-
+                <h2 className="text-xl font-semibold mb-2">Invoice Address</h2>
                 <div className="border p-3 rounded space-y-2">
-                    <label className="block text-sm font-medium mb-1">First Name</label>
-                    <input
-                        type="text"
-                        placeholder="First Name"
-                        value={shippingAddress.first_name}
-                        onChange={(e) =>
-                            setShippingAddress({ ...shippingAddress, first_name: e.target.value })
-                        }
-                        className="w-full border px-2 py-1 rounded"
-                    />
-                    <label className="block text-sm font-medium mb-1">Last Name</label>
-                    <input
-                        type="text"
-                        placeholder="Last Name"
-                        value={shippingAddress.last_name}
-                        onChange={(e) =>
-                            setShippingAddress({ ...shippingAddress, last_name: e.target.value })
-                        }
-                        className="w-full border px-2 py-1 rounded"
-                    />
-                    <label className="block text-sm font-medium mb-1">Street</label>
-                    <input
-                        type="text"
-                        placeholder="Street and house number"
-                        value={shippingAddress.address}
-                        onChange={(e) =>
-                            setShippingAddress({ ...shippingAddress, address: e.target.value })
-                        }
-                        className="w-full border px-2 py-1 rounded"
-                    />
-                    <div className="space-y-2">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Postal Code</label>
-                            <input
-                                type="text"
-                                placeholder="ZIP"
-                                value={shippingAddress.post_code}
-                                onChange={(e) =>
-                                    setShippingAddress({ ...shippingAddress, post_code: e.target.value })
-                                }
-                                className="w-full border px-2 py-1 rounded"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium mb-1">City</label>
-                            <input
-                                type="text"
-                                placeholder="City"
-                                value={shippingAddress.city}
-                                onChange={(e) =>
-                                    setShippingAddress({ ...shippingAddress, city: e.target.value })
-                                }
-                                className="w-full border px-2 py-1 rounded"
-                            />
-                        </div>
-                    </div>
-
-                    <label className="block text-sm font-medium mb-1">Country</label>
-                    <select
-                        name="country"
-                        value={shippingAddress.country || ""}
-                        onChange={(e) =>
-                            setShippingAddress({ ...shippingAddress, country: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border rounded"
-                    >
+                    <input type="text" placeholder="First Name" value={invoiceAddress.first_name}
+                        onChange={(e) => setInvoiceAddress({ ...invoiceAddress, first_name: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                    <input type="text" placeholder="Last Name" value={invoiceAddress.last_name}
+                        onChange={(e) => setInvoiceAddress({ ...invoiceAddress, last_name: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                    <input type="text" placeholder="Address" value={invoiceAddress.address}
+                        onChange={(e) => setInvoiceAddress({ ...invoiceAddress, address: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                    <input type="text" placeholder="ZIP" value={invoiceAddress.post_code}
+                        onChange={(e) => setInvoiceAddress({ ...invoiceAddress, post_code: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                    <input type="text" placeholder="City" value={invoiceAddress.city}
+                        onChange={(e) => setInvoiceAddress({ ...invoiceAddress, city: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                    <select value={invoiceAddress.country}
+                        onChange={(e) => setInvoiceAddress({ ...invoiceAddress, country: e.target.value })}
+                        className="w-full px-3 py-2 border rounded">
                         <option value="">Select Country</option>
                         {countryList.map((c) => (
-                            <option key={c.code} value={c.code}>
-                                {c.name}
-                            </option>
+                            <option key={c.code} value={c.code}>{c.name}</option>
                         ))}
                     </select>
                 </div>
             </section>
+            <div className="mb-4">
+                <label className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        checked={showShippingFields}
+                        onChange={(e) => setShowShippingFields(e.target.checked)}
+                    />
+                    Delivery address is different
+                </label>
+            </div>
+
+
+            {showShippingFields && (
+                <section className="mb-6">
+                    <h2 className="text-xl font-semibold mb-2">Delivery Address</h2>
+                    <div className="border p-3 rounded space-y-2">
+                        <input type="text" placeholder="First Name" value={shippingAddress.first_name}
+                            onChange={(e) => setShippingAddress({ ...shippingAddress, first_name: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                        <input type="text" placeholder="Last Name" value={shippingAddress.last_name}
+                            onChange={(e) => setShippingAddress({ ...shippingAddress, last_name: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                        <input type="text" placeholder="Address" value={shippingAddress.address}
+                            onChange={(e) => setShippingAddress({ ...shippingAddress, address: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                        <input type="text" placeholder="ZIP" value={shippingAddress.post_code}
+                            onChange={(e) => setShippingAddress({ ...shippingAddress, post_code: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                        <input type="text" placeholder="City" value={shippingAddress.city}
+                            onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })} className="w-full border px-2 py-1 rounded" />
+                        <select value={shippingAddress.country}
+                            onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })}
+                            className="w-full px-3 py-2 border rounded">
+                            <option value="">Select Country</option>
+                            {countryList.map((c) => (
+                                <option key={c.code} value={c.code}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </section>
+            )}
+
 
             <section className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Shipping method</h2>

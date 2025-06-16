@@ -28,7 +28,7 @@ class OrderStatusService:
         if self.order.payment_status == PaymentStatus.PAID:
             return
         self.order.payment_status = PaymentStatus.FAILED
-        self.order.order_status = OrderStatus.FAILED
+        self.order.order_status = OrderStatus.CANCELED
         self.order.save()
 
     def set_payment_processing(self):
@@ -48,5 +48,5 @@ class OrderStatusService:
         if self.order.payment_status == PaymentStatus.PAID:
             return
         self.order.payment_status = PaymentStatus.FAILED
-        self.order.order_status = OrderStatus.CANCELLED
+        self.order.order_status = OrderStatus.CANCELED
         self.order.save()

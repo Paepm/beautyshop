@@ -1,7 +1,7 @@
 from rest_framework import serializers
+from devtools import debug
 
 from accounts.models import CustomUser
-from django_countries.fields import CountryField
 from django_countries.serializer_fields import CountryField as CountrySerializerField
 
 
@@ -27,6 +27,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_country(self, value):
         allowed_countries = ["AT", "DE", "LI", "CH"]
-        if value.code not in allowed_countries:
+        if value not in allowed_countries:
             raise serializers.ValidationError("Only AT, DE, LI, and CH are allowed.")
         return value

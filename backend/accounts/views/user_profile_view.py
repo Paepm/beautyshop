@@ -17,6 +17,7 @@ class ProfileView(APIView):
     def get(self, request):
         # debug("[PROFILEVIEW GET] request.user", request.user)
         user_data = UserProfileService.get_user_profile(request.user)
+        debug("[PROFILEVIEW GET] user_data", user_data)
         # debug("[PROFILEVIEW GET]", user_data)
         return Response(user_data, status=status.HTTP_200_OK)
 

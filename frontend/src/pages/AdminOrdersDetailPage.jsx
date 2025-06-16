@@ -74,6 +74,8 @@ function AdminOrdersDetailPage() {
             });
 
             setMessage("✅ Status successfully updated.");
+            setTimeout(() => setMessage(""), 3000);
+
             setShowModal(false);
 
             // Order-Daten neu laden
@@ -82,6 +84,7 @@ function AdminOrdersDetailPage() {
         } catch (err) {
             console.error("Update failed:", err);
             setMessage("❌ Error by update Status.");
+            setTimeout(() => setMessage(""), 3000);
         }
     };
 
@@ -186,14 +189,14 @@ function AdminOrdersDetailPage() {
                                 value={newOrderStatus}
                                 onChange={(e) => setNewOrderStatus(e.target.value)}
                             >
+                                <option value="open">Open</option>
                                 <option value="pending">Pending</option>
                                 <option value="processing">Processing</option>
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
-                                <option value="cancelled">Cancelled</option>
+                                <option value="canceled">Canceled</option>
                             </select>
                         </div>
-
                         <div className="mb-4">
                             <label className="block text-sm font-medium mb-1">Shipping Provider</label>
                             <select
@@ -201,6 +204,7 @@ function AdminOrdersDetailPage() {
                                 value={newShippingProvider}
                                 onChange={(e) => setNewShippingProvider(e.target.value)}
                             >
+                                <option value="">None</option>
                                 <option value="DPD">DPD</option>
                                 <option value="Post AT">Post AT</option>
                             </select>

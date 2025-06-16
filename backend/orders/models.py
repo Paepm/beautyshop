@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 
 from shop.models import Product as product
 from payments.enums.payment_providers import PaymentProviders
@@ -18,6 +20,7 @@ class Order(models.Model):
         related_name="orders",
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     # shipping details
@@ -83,6 +86,16 @@ class Order(models.Model):
         choices=ShippingProviderChoices.choices,
         help_text="The shipping provider handling this order",
     )
+    last_tracking_update = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Last time the tracking information was updated",
+    )
+    delivery_estimate = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Estimated delivery time for the order",
+    )
 
     # get the payment_method from the webhook dict from stripe or paypal
     payment_method = models.CharField(
@@ -107,8 +120,18 @@ class Order(models.Model):
         choices=OrderStatus.choices, default=OrderStatus.PENDING, max_length=30
     )
 
+    delivered_at = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return f"Order #{self.id} by {self.user} – {self.payment_status}"
+
+    # JUST FOR TESTING PURPOSES
+    def is_ready_for_delivery_mark(self):
+        if self.order_status != "shipped":
+            return False
+        if not self.updated_at:
+            return False
+        return self.updated_at <= timezone.now() - timedelta(minutes=5)
 
     def get_payment_provider_label(self):
         try:

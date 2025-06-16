@@ -61,6 +61,7 @@ LOCAL_APPS = [
     "emails",
     "adminpanel",
     "wishlist",
+    "shipping",  # Custom app for shipping-related functionality
 ]
 
 

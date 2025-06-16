@@ -19,6 +19,7 @@ class CheckoutView(APIView):
             debug("[CHECKOUT_VIEW] Data received:", data)
             payment_provider = data.get("payment_provider")
             payment_method = data.get("payment_method")
+            invoice_data = data.get("invoice_data")
 
             # debug("[CHECKOUT_VIEW] Data received:", data)
 
@@ -30,6 +31,7 @@ class CheckoutView(APIView):
             checkout.create_order(
                 payment_provider=payment_provider,
                 shipping_data=shipping_data,
+                invoice_data=invoice_data,
                 payment_method=payment_method,
             )
             checkout.save_shipping_info(shipping_data, payment_method)

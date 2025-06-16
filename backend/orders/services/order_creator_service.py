@@ -34,7 +34,7 @@ class OrderCreatorService:
             return None
 
     def create_order(
-        self, payment_provider, shipping_data, payment_method
+        self, payment_provider, shipping_data, invoice_data, payment_method
     ) -> Order | None:
         """
         Use the OrderFactory to create an Order from the user's cart.
@@ -53,5 +53,6 @@ class OrderCreatorService:
         return factory.create(
             payment_provider=payment_provider,
             shipping_data=shipping_data,
+            invoice_data=invoice_data,
             payment_method=payment_method,
         )

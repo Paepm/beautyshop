@@ -19,6 +19,7 @@ class OrderFactory:
         self,
         payment_provider: str | None = None,
         shipping_data: dict | None = None,
+        invoice_data: dict | None = None,
         payment_method: str = "standard",
     ) -> Order | None:
 
@@ -51,7 +52,7 @@ class OrderFactory:
                 created_at=timezone.now(),
                 payment_provider=payment_provider,
                 payment_status=PaymentStatus.OPEN,
-                order_status=OrderStatus.PENDING,
+                order_status=OrderStatus.OPEN,
                 shipping_first_name=shipping_data.get("first_name", ""),
                 shipping_last_name=shipping_data.get("last_name", ""),
                 shipping_address=shipping_data.get("address", ""),
@@ -60,6 +61,12 @@ class OrderFactory:
                 shipping_country=shipping_data.get("country", ""),
                 shipping_method=payment_method,
                 shipping_cost=shipping_cost,
+                invoice_first_name=invoice_data.get("first_name", ""),
+                invoice_last_name=invoice_data.get("last_name", ""),
+                invoice_address=invoice_data.get("address", ""),
+                invoice_post_code=invoice_data.get("post_code", ""),
+                invoice_city=invoice_data.get("city", ""),
+                invoice_country=invoice_data.get("country", ""),
             )
 
             for item in cart_items:

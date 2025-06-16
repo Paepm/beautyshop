@@ -84,12 +84,6 @@ function AdminOrdersPage() {
                 >
                     📄 Export as PDF
                 </button>
-                <button
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                    onClick={() => downloadFile("csv")}
-                >
-                    📊 Export as CSV
-                </button>
             </div>
 
             {/* Filter Controls */}
