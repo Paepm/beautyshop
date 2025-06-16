@@ -19,7 +19,7 @@ function ProductDetailPage() {
     const { refreshCart } = useCart();
     const [outOfStockNotice, setOutOfStockNotice] = useState(false);
 
-    const [wishlistError, setWishlistError] = useState('');
+    const [wishlistError, setWishlistError] = useState(false);
     const { wishlistItems, fetchWishlist } = useWishlist();
 
 
@@ -97,14 +97,13 @@ function ProductDetailPage() {
             setAdded(true);
             setTimeout(() => setAdded(false), 2000);
         } catch (error) {
-            setOutOfStockNotice(true);
+            // setOutOfStockNotice(true);
             setTimeout(() => setOutOfStockNotice(false), 3000);
         }
     };
 
 
     if (loading) return <p className="p-6 text-center text-gray-500">Loading product details...</p>;
-    if (error) return <p className="p-6 text-center text-red-600">{error}</p>;
     if (!product) return null;
 
     // Lieferzeit (2–5 Werktage)
@@ -185,6 +184,11 @@ function ProductDetailPage() {
                             Out of stock
                         </span>
                     )}
+                    {wishlistError && (
+                        <span className="absolute left-28 top-0 text-sm text-red-600 font-medium">
+                            You have already added this product to your wishlist.
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -200,7 +204,7 @@ function ProductDetailPage() {
                     </button>
                     <button
                         onClick={handleWishlistClick}
-                        className="px-6 py-3 rounded-2xl bg-black text-white font-semibold hover:bg-red-600 transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
+                        className="btn px-6 py-3 bg-black hover:bg-gray-800 text-white rounded hover:bg-gray-400 disabled:cursor-not-allowed"
                     >
                         ❤️ Add to Wishlist
                     </button>
