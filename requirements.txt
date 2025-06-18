@@ -13,4 +13,5 @@ pillow==10.2.0
 black==24.3.0
 devtools==0.12.2
 reportlab
+psycopg2-binary
 

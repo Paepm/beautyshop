@@ -38,7 +38,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # Optional: SEO, Slug, Meta
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=200)
 
     @property
     def sale(self):

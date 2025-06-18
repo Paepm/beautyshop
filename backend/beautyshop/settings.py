@@ -129,10 +129,15 @@ CSRF_TRUSTED_ORIGINS = [
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "beautyshop",
+        "USER": "beautyshop_user",
+        "PASSWORD": "beautyshop_pass",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
+
 
 # added for the custom user model
 AUTH_USER_MODEL = "accounts.CustomUser"
