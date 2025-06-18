@@ -1,15 +1,24 @@
+# Python / Django
 .env
 media/
 venv/
 __pycache__/
 *.pyc
 db.sqlite3
+*.log
+
+# VS Code & IDEs
 .vscode/
 .idea/
+
+# System
 .DS_Store
 Thumbs.db
-*.log
+
+# Docker/Devcontainer
 .devcontainer/
-node_modules/
 stripe.deb
 stripe.tar.gz
+
+# Node.js global (falls nötig)
+node_modules/
