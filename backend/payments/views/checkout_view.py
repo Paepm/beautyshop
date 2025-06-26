@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from devtools import debug
+from django.conf import settings
 
 from payments.services.checkout_service import CheckoutService
 
@@ -38,10 +39,8 @@ class CheckoutView(APIView):
 
             debug("[CHECKOUT_VIEW] Order created successfully:", checkout.order)
 
-            success_url = (
-                f"http://localhost:3000/payments/success_payment/{checkout.order.id}"
-            )
-            cancel_url = "http://localhost:3000/payments/cancel_payment"
+            success_url = f"{settings.FRONTEND_BASE_URL}/payments/success_payment/{checkout.order.id}"
+            cancel_url = f"{settings.FRONTEND_BASE_URL}/payments/cancel_payment"
 
             redirect_url = checkout.start_checkout(success_url, cancel_url)
             return Response({"redirect_url": redirect_url}, status=status.HTTP_200_OK)

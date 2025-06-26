@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import api from '../services/api';
+import api, {baseUrl} from '../services/api';
 
 
 function OrderList() {

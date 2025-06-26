@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-!mjyz1+wxiham11_b0wq=q3qdgm*qlebo0+ll9u^lyxp%t7)7g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "1753-62-178-83-52.ngrok-free.app"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "backend", "62.178.83.52", "192.168.0.11", "coffee-crew.at", "www.coffee-crew.at"]
 
 
 # Application definition
@@ -41,6 +41,7 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",  # Django Extensions for additional features
     "corsheaders",
+    "sslserver"
 ]
 
 # APPEND_SLASH is set to True to ensure that URLs are properly formatted with a trailing slash.
@@ -106,35 +107,35 @@ WSGI_APPLICATION = "beautyshop.wsgi.application"
 
 SESSION_COOKIE_NAME = "sessionid"
 
-CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = "Lax"
+DEBUG = True  # Für Entwicklung anlassen
+    
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
+    'https://coffee-crew.at',
+    'https://www.coffee-crew.at',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True  # Kann später eingeschränkt werden
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-]
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "beautyshop",
-        "USER": "beautyshop_user",
-        "PASSWORD": "beautyshop_pass",
-        "HOST": "localhost",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'beautyshop'),
+        'USER': os.environ.get('POSTGRES_USER', 'beautyshop_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'beautyshop_pass'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': '5432',
     }
 }
 
@@ -204,7 +205,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-FRONTEND_URL = "http://localhost:3000"
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://coffee-crew.at")
+FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "https://coffee-crew.at")
 
 
 # Static files (CSS, JavaScript, Images)

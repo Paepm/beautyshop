@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
+import api, {baseUrl} from '../services/api';
 import { useCart } from "../contexts/CartContext";
 import { AuthContext } from '../contexts/AuthContext';
 

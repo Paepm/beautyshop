@@ -12,13 +12,62 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - beautyshop-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - /etc/letsencrypt/live/coffee-crew.at:/etc/letsencrypt/live/coffee-crew.at:ro
+      - /etc/letsencrypt/archive/coffee-crew.at:/etc/letsencrypt/archive/coffee-crew.at:ro
+      - ./backend/media:/app/media:ro
+    networks:
+      - beautyshop-network
+
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+      - ./backend/media:/app/media
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_DB: beautyshop
+      POSTGRES_USER: beautyshop_user
+      POSTGRES_PASSWORD: beautyshop_pass
+      POSTGRES_HOST: db
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - beautyshop-network
 
   adminer:
     image: adminer
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      - beautyshop-network
 
 volumes:
   postgres_data:
     external: true
+    name: beautyshop_postgres_data
+
+networks:
+  beautyshop-network:
+    driver: bridge

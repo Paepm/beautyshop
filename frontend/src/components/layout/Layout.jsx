@@ -2,6 +2,7 @@ import { Outlet, Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import FilterHeader from './FilterHeader';
+import  {baseUrl} from '../../services/api'; // assuming you have a baseUrl defined
 
 function Layout() {
     return (
@@ -13,7 +14,7 @@ function Layout() {
                     <div className="absolute top-2 left-4 z-50">
                         <Link to="/">
                             <img
-                                src="http://localhost:8000/media/shop_page/WohnsSinn_logo1.png"
+                                src="/media/shop_page/WohnsSinn_logo1.png"
                                 alt="Logo"
                                 className="h-20 hover:scale-110 transition-transform drop-shadow"
                             />

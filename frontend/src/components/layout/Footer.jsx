@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import i18n from 'i18next';
 
+import {baseUrl} from '../../services/api'; // Adjust the import path as necessary
+
 function Footer() {
     return (
         <footer className="bg-yellow-100 border-b border-yellow-300 px-4 py-2">

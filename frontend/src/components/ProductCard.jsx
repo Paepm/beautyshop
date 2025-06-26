@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from "../contexts/CartContext";
 import { FaHeart } from 'react-icons/fa';
 
-import api from '../services/api';
+import api, {baseUrl} from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
 import { useWishlist } from '../contexts/WishlistContext';
 
@@ -19,6 +19,7 @@ function ProductCard({ product }) {
     const { wishlistItems, fetchWishlist } = useWishlist();
 
     const handleAddToCart = async () => {
+        console.log("product.image:", product.image);
         setError('');
         if (!isAuthenticated) {
             navigate('/login');

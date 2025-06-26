@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { useWishlist } from '../contexts/WishlistContext';
 import { AuthContext } from '../contexts/AuthContext';
-import api from '../services/api';
+import api, {baseUrl} from '../services/api';
 import { useCart } from '../contexts/CartContext';
 
 function ProductDetailPage() {
@@ -127,6 +127,7 @@ function ProductDetailPage() {
                         )}
                         <img
                             src={product.images?.[currentImageIndex]?.image || product.image}
+
                             alt={product.name}
                             className="w-full h-auto object-contain rounded-xl shadow-md max-h-[450px]"
                             key={product.images?.[currentImageIndex]?.image || product.image}

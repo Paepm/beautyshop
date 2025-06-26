@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 
-import api from "../services/api";
+import api, {baseUrl} from "../services/api";
 import { checkoutOrder } from "../services/orderService";
 
 function Checkout() {

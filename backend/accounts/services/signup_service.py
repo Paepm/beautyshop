@@ -2,6 +2,7 @@ from django.core import signing
 from django.http import HttpRequest
 from typing import Optional, Tuple
 from django.contrib.auth import login
+from django.conf import settings
 
 from accounts.models import CustomUser
 from accounts.forms import SignupForm
@@ -115,4 +116,4 @@ class SignupService:
         Returns:
             str: The full verification URL.
         """
-        return f"http://localhost:3000/verify/{token}"  # just for dev, is needed because django and react conflict! need to change in production to right url,
+        return f"{settings.FRONTEND_URL}/verify/{token}"  # just for dev, is needed because django and react conflict! need to change in production to right url,

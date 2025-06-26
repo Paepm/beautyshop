@@ -5,8 +5,10 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+const baseUrl = "http://192.168.0.11:8000"
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: "/api",
     withCredentials: true,  // for the sessionid cookie from Django backend
 });
 console.log("Axios baseURL:", api.defaults.baseURL);
@@ -26,5 +28,6 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+export { baseUrl };
 export default api;
 
