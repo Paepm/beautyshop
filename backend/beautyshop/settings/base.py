@@ -8,7 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config("DJANGO_SECRET_KEY", default="unsafe-default-dev-key")
 
 
-
 DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -72,7 +71,9 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Password validators
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
