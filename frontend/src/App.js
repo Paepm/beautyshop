@@ -34,6 +34,7 @@ import GTCPage from './pages/GTCPage';
 import ContactPage from './pages/ContactPage';
 import WishlistPage from './pages/WishlistPage';
 import { WishlistProvider } from './contexts/WishlistContext';
+import AdminProductStockPage from './pages/AdminProductStockPage';
 
 function App() {
   useEffect(() => {
@@ -74,6 +75,7 @@ function App() {
                 <Route path="gtc" element={<GTCPage />} />
                 <Route path="contact" element={<ContactPage />} />
                 <Route path="wishlist" element={<WishlistPage />} />
+                <Route path="adminpanel/stock_updater" element={<AdminProductStockPage />} />
               </Route>
             </Routes>
           </CartProvider>

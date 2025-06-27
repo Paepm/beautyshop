@@ -7,6 +7,7 @@ from adminpanel.views.admin_order_view import (
 )
 from adminpanel.views.admin_user_view import AdminUserListView
 from adminpanel.views.admin_order_status_handler import AdminOrderStatusHandlerView
+from adminpanel.views.admin_stock_updater_view import AdminStockUpdaterView
 
 app_name = "adminpanel"
 
@@ -20,4 +21,5 @@ urlpatterns = [
         AdminOrderStatusHandlerView.as_view(),
         name="admin_order_status_handler",
     ),
+    path("stock_updater/", AdminStockUpdaterView.as_view(), name="admin_stock_updater"),
 ]

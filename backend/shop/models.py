@@ -39,6 +39,10 @@ class Product(models.Model):
 
     # Optional: SEO, Slug, Meta
     slug = models.SlugField(unique=True, blank=True, max_length=200)
+    
+    article_nr = models.CharField(
+        max_length=20, unique=True
+    )
 
     @property
     def sale(self):

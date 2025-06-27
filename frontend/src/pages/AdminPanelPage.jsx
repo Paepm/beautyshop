@@ -2,7 +2,6 @@ import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../contexts/AuthContext';
 
-
 function AdminPanelPage() {
     const { user, isAuthenticated, loading } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -46,6 +45,14 @@ function AdminPanelPage() {
                         className="w-full text-left px-4 py-2 border rounded hover:bg-gray-100"
                     >
                         🚚 Order Status Management
+                    </button>
+                </li>
+                <li>
+                    <button
+                        onClick={() => navigate("/adminpanel/stock_updater")}
+                        className="w-full text-left px-4 py-2 border rounded hover:bg-gray-100"
+                    >
+                        📦 Product Stock Updater
                     </button>
                 </li>
             </ul>
