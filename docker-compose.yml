@@ -41,10 +41,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      POSTGRES_DB: beautyshop
-      POSTGRES_USER: beautyshop_user
-      POSTGRES_PASSWORD: beautyshop_pass
-      POSTGRES_HOST: db
+      - DJANGO_SETTINGS_MODULE=beautyshop.settings.prod
     env_file:
       - ./.env
     depends_on:
