@@ -1,3 +1,4 @@
+# backend/beautyshop/settings/prod.py
 import os
 from .base import *
 
@@ -13,6 +14,7 @@ ALLOWED_HOSTS = [
     "www.coffee-crew.at",
 ]
 
+# WICHTIG: SECRET_KEY aus Umgebungsvariablen holen
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", SECRET_KEY)
 
 DATABASES = {
@@ -26,6 +28,7 @@ DATABASES = {
     }
 }
 
+# Security Settings für Prod
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
@@ -38,4 +41,4 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # ggf. später einschränken
+CORS_ALLOW_ALL_ORIGINS = True  # später ggf. einschränken
