@@ -5,7 +5,9 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = "django-insecure-!mjyz1+wxiham11_b0wq=q3qdgm*qlebo0+ll9u^lyxp%t7)7g"  # Default/Fallback
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="unsafe-default-dev-key")
+
+
 
 DJANGO_APPS = [
     "django.contrib.admin",

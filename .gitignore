@@ -1,5 +1,5 @@
 # Python / Django
-.env
+.env.dev
 media/
 venv/
 __pycache__/
