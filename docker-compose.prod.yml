@@ -43,7 +43,7 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=beautyshop.settings.prod
     env_file:
-      - ./.env
+      - ./.env.prod
     depends_on:
       - db
     restart: unless-stopped
