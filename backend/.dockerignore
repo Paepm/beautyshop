@@ -1,0 +1,19 @@
+# Verhindert, dass Git-Verzeichnis und sensible Dateien ins Image gelangen
+.git
+.gitignore
+
+# Python / Django / Secrets
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+media/
+.env*
+venv/
+db.sqlite3
+
+# System-Dateien
+.DS_Store

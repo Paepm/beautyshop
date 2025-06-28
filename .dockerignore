@@ -1,0 +1,37 @@
+#############################
+# Quell- & Geheim­daten
+#############################
+.git
+.gitignore
+*.env*
+*.pem
+*.key
+*.crt
+*.pfx
+
+#############################
+# Python / Django
+#############################
+__pycache__/
+*.py[cod]
+*.log
+*.sqlite3
+media/                 # hochgeladene Dateien – werden per Volume gemountet
+backend/venv/
+
+#############################
+# Node / React
+#############################
+node_modules/
+frontend/node_modules/
+frontend/.pnp*
+frontend/coverage/
+frontend/build/         # bauen wir im Image, nicht einchecken
+
+#############################
+# Docker-Artefakte & Tools
+#############################
+*.tar
+*.tar.gz
+*.deb
+.devcontainer/

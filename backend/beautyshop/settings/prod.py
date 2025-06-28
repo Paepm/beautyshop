@@ -14,7 +14,6 @@ ALLOWED_HOSTS = [
     "www.coffee-crew.at",
 ]
 
-# WICHTIG: SECRET_KEY aus Umgebungsvariablen holen
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", SECRET_KEY)
 
 FRONTEND_BASE_URL = "https://coffee-crew.at"
@@ -30,7 +29,6 @@ DATABASES = {
     }
 }
 
-# Security Settings für Prod
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
@@ -43,4 +41,18 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # später ggf. einschränken
+CORS_ALLOWED_ORIGINS = [
+    "https://coffee-crew.at",
+    "https://www.coffee-crew.at",
+]
+CORS_ALLOW_ALL_ORIGINS = False  # ❗ WICHTIG
+
+# Weitere Security-Einstellungen
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_SSL_REDIRECT = True

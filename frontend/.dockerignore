@@ -1,0 +1,16 @@
+# Verhindert, dass Git-Verzeichnis und sensible Dateien ins Image gelangen
+.git
+.gitignore
+
+# Node.js build- und cache-bezogene Dateien
+node_modules
+build
+dist
+.cache
+
+# System-Dateien
+.DS_Store
+.env*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
