@@ -17,6 +17,8 @@ ALLOWED_HOSTS = [
 # WICHTIG: SECRET_KEY aus Umgebungsvariablen holen
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", SECRET_KEY)
 
+FRONTEND_BASE_URL = "https://coffee-crew.at"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
