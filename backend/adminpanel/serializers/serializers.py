@@ -14,6 +14,8 @@ class AdminProductSerializer(serializers.ModelSerializer):
             "price_current",
             "created_at",
             "updated_at",
+            "article_nr",
+            "stock",       
         ]
 
 

@@ -1,4 +1,3 @@
-
 # backend/beautyshop/settings/base.py
 from pathlib import Path
 import os
@@ -6,7 +5,8 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = "django-insecure-!mjyz1+wxiham11_b0wq=q3qdgm*qlebo0+ll9u^lyxp%t7)7g"  # Default/Fallback
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="unsafe-default-dev-key")
+
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -71,7 +71,9 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Password validators
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
