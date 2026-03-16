@@ -15,6 +15,10 @@ class PwResetService:
         self.User = get_user_model()
 
     def send_password_reset_link(self, email: str) -> tuple[bool, str]:
+        from django.conf import settings
+        print(f"Service: Processing password reset for email: {email}")
+        print(f"Email settings - HOST_USER: '{settings.EMAIL_HOST_USER}'")
+        print(f"Email settings - DEFAULT_FROM_EMAIL: '{settings.DEFAULT_FROM_EMAIL}'")
         try:
             user = self.User.objects.get(email=email)
         except self.User.DoesNotExist:

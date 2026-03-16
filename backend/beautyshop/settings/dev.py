@@ -15,10 +15,13 @@ DATABASES = {
         "NAME": "beautyshop",
         "USER": "beautyshop_user",
         "PASSWORD": "beautyshop_pass",
-        "HOST": "localhost",
+        "HOST": "127.0.0.1",
         "PORT": "5432",
     }
 }
+
+FRONTEND_BASE_URL = "http://localhost:3000"
+
 
 # CORS und CSRF für localhost:3000 (React dev server)
 CSRF_COOKIE_HTTPONLY = False

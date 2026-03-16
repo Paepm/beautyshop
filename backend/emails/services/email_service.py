@@ -1,6 +1,7 @@
 from django.core.mail import send_mail, BadHeaderError
 from django.conf import settings
 from smtplib import SMTPException
+from devtools import debug
 
 from emails.enums.email_templates import EmailTemplate
 from beautyshop.logging_config import setup_logger
@@ -14,6 +15,7 @@ class EmailService:
         try:
             subject = template.value["subject"]
             message = template.value["message"].format(**context)
+            print(f"EmailService: Sending to {to_email} from '{settings.DEFAULT_FROM_EMAIL}'")
 
             send_mail(
                 subject=subject,

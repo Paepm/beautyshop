@@ -12,6 +12,7 @@ function LoosePwPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // setError('');
+        console.log('Frontend: Email being sent:', email);
         try {
             await api.post('accounts/password_reset/', { email }, {
                 headers: {

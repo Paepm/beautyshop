@@ -3,7 +3,7 @@ version: '3.9'
 services:
   db:
     image: postgres:15
-    restart: always
+    # restart: always
     environment:
       POSTGRES_DB: beautyshop
       POSTGRES_USER: beautyshop_user
@@ -15,7 +15,7 @@ services:
 
   adminer:
     image: adminer
-    restart: always
+    # restart: always
     ports:
       - "8080:8080"
 

@@ -1,0 +1,17 @@
+services:
+  flyway:
+    image: flyway/flyway
+    command: [
+      "-url=jdbc:postgresql://beautyshop-db-1:5432/beautyshop",
+      "-user=beautyshop_user",
+      "-password=beautyshop_pass",
+      "testConnection"
+    ]
+    networks:
+      - beautyshop_default
+    volumes:
+      - ./sql:/flyway/sql
+
+networks:
+  beautyshop_default:
+    external: true
