@@ -4,16 +4,21 @@ media/
 venv/
 __pycache__/
 *.pyc
-db.sqlite3
+db.sqlite3*
 *.log
 
 # VS Code & IDEs
 .vscode/
 .idea/
 
+# JSON
+data*.json
+
 # System
 .DS_Store
 Thumbs.db
+
+
 
 # Docker/Devcontainer
 .devcontainer/
